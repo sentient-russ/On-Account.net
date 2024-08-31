@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using MailKit.Net.Smtp;
 
-
 namespace OnAccount.Areas.Identity.Services;
 public class EmailSender : IEmailSender
 {
@@ -15,6 +14,7 @@ public class EmailSender : IEmailSender
     {
         _logger = logger;
         GC_Email_Pass = Environment.GetEnvironmentVariable("GC_Email_Pass");
+        _logger = logger;
     }
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
