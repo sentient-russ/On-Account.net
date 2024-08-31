@@ -77,6 +77,26 @@ namespace OnAccount.Areas.Identity.Pages.Account
             public string Email { get; set; }
 
             [Required]
+            [StringLength(100,ErrorMessage ="Name is too long it must be under 100 characters long.",MinimumLength = 1)]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [StringLength(100, ErrorMessage = "Name is too long it must be under 100 characters long.", MinimumLength = 1)]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+            [Required]
+            [StringLength(100, ErrorMessage = "address is too long it must be under 100 characters long.", MinimumLength = 1)]
+            [Display(Name = "Current Address")]
+            public string Address { get; set; }
+
+            [Required]
+            [StringLength(100, ErrorMessage = "date of is too long it must be under 100 characters long.", MinimumLength = 1)]
+            [Display(Name = "Date of Birth")]
+            public string DateofBirth { get; set; }
+
+            [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
