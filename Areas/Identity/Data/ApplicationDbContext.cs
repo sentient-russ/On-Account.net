@@ -38,6 +38,8 @@ public class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<AppUs
         builder.Property(u => u.ScreenName).HasMaxLength(256);
         builder.Property(u => u.FirstName).HasMaxLength(256);
         builder.Property(u => u.LastName).HasMaxLength(256);
+        builder.Property(u => u.Address).HasMaxLength(256);
+        builder.Property(u => u.DateofBirth).HasMaxLength(256);
         builder.Property(u => u.PhoneNumber).HasMaxLength(256);
         builder.Property(u => u.UserRole).HasMaxLength(256);
         builder.Property(u => u.ActiveStatus);

@@ -170,8 +170,16 @@ namespace OnAccount.Migrations
                     b.Property<bool?>("ActiveStatus")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DateofBirth")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
