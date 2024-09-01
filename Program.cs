@@ -150,6 +150,9 @@ app.UseCookiePolicy();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "admin",
+    pattern: "{controller=AdminController}/{action=Index}/{id?}");
 //app.MapControllerRoute(
 //    name: "portal",
 //    pattern: "{controller=PortalController}/{action=Index}/{id?}");

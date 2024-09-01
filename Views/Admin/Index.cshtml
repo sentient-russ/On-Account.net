@@ -1,0 +1,68 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
+    ViewData["welcome"] = "Edit Post";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData</title>
+</head>
+<body>
+    <div class="container">
+        <h2>System Users</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>User Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Creation Date</th>
+                    <th>Suspension Date</th>
+                    <th>Reinstatement Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.UserName</td>
+                        <td>@user.Email</td>
+                        <td>
+                            <select class="form-select">
+                                @foreach (var role in Model.Roles)
+                                {
+                                    <option value="@role.Id" selected="@(role.Name == user.Role ? "selected" : null)">@role.Name</option>
+                                }
+                            </select>
+                        </td>
+                        <td><input type="text" class="form-control datepicker" value="@user.CreationDate.ToString("yyyy-MM-dd")"></td>
+                        <td><input type="text" class="form-control datepicker" value="@(user.SuspensionDate?.ToString("yyyy-MM-dd") ?? "")"></td>
+                        <td><input type="text" class="form-control datepicker" value="@(user.ReinstatementDate?.ToString("yyyy-MM-dd") ?? "")"></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
+</body>
+</html>
