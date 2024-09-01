@@ -82,6 +82,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
         .LogTo(Console.WriteLine, LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
+        
 );
 
 

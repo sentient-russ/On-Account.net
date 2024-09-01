@@ -46,55 +46,40 @@ namespace OnAccount.Areas.Identity.Pages.Account
             _emailSender = emailSender;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public string ReturnUrl { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
-            public string Email { get; set; }
+            public string Email { get; set; } = "";
 
             [Required]
             [StringLength(100,ErrorMessage ="Name is too long it must be under 100 characters long.",MinimumLength = 1)]
             [Display(Name = "First Name")]
-            public string FirstName { get; set; }
+            public string FirstName { get; set; } = "";
 
             [Required]
             [StringLength(100, ErrorMessage = "Name is too long it must be under 100 characters long.", MinimumLength = 1)]
             [Display(Name = "Last Name")]
-            public string LastName { get; set; }
+            public string LastName { get; set; } = "";
 
             [Required]
             [StringLength(100, ErrorMessage = "address is too long it must be under 100 characters long.", MinimumLength = 1)]
             [Display(Name = "Current Address")]
-            public string Address { get; set; }
+            public string Address { get; set; } = "";
 
             [Required]
-            [StringLength(100, ErrorMessage = "date of is too long it must be under 100 characters long.", MinimumLength = 1)]
-            [Display(Name = "Date of Birth")]
-            public string DateofBirth { get; set; }
+            [DataType(DataType.Date)]
+            [Display(Name = "Private Sobriety Date")]
+            [StringLength(100, ErrorMessage = "Please enter a valid date.", MinimumLength = 6)]
+            public string DateofBirth { get; set; } = "";
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
