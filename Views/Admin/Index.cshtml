@@ -39,6 +39,7 @@
                             <select class="form-select">
                                 @foreach (var role in Model.Roles)
                                 {
+                                                            
                                     <option value="@role.Id" selected="@(role.Name == user.Role ? "selected" : null)">@role.Name</option>
                                 }
                             </select>

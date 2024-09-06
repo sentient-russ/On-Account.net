@@ -10,6 +10,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\img\OnAccount_Logo_Black.png" />
+    <Content Remove="wwwroot\img\OnAccount_Logo_White.png" />
+    <Content Remove="wwwroot\img\OnAccount_Logo_White_A.png" />
+    <Content Remove="wwwroot\img\OnAccount_Logo_White_B.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\img\OnAccount_Logo_Black.png" />
+    <None Include="wwwroot\img\OnAccount_Logo_White.png" />
+    <None Include="wwwroot\img\OnAccount_Logo_White_A.png" />
+    <None Include="wwwroot\img\OnAccount_Logo_White_B.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MailKit" Version="4.7.1.1" />
     <PackageReference Include="MediReport.MySql.Data" Version="8.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
