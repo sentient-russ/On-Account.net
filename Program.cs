@@ -66,7 +66,6 @@ Environment.SetEnvironmentVariable("DbConnectionString", connectionString);//thi
 Environment.SetEnvironmentVariable("GC_Email_Pass", GC_Email_Pass);
 
 var serverVersion = new MySqlServerVersion(new Version(10, 6, 11));
-//var serverVersion = new MySqlServerVersion(new Version(8, 0, 39));
 //use this option for a stable normal configuration
 builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
@@ -84,7 +83,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
         .LogTo(Console.WriteLine, LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
-        
+
 );*/
 
 
@@ -101,9 +100,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     // Default Lockout settings.
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
-    options.Lockout.AllowedForNewUsers = false;
-    // Authorization 
-
+    options.Lockout.AllowedForNewUsers = true;
 
 });
 builder.Services.AddAuthorization();
@@ -161,31 +158,6 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "create",
     pattern: "{controller=AdminController}/{action=Create}/{id?}");
-
-
-//app.MapControllerRoute(
-//    name: "portal",
-//    pattern: "{controller=PortalController}/{action=Index}/{id?}");
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Home}/{action=Terms}/");
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Home}/{action=Privacy}/");
-//app.MapControllerRoute(
-//    name: "contactform",
-//    pattern: "/Contact",
-//    defaults: new { controller = "ContactController", action = "post" });
-//app.MapControllerRoute(
-//    name: "contactform-get",
-//    pattern: "/Contact",
-//    defaults: new { controller = "ContactController", action = "get" });
-//app.MapControllerRoute(
-//    name: "portal",
-//    pattern: "{controller=PortalController}/{action=Index}/{id?}");
-//app.MapControllerRoute(
-//    name: "portal",
-//    pattern: "{controller=PortalController}/{action=RemoveFavorite}/{id?}");
 
 app.MapRazorPages();
 app.Run();

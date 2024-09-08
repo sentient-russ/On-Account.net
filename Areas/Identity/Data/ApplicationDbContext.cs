@@ -43,6 +43,8 @@ public class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<AppUs
         builder.Property(u => u.PhoneNumber).HasMaxLength(256);
         builder.Property(u => u.UserRole).HasMaxLength(256);
         builder.Property(u => u.ActiveStatus);
+        builder.Property(u => u.AcctReinstatementDate);
+        builder.Property(u => u.AcctSuspensionDate);
     }
 }
 

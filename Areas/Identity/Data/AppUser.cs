@@ -18,6 +18,14 @@ public class AppUser : IdentityUser
     public string? UserRole { get; set; } = "";
     public bool? ActiveStatus { get; set; } = true;
 
+    public DateTime? AcctSuspensionDate { get; set; }
+
+    public DateTime? AcctReinstatementDate { get; set; }
+
+
+
+
+
     //[System.ComponentModel.DataAnnotations.Schema.NotMapped]
     //public List<PostModel>? Posts { get; set; }
 
