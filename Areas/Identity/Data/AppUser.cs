@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -15,8 +16,8 @@ public class AppUser : IdentityUser
     internal string? DateofBirth { get; set; } = "";
     internal string? Address { get; set; } = "";
     public string? UserRole { get; set; } = "";
-    public bool? ActiveStatus { get; set; } = false;
-    
+    public bool? ActiveStatus { get; set; } = true;
+
     //[System.ComponentModel.DataAnnotations.Schema.NotMapped]
     //public List<PostModel>? Posts { get; set; }
 
