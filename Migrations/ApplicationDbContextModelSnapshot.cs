@@ -167,6 +167,12 @@ namespace OnAccount.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("AcctReinstatementDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("AcctSuspensionDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<bool?>("ActiveStatus")
                         .HasColumnType("tinyint(1)");
 
