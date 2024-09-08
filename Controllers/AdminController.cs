@@ -62,9 +62,9 @@ namespace OnAccount.Controllers
             return RedirectToAction("Index");
         }
         [HttpGet]
-        public async Task<IActionResult> ManageAccounts(IdentityRole model)
+        public async Task<IActionResult> ManageAccounts()
         {
-            var users = _userManager.Users;
+            var users = _userManager;
 
             return View(users);
         }

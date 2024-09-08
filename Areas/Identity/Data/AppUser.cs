@@ -21,14 +21,8 @@ public class AppUser : IdentityUser
     public DateTime? AcctSuspensionDate { get; set; }
 
     public DateTime? AcctReinstatementDate { get; set; }
+    public DateTime? LastPasswordChangedDate { get; set; }
+    public string PasswordResetDays { get; set; } = "90";
 
-
-
-
-
-    //[System.ComponentModel.DataAnnotations.Schema.NotMapped]
-    //public List<PostModel>? Posts { get; set; }
-
-    //[System.ComponentModel.DataAnnotations.Schema.NotMapped]
 }
 

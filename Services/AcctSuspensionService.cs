@@ -1,18 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Net;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.DotNet.MSIdentity.Shared;
-using System.Diagnostics;
-using static System.Net.WebRequestMethods;
-using Microsoft.Identity.Client;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
 using OnAccount.Areas.Identity.Data;
-using OnAccount.Controllers;
-
+using System;
 /*
  This service runs once per hour to update scheduled account lockout events.
  */
@@ -21,30 +9,17 @@ namespace OnAccount.Services
     public class AcctSuspensionService : IHostedService, IDisposable
     {
         private Timer? _timer;
-        private readonly ILogger<AdminController> logger;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
-        private readonly IUserStore<AppUser> _userStore;
-        private readonly IUserEmailStore<AppUser> _emailStore;
-        private readonly IEmailSender _emailSender;
+        
         private DbConnectorService _dbConnectorService;
-        public AcctSuspensionService(ILogger<AdminController> logger,
-            RoleManager<IdentityRole> roleManager,
-            UserManager<AppUser> userManager,
-            IUserStore<AppUser> userStore,
-            SignInManager<AppUser> signInManager) 
+        public AcctSuspensionService(UserManager<AppUser> userManager) 
         {
-            this.logger = logger;
-            this._roleManager = roleManager;
             this._userManager = userManager;
-            this._userStore = userStore;
-            this._signInManager = signInManager;
             this._dbConnectorService = new DbConnectorService();
         }
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(3600)); //runs on the hour
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(864000)); //runs once perday from the last start time.
             return Task.CompletedTask;
         }
         public Task StopAsync(CancellationToken cancellationToken)
@@ -59,6 +34,7 @@ namespace OnAccount.Services
         private void DoWork(object? state)
         {
             UpdateLockouts();
+            UpdateLockoutsExpPassword();
         }
         private void UpdateLockouts()
         {
@@ -71,6 +47,24 @@ namespace OnAccount.Services
                 }
             }
         }
+        private async void UpdateLockoutsExpPassword()
+        {
+            var users = this._userManager.Users.ToList();
+            for (var i = 0; i < users.Count; i++)
+            {
+                DateTime lastChangedDate = (DateTime)users[i].LastPasswordChangedDate;
+                var nextExpiration = lastChangedDate.AddDays(Int32.Parse(users[i].PasswordResetDays));
+                if (nextExpiration <= System.DateTime.Now)
+                {
+                    _dbConnectorService.UpdateLockout(users[i]);
+                    Services.EmailService sendit = new EmailService();
+                    var subject = "Alert! Your OnAccount password is about to expire! (Sent on behalf of On-Account from Magnadigi.com";
+                    var body = "Dear " + users[i].FirstName + ", \n" + "Your password expires on " + nextExpiration + ".\n" + "Please vist https://www.on-account.net to update your password. \nThank You,\nThe on-account team.";
+                    await sendit.SendEmailAsync(users[i].Email, subject, body);
+                }
+            }
+        }
+        
     }
 }
 
