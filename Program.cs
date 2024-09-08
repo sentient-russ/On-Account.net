@@ -58,32 +58,34 @@ else
     GC_Email_Pass = builder.Configuration.GetConnectionString("GC_Email_Pass");
 
 }
-builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultTokenProviders()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 Environment.SetEnvironmentVariable("DbConnectionString", connectionString);//this is used in services to access the string
 Environment.SetEnvironmentVariable("GC_Email_Pass", GC_Email_Pass);
 
-
-
-//var serverVersion = new MySqlServerVersion(new Version(10, 6, 11));
-var serverVersion = new MySqlServerVersion(new Version(8, 0, 39));
+var serverVersion = new MySqlServerVersion(new Version(10, 6, 11));
+//var serverVersion = new MySqlServerVersion(new Version(8, 0, 39));
 //use this option for a stable normal configuration
-//builder.Services.AddDbContext<ApplicationDbContext>(
-//    dbContextOptions => dbContextOptions
-//        .UseMySql(connectionString, serverVersion, options => options.EnableRetryOnFailure())
-
-//        .LogTo(Console.WriteLine, LogLevel.Information)
-//        .EnableSensitiveDataLogging()
-//        .EnableDetailedErrors()
-//);
-//use for code first migrations with mysql only
 builder.Services.AddDbContext<ApplicationDbContext>(
+    dbContextOptions => dbContextOptions
+        .UseMySql(connectionString, serverVersion, options => options.EnableRetryOnFailure())
+
+        .LogTo(Console.WriteLine, LogLevel.Information)
+        .EnableSensitiveDataLogging()
+        .EnableDetailedErrors()
+);
+
+//use for code first migrations with mysql only
+/*builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion, options => options.SchemaBehavior(Pomelo.EntityFrameworkCore.MySql.Infrastructure.MySqlSchemaBehavior.Ignore))
         .LogTo(Console.WriteLine, LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
         
-);
+);*/
 
 
 builder.Services.AddControllersWithViews();
@@ -100,6 +102,9 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = false;
+    // Authorization 
+
+
 });
 builder.Services.AddAuthorization();
 
@@ -145,7 +150,7 @@ app.UseEndpoints(endpoints =>
 app.UseResponseCompression();
 app.UseStaticFiles();
 app.UseCookiePolicy();
-
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
@@ -153,6 +158,11 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "admin",
     pattern: "{controller=AdminController}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "create",
+    pattern: "{controller=AdminController}/{action=Create}/{id?}");
+
+
 //app.MapControllerRoute(
 //    name: "portal",
 //    pattern: "{controller=PortalController}/{action=Index}/{id?}");
