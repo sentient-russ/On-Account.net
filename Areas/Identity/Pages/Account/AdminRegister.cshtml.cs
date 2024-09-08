@@ -103,6 +103,10 @@ namespace OnAccount.Areas.Identity.Pages.Account
 
             [ValidateNever]
             public IEnumerable<SelectListItem> RoleList { get; set; }
+
+            [ValidateNever]
+            public string PasswordResetDays { get; set; } = "90";
+
         }     
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -135,6 +139,8 @@ namespace OnAccount.Areas.Identity.Pages.Account
                 user.DateofBirth = Input.DateofBirth;
                 user.Email = Input.Email;
                 user.UserRole = Input.UserRole;
+                user.LastPasswordChangedDate = System.DateTime.Now;
+                user.PasswordResetDays = Input.PasswordResetDays;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

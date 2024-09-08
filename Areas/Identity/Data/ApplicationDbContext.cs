@@ -45,6 +45,8 @@ public class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<AppUs
         builder.Property(u => u.ActiveStatus);
         builder.Property(u => u.AcctReinstatementDate);
         builder.Property(u => u.AcctSuspensionDate);
+        builder.Property(u => u.LastPasswordChangedDate);
+        builder.Property(u => u.PasswordResetDays);
     }
 }
 

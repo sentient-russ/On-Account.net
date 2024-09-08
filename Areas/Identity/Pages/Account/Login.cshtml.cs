@@ -3,6 +3,7 @@
 #nullable disable
 
 using System;
+
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,17 +16,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using OnAccount.Areas.Identity.Data;
+using System.Security.Claims;
 
 namespace OnAccount.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<AppUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -105,9 +109,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList(); 
             if (ModelState.IsValid)
             {
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
@@ -115,7 +117,19 @@ namespace OnAccount.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    // This block redirects the user to a password reset if it is set to expire in the next three days.
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    DateTime lastChangedDate = (DateTime)user.LastPasswordChangedDate;
+                    var notificationDate = lastChangedDate.AddDays(90);
+                    if (notificationDate <= DateTime.Now)
+                    {
+                        return RedirectToPage("./Manage/PasswordExpired");
+                    }
+                    else
+                    {
+                        return LocalRedirect(returnUrl);
+                    }
+                        
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -136,5 +150,6 @@ namespace OnAccount.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
     }
 }
