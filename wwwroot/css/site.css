@@ -20,3 +20,17 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.manage-container-column{
+    display:flex;
+    flex-direction:column;
+}
+.manage-container-row{
+    display:flex;
+    flex-direction:row;
+    max-height:75px;
+    padding:10px;
+}
+.manage-btn-cntr{
+    padding-right: 20px;
+}
