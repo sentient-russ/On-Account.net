@@ -10,7 +10,15 @@
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h2>Create a new account.</h2>
             <hr />
+
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.ScreenName" class="form-control" autocomplete="screanname" aria-required="true" placeholder="name@example.com" />
+                <label asp-for="Input.ScreenName">User Name</label>
+                <span asp-validation-for="Input.ScreenName" class="text-danger"></span>
+            </div>
+
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                 <label asp-for="Input.Email">Email</label>
@@ -33,6 +41,30 @@
                 <input asp-for="Input.Address" class="form-control" autocomplete="current address" aria-required="true" placeholder="Current Address" />
                 <label asp-for="Input.Address">Current Address</label>
                 <span asp-validation-for="Input.Address" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.City" class="form-control" autocomplete="city" aria-required="true" placeholder="City" />
+                <label asp-for="Input.City">City</label>
+                <span asp-validation-for="Input.City" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.State" class="form-control" autocomplete="state" aria-required="true" placeholder="State" />
+                <label asp-for="Input.State">Current Address</label>
+                <span asp-validation-for="Input.State" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Zip" class="form-control" autocomplete="zip" aria-required="true" placeholder="Zip Code" />
+                <label asp-for="Input.Zip">Current Address</label>
+                <span asp-validation-for="Input.Zip" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="phone number" aria-required="true" placeholder="(000)000-0000" />
+                <label asp-for="Input.PhoneNumber">Phone Number</label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-3">

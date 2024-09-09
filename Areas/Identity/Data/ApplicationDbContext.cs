@@ -12,14 +12,18 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     : base(options)
     {
     }
+
+        
     //private DbSet<AIModel> AIModel { get; set; }
     //private DbSet<PostModel> PostModel { get; set; }
     //private DbSet<VoteModel> VoteModels { get; set; }
     //private DbSet<FavoritesModel> FavoritesModel { get; set; }
+    //public DbSet<OnAccount.Models.AppUserModel> AppUserModel { get; set; } = default!;
 
     //the next section overrides the default db naming // migrate and update database afterwords
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        
         base.OnModelCreating(builder);
         builder.HasDefaultSchema("Identity");
         builder.Entity<AppUser>(entity => { entity.ToTable(name: "Users"); });
@@ -29,11 +33,12 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
         builder.Entity<IdentityUserLogin<string>>(entity => { entity.ToTable(name: "UserLogins"); });
         builder.Entity<IdentityRoleClaim<string>>(entity => { entity.ToTable(name: "RoleClaims"); });
         builder.Entity<IdentityUserToken<string>>(entity => { entity.ToTable(name: "UserTokens"); });
-        }
-    public DbSet<OnAccount.Models.AppUserModel> AppUserModel { get; set; } = default!;
+        builder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
+    }
+    
 }
 
-public class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<AppUser>
+internal class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<AppUser>
 {
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
@@ -41,6 +46,9 @@ public class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<AppUs
         builder.Property(u => u.FirstName).HasMaxLength(256);
         builder.Property(u => u.LastName).HasMaxLength(256);
         builder.Property(u => u.Address).HasMaxLength(256);
+        builder.Property(u => u.City).HasMaxLength(256);
+        builder.Property(u => u.State).HasMaxLength(256);
+        builder.Property(u => u.Zip).HasMaxLength(256);
         builder.Property(u => u.DateofBirth).HasMaxLength(256);
         builder.Property(u => u.PhoneNumber).HasMaxLength(256);
         builder.Property(u => u.UserRole).HasMaxLength(256);
