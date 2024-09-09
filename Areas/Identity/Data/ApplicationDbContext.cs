@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnAccount.Areas.Identity.Data;
+using OnAccount.Models;
 
 namespace OnAccount.Areas.Identity.Data;
 public class ApplicationDbContext : IdentityDbContext<AppUser>
@@ -29,6 +30,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
         builder.Entity<IdentityRoleClaim<string>>(entity => { entity.ToTable(name: "RoleClaims"); });
         builder.Entity<IdentityUserToken<string>>(entity => { entity.ToTable(name: "UserTokens"); });
         }
+    public DbSet<OnAccount.Models.AppUserModel> AppUserModel { get; set; } = default!;
 }
 
 public class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<AppUser>

@@ -158,6 +158,9 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "create",
     pattern: "{controller=AdminController}/{action=Create}/{id?}");
+app.MapControllerRoute(
+    name: "create",
+    pattern: "{controller=AdminController}/{action=ManageAccounts}/{id?}");
 
 app.MapRazorPages();
 app.Run();
