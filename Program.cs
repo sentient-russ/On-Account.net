@@ -67,24 +67,24 @@ Environment.SetEnvironmentVariable("GC_Email_Pass", GC_Email_Pass);
 
 var serverVersion = new MySqlServerVersion(new Version(10, 6, 11));
 //use this option for a stable normal configuration
-/*builder.Services.AddDbContext<ApplicationDbContext>(
+builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion, options => options.EnableRetryOnFailure())
 
         .LogTo(Console.WriteLine, LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
-);*/
+);
 
 //use for code first migrations with mysql only
-builder.Services.AddDbContext<ApplicationDbContext>(
+/*builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion, options => options.SchemaBehavior(Pomelo.EntityFrameworkCore.MySql.Infrastructure.MySqlSchemaBehavior.Ignore))
         .LogTo(Console.WriteLine, LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 
-);
+);*/
 
 
 builder.Services.AddControllersWithViews();
@@ -142,8 +142,9 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapControllers(); //All controllers including the API are mapped here.
+    endpoints.MapControllers();
 });
+
 app.UseResponseCompression();
 app.UseStaticFiles();
 app.UseCookiePolicy();
@@ -153,14 +154,21 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapControllerRoute(
-    name: "admin",
+    name: "Admin",
     pattern: "{controller=AdminController}/{action=Index}/{id?}");
 app.MapControllerRoute(
-    name: "create",
-    pattern: "{controller=AdminController}/{action=Create}/{id?}");
+    name: "Roles",
+    pattern: "{controller=AdminController}/{action=CreateRole}/{id?}");
 app.MapControllerRoute(
-    name: "create",
+    name: "Accounts",
     pattern: "{controller=AdminController}/{action=ManageAccounts}/{id?}");
+/*app.MapControllerRoute(
+    name: "ManageAccount",
+    pattern: "{controller=AdminController}/{action=EditAccountDetails}/{detailsIn?}");*/
+//app.MapControllerRoute(
+//    name: "UpdateAccount",
+//    pattern: "/UpdateAccountDetails",
+//    defaults: new { controller = "AdminController", action = "post" });
 
 app.MapRazorPages();
 app.Run();

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using OnAccount.Areas.Identity.Data;
+using OnAccount.Services;
 using OnAccount.Migrations;
 using OnAccount.Models;
 using System.ComponentModel;
@@ -24,6 +25,7 @@ namespace OnAccount.Controllers
         private readonly IUserEmailStore<AppUser> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ApplicationDbContext _DbContext;
+        private readonly DbConnectorService _dbConnectorService;
 
 
         public AdminController(ILogger<AdminController> logger, 
@@ -39,56 +41,61 @@ namespace OnAccount.Controllers
             this._userStore = userStore;
             this._signInManager = signInManager;
             this._DbContext = context;
-
+            this._dbConnectorService = new DbConnectorService();
         }
 
         public IActionResult Index()
         {
             var roles = _roleManager.Roles;
-
             return View(roles);
         }
-
+        //Oddly this method is for creating roles
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult CreateRole()
         {
-
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(IdentityRole model)
+        public async Task<IActionResult> CreateRole(IdentityRole model)
         {
 
             if (!_roleManager.RoleExistsAsync(model.Name).GetAwaiter().GetResult())
             {
                 _roleManager.CreateAsync(new IdentityRole(model.Name)).GetAwaiter().GetResult();
             }
-
             return RedirectToAction("Index");
         }
         [HttpGet]
         public async Task<IActionResult> ManageAccounts()
         {
             var appUsers = await _DbContext.Users.ToListAsync();
-            var appUserModels = MapAppUsersToAppUserModels(appUsers);
-            return View(appUserModels);
-
-
+            return View(appUsers);
         }
-        private IEnumerable<AppUserModel> MapAppUsersToAppUserModels(IEnumerable<AppUser> appUsers)
+        
+        [HttpGet]
+        public async Task<IActionResult> EditAccountDetails(string? Id)
         {
-            return appUsers.Select(user => new AppUserModel
+            var appUsers = await _DbContext.Users.ToListAsync();
+            AppUser appUser = new AppUser();
+            for (var i = 0; i < appUsers.Count; i++)
             {
-                Id = user.Id,
-                ScreenName = user.ScreenName,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                UserRole = user.UserRole,
-                Email = user.Email,
+                if (appUsers[i].Id == Id)
+                {
+                    appUser = appUsers[i];
+                }
+            }
 
-            }).ToList();
+            return View(appUser);
         }
-
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> UpdateAccountDetails([Bind("Id, ScreenName, FirstName, LastName, PhoneNumber, Address, City, State, Zip, DateofBirth, UserRole, ActiveStatus, UserName, Email, NormalizedUserName, AcctSuspensionDate, AcctReinstatementDate, LastPasswordChangedDate, PasswordResetDays")] AppUserModel detailsIn)
+        {
+            AppUserModel appUser = new AppUserModel();
+            appUser = detailsIn;
+            _dbConnectorService.UpdateUserDetails(appUser);
+            return RedirectToAction(nameof(ManageAccounts));
+        }
     }
 }

@@ -1,0 +1,91 @@
+﻿@model OnAccount.Areas.Identity.Data.AppUser
+@{
+    ViewData["Title"] = "EditAccountDetails";
+}
+
+<h1>EditAccountDetails</h1>
+
+<h4 class="text-center mb-2">AppUserModel</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-4 mx-auto">
+        <form asp-action="UpdateAccountDetails">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="ScreenName" class="control-label"></label>
+                <input asp-for="ScreenName" class="form-control" />
+                <span asp-validation-for="ScreenName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <select asp-for="UserRole" asp-items=@Model.RoleList class="form-select" aria-required="true">
+                    <option disabled selected>Select Role</option>
+                </select>
+                <span asp-validation-for="UserRole" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ActiveStatus" class="control-label"></label>
+                <input asp-for="ActiveStatus" class="form-control" />
+                <span asp-validation-for="ActiveStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NormalizedUserName" class="control-label"></label>
+                <input asp-for="NormalizedUserName" class="form-control" />
+                <span asp-validation-for="NormalizedUserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AcctSuspensionDate" class="control-label"></label>
+                <input asp-for="AcctSuspensionDate" class="form-control" />
+                <span asp-validation-for="AcctSuspensionDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AcctReinstatementDate" class="control-label"></label>
+                <input asp-for="AcctReinstatementDate" class="form-control" />
+                <span asp-validation-for="AcctReinstatementDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastPasswordChangedDate" class="control-label"></label>
+                <input asp-for="LastPasswordChangedDate" class="form-control" />
+                <span asp-validation-for="LastPasswordChangedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PasswordResetDays" class="control-label"></label>
+                <input asp-for="PasswordResetDays" class="form-control" />
+                <span asp-validation-for="PasswordResetDays" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

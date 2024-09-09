@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnAccount.Areas.Identity.Data;
 
@@ -11,9 +12,11 @@ using OnAccount.Areas.Identity.Data;
 namespace OnAccount.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240909201438_RegistrationFields")]
+    partial class RegistrationFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,21 +179,9 @@ namespace OnAccount.Migrations
                     b.Property<bool?>("ActiveStatus")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("Address")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<string>("City")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
-
-                    b.Property<string>("DateofBirth")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -200,12 +191,10 @@ namespace OnAccount.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("FirstName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("LastName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime?>("LastPasswordChangedDate")
                         .HasColumnType("datetime(6)");
@@ -232,22 +221,16 @@ namespace OnAccount.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("PhoneNumber")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("ScreenName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");
-
-                    b.Property<string>("State")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
@@ -257,12 +240,7 @@ namespace OnAccount.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.Property<string>("UserRole")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<string>("Zip")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

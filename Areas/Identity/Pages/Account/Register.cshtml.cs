@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -56,30 +57,63 @@ namespace OnAccount.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
-            public string Email { get; set; } = "";
+            [DataType(DataType.Text)]
+            [StringLength(100, MinimumLength = 1)]
+            [DisplayName("User Name:")]
+            public string? ScreenName { get; set; } = "";
 
             [Required]
-            [StringLength(100,ErrorMessage ="Name is too long it must be under 100 characters long.",MinimumLength = 1)]
-            [Display(Name = "First Name")]
-            public string FirstName { get; set; } = "";
+            [DataType(DataType.EmailAddress)]
+            [StringLength(255, MinimumLength = 1)]
+            [DisplayName("Email Address:")]
+            public string? Email { get; set; }
 
             [Required]
-            [StringLength(100, ErrorMessage = "Name is too long it must be under 100 characters long.", MinimumLength = 1)]
-            [Display(Name = "Last Name")]
-            public string LastName { get; set; } = "";
+            [DataType(DataType.Text)]
+            [StringLength(100, MinimumLength = 1)]
+            [DisplayName("First Name:")]
+            public string? FirstName { get; set; } = "";
 
             [Required]
-            [StringLength(100, ErrorMessage = "address is too long it must be under 100 characters long.", MinimumLength = 1)]
-            [Display(Name = "Current Address")]
-            public string Address { get; set; } = "";
+            [DataType(DataType.Text)]
+            [StringLength(100, MinimumLength = 1)]
+            [DisplayName("Last Name:")]
+            public string? LastName { get; set; } = "";
+            [Required]
+            [DataType(DataType.PhoneNumber)]
+            [StringLength(11, MinimumLength = 10)]
+            [DisplayName("Phone Number:")]
+            public string? PhoneNumber { get; set; } = "";
+
+            [Required]
+            [DataType(DataType.Text)]
+            [StringLength(150, MinimumLength = 1)]
+            [DisplayName("Address:")]
+            internal string? Address { get; set; } = "";
+
+            [Required]
+            [DataType(DataType.Text)]
+            [StringLength(50, MinimumLength = 1)]
+            [DisplayName("City:")]
+            internal string? City { get; set; } = "";
+
+            [Required]
+            [DataType(DataType.Text)]
+            [StringLength(2, MinimumLength = 2)]
+            [DisplayName("State:")]
+            internal string? State { get; set; } = "";
+
+            [Required]
+            [DataType(DataType.Text)]
+            [StringLength(10, MinimumLength = 1)]
+            [DisplayName("Zip:")]
+            internal string? Zip { get; set; } = "";
 
             [Required]
             [DataType(DataType.Date)]
-            [Display(Name = "Private Sobriety Date")]
-            [StringLength(100, ErrorMessage = "Please enter a valid date.", MinimumLength = 6)]
-            public string DateofBirth { get; set; } = "";
+            [StringLength(20, MinimumLength = 20)]
+            [DisplayName("Birthday:")]
+            internal string? DateofBirth { get; set; } = "";
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
@@ -106,11 +140,16 @@ namespace OnAccount.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-                user.Address = Input.Address;
+                user.ScreenName = Input.ScreenName;
+                user.Email = Input.Email;
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
+                user.PhoneNumber = Input.PhoneNumber;
+                user.Address = Input.Address;
+                user.City = Input.City; 
+                user.State = Input.State;
+                user.Zip = Input.Zip;
                 user.DateofBirth = Input.DateofBirth;
-                user.Email = Input.Email;
                 user.LastPasswordChangedDate = System.DateTime.Now;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
