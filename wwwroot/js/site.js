@@ -5,10 +5,39 @@
 var screen_name_element = document.getElementById("input_screen_name");
 var first_name_element = document.getElementById("input_first_name");
 var last_name_element = document.getElementById("input_last_name");
-screen_name_element.value = RSteele0924
+/*screen_name_element.value = RSteele0924;*/
+var lastname = "";
+var firstInitial = "";
+var lastNameInitial = "";
+var date = new Date();
+var currentYear = date.getFullYear();
+var currentMonth = date.getMonth();
+var username = "";
 
+var currentMonthTwoDigits = currentMonth < 10 ? '0' + currentMonth : currentMonth.toString();
+console.log(currentMonthTwoDigits);
 
+//function that combines all inputs from user to create username following first intial + last name + month + last 2 digits of year
+function usernameCreator() {
+	screen_name_element.value = firstInitial + lastname + currentMonthTwoDigits + (currentYear%100);
+}
+//assigns to lastname variable capital for username creation and capitalizes first initial 
+last_name_element.addEventListener("focusout", function () {
+	lastname = last_name_element.value;
+	lastNameInitial = lastname[0].toUpperCase();
+	lastname = lastNameInitial + lastname.substring(1, lastname.length);
+	console.log(lastname);
+	usernameCreator();
+});
 
+//assigns to firstInitial a captal letter for use for username creation
+first_name_element.addEventListener("focusout", function () {
+	firstInitial = first_name_element.value[0];
+	firstInitial=firstInitial.toUpperCase();
+	console.log("Form ID:", first_name_element.value);
+	console.log(firstInitial);
+	usernameCreator();
+});
 
 
 

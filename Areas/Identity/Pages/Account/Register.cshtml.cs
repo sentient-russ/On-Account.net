@@ -81,7 +81,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
 
             [Required]
             [DataType(DataType.PhoneNumber)]
-            [StringLength(11, MinimumLength = 10)]
+            [StringLength(14, MinimumLength = 13)]
             [DisplayName("Phone Number:")]
             public string? PhoneNumber { get; set; } = "";
 
@@ -89,31 +89,30 @@ namespace OnAccount.Areas.Identity.Pages.Account
             [DataType(DataType.Text)]
             [StringLength(150, MinimumLength = 1)]
             [DisplayName("Address:")]
-            internal string? Address { get; set; } = "";
+            public string? Address { get; set; } = "";
 
             [Required]
             [DataType(DataType.Text)]
             [StringLength(50, MinimumLength = 1)]
             [DisplayName("City:")]
-            internal string? City { get; set; } = "";
+            public string? City { get; set; } = "";
 
             [Required]
             [DataType(DataType.Text)]
             [StringLength(2, MinimumLength = 2)]
             [DisplayName("State:")]
-            internal string? State { get; set; } = "";
+            public string? State { get; set; } = "";
 
             [Required]
             [DataType(DataType.Text)]
             [StringLength(10, MinimumLength = 1)]
             [DisplayName("Zip:")]
-            internal string? Zip { get; set; } = "";
+            public string? Zip { get; set; } = "";
 
             [Required]
             [DataType(DataType.Date)]
-            [StringLength(20, MinimumLength = 20)]
             [DisplayName("Birthday:")]
-            internal string? DateofBirth { get; set; } = "";
+            public string? DateofBirth { get; set; } = "";
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
