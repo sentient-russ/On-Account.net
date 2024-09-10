@@ -12,7 +12,7 @@
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.ScreenName" class="form-control" autocomplete="user-name" placeholder="username" id="input_screen_name" disabled />
+                <input asp-for="Input.ScreenName" class="form-control" autocomplete="user-name" placeholder="username" id="input_screen_name" readonly="true" />
                 <label asp-for="Input.ScreenName" class="control-label"></label>
                 <span asp-validation-for="Input.ScreenName" class="text-danger"></span>
             </div>

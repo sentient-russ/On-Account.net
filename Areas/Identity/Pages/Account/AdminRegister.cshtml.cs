@@ -68,7 +68,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
             [Required]
             [DataType(DataType.Text)]
             [StringLength(100, MinimumLength = 1)]
-            [DisplayName("User Name:")]
+            [DisplayName("(automatic) User Name:")]
             public string? ScreenName { get; set; } = "";
             [Required]
             [EmailAddress]
@@ -100,20 +100,20 @@ namespace OnAccount.Areas.Identity.Pages.Account
             [DataType(DataType.Text)]
             [StringLength(50, ErrorMessage = "Address must be under 50 characters long.", MinimumLength = 1)]
             [DisplayName("City:")]
-            internal string? City { get; set; } = "";
+            public string? City { get; set; } = "";
 
             [Required]
             [DataType(DataType.Text)]
             [StringLength(2, ErrorMessage = "Address must 2 characters long.", MinimumLength = 2)]
             [DisplayName("State:")]
-            internal string? State { get; set; } = "";
+            public string? State { get; set; } = "";
 
             [Required]
             [DataType(DataType.Text)]
             [StringLength(5, ErrorMessage = "Please enter a 5 digit zip code.", MinimumLength = 1)]
             [DisplayName("Zip:")]
 
-            internal string? Zip { get; set; } = "";
+            public string? Zip { get; set; } = "";
             [Required]
             [DataType(DataType.Date)]
             [Display(Name = "Date of Birth")]
