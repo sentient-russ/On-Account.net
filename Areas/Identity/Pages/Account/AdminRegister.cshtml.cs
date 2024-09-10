@@ -23,6 +23,8 @@ using OnAccount.Areas.Identity.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel;
 using System.Globalization;
+using Microsoft.CodeAnalysis.Editing;
+using OnAccount.Services;
 
 
 namespace OnAccount.Areas.Identity.Pages.Account
@@ -120,6 +122,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [FirstLetterCapitalValidator(ErrorMessage = "The first letter of the password must be capitalized.")]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
