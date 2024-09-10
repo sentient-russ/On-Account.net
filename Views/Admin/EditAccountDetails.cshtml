@@ -1,36 +1,37 @@
 ﻿@model OnAccount.Areas.Identity.Data.AppUser
+@using Microsoft.AspNetCore.Identity
 @{
     ViewData["Title"] = "EditAccountDetails";
 }
-
-<h1>EditAccountDetails</h1>
-
-<h4 class="text-center mb-2">AppUserModel</h4>
-
+<h1>Edit Account Details</h1>
+<h4 class="text-center mb-2">User Registration</h4>
 <hr />
 <div class="row">
     <div class="col-md-4 mx-auto">
         <form asp-action="UpdateAccountDetails">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="ScreenName" class="control-label"></label>
-                <input asp-for="ScreenName" class="form-control" />
+           <div class="form-floating mb-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <input asp-for="Id" class="form-control" autocomplete="Id" placeholder="Id" type="hidden" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="ScreenName" class="form-control" autocomplete="user-name" placeholder="username" id="input_screen_name" disabled />
+                <label asp-for="ScreenName" class="control-label"></label>                
                 <span asp-validation-for="ScreenName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-floating mb-3">
+                <input asp-for="FirstName" class="form-control" id="input_first_name"/>
                 <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-floating mb-3">
+                <input asp-for="LastName" class="form-control" id="input_last_name" />
                 <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
+            <div class="form-floating mb-3">
+                <input asp-for="PhoneNumber" class="form-control" id="Phone" placeholder="(000) 000-0000"/>
+                <label asp-for="PhoneNumber" class="control-label"></label>                
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
@@ -39,53 +40,37 @@
                 </select>
                 <span asp-validation-for="UserRole" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ActiveStatus" class="control-label"></label>
-                <input asp-for="ActiveStatus" class="form-control" />
-                <span asp-validation-for="ActiveStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserName" class="control-label"></label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
+            <div class="form-floating mb-3">
                 <input asp-for="Email" class="form-control" />
+                <label asp-for="Email" class="control-label"></label>               
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="NormalizedUserName" class="control-label"></label>
-                <input asp-for="NormalizedUserName" class="form-control" />
-                <span asp-validation-for="NormalizedUserName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AcctSuspensionDate" class="control-label"></label>
-                <input asp-for="AcctSuspensionDate" class="form-control" />
+            <div class="form-floating mb-3">
+                <input asp-for="AcctSuspensionDate" class="form-control" type="date"/>
+                <label asp-for="AcctSuspensionDate" class="control-label"></label>                
                 <span asp-validation-for="AcctSuspensionDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="AcctReinstatementDate" class="control-label"></label>
-                <input asp-for="AcctReinstatementDate" class="form-control" />
+            <div class="form-floating mb-3">
+                <input asp-for="AcctReinstatementDate" class="form-control" type="date" />
+                <label asp-for="AcctReinstatementDate" class="control-label"></label>                
                 <span asp-validation-for="AcctReinstatementDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-floating mb-3">
+                <input asp-for="LastPasswordChangedDate" class="form-control" type="date" />
                 <label asp-for="LastPasswordChangedDate" class="control-label"></label>
-                <input asp-for="LastPasswordChangedDate" class="form-control" />
                 <span asp-validation-for="LastPasswordChangedDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="PasswordResetDays" class="control-label"></label>
+            <div class="form-floating mb-3">
                 <input asp-for="PasswordResetDays" class="form-control" />
+                <label asp-for="PasswordResetDays" class="control-label"></label>
                 <span asp-validation-for="PasswordResetDays" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-floating mb-3">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

@@ -56,7 +56,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
+            //[Required]
             [DataType(DataType.Text)]
             [StringLength(100, MinimumLength = 1)]
             [DisplayName("User Name:")]
@@ -79,6 +79,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
             [StringLength(100, MinimumLength = 1)]
             [DisplayName("Last Name:")]
             public string? LastName { get; set; } = "";
+
             [Required]
             [DataType(DataType.PhoneNumber)]
             [StringLength(11, MinimumLength = 10)]
