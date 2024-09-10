@@ -162,13 +162,6 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "Accounts",
     pattern: "{controller=AdminController}/{action=ManageAccounts}/{id?}");
-/*app.MapControllerRoute(
-    name: "ManageAccount",
-    pattern: "{controller=AdminController}/{action=EditAccountDetails}/{detailsIn?}");*/
-//app.MapControllerRoute(
-//    name: "UpdateAccount",
-//    pattern: "/UpdateAccountDetails",
-//    defaults: new { controller = "AdminController", action = "post" });
 
 app.MapRazorPages();
 app.Run();

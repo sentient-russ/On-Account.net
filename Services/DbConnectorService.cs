@@ -42,9 +42,9 @@ namespace OnAccount.Services
                 cmd1.Parameters.AddWithValue("@Zip", userIn.Zip);
                 cmd1.Parameters.AddWithValue("@DateofBirth", userIn.DateofBirth);
                 cmd1.Parameters.AddWithValue("@UserRole", userIn.UserRole);
-                cmd1.Parameters.AddWithValue("@UserName", userIn.UserName);
+                cmd1.Parameters.AddWithValue("@UserName", userIn.Email);
                 cmd1.Parameters.AddWithValue("@Email", userIn.Email);
-                cmd1.Parameters.AddWithValue("@NormalizedUserName", userIn.NormalizedUserName);
+                cmd1.Parameters.AddWithValue("@NormalizedUserName", userIn.Email.ToUpper());
                 cmd1.Parameters.AddWithValue("@AcctSuspensionDate", userIn.AcctSuspensionDate);
                 cmd1.Parameters.AddWithValue("@AcctReinstatementDate", userIn.AcctReinstatementDate);
                 cmd1.Parameters.AddWithValue("@LastPasswordChangedDate", userIn.LastPasswordChangedDate);

@@ -10,6 +10,9 @@ using OnAccount.Migrations;
 using OnAccount.Models;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Google.Protobuf.WellKnownTypes;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace OnAccount.Controllers
 {
@@ -50,6 +53,7 @@ namespace OnAccount.Controllers
             return View(roles);
         }
         //Oddly this method is for creating roles
+
         [HttpGet]
         public IActionResult CreateRole()
         {
@@ -85,6 +89,16 @@ namespace OnAccount.Controllers
                     appUser = appUsers[i];
                 }
             }
+            var roles = await _roleManager.Roles.ToListAsync();
+            var items = new List<SelectListItem>();
+            foreach (var role in roles)
+            {
+                items.Add(new SelectListItem
+                {
+                    Text = role.Name,  // Assuming 'Name' is the property you want to display
+                });
+            }
+            appUser.RoleList = items;
 
             return View(appUser);
         }

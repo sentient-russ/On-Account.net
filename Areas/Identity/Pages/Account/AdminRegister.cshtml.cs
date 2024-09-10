@@ -21,6 +21,9 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using OnAccount.Areas.Identity.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel;
+using System.Globalization;
+
 
 namespace OnAccount.Areas.Identity.Pages.Account
 {
@@ -61,28 +64,57 @@ namespace OnAccount.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            [DataType(DataType.Text)]
+            [StringLength(100, MinimumLength = 1)]
+            [DisplayName("User Name:")]
+            public string? ScreenName { get; set; } = "";
+            [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; } = "";
 
             [Required]
-            [StringLength(100, ErrorMessage = "Name is too long it must be under 100 characters long.", MinimumLength = 1)]
+            [StringLength(100, ErrorMessage = "First name must be under 100 characters long.", MinimumLength = 1)]
             [Display(Name = "First Name")]
             public string FirstName { get; set; } = "";
 
             [Required]
-            [StringLength(100, ErrorMessage = "Name is too long it must be under 100 characters long.", MinimumLength = 1)]
+            [StringLength(100, ErrorMessage = "Last name must be under 100 characters long.", MinimumLength = 1)]
             [Display(Name = "Last Name")]
             public string LastName { get; set; } = "";
 
             [Required]
-            [StringLength(100, ErrorMessage = "address is too long it must be under 100 characters long.", MinimumLength = 1)]
+            [DataType(DataType.PhoneNumber)]
+            [StringLength(10, ErrorMessage = "Phone number must be 10 digits.", MinimumLength = 10)]
+            [DisplayName("Phone Number:")]
+            public string? PhoneNumber { get; set; } = "";
+
+            [Required]
+            [StringLength(100, ErrorMessage = "Address must be under 100 characters long.", MinimumLength = 1)]
             [Display(Name = "Current Address")]
             public string Address { get; set; } = "";
 
             [Required]
+            [DataType(DataType.Text)]
+            [StringLength(50, ErrorMessage = "Address must be under 50 characters long.", MinimumLength = 1)]
+            [DisplayName("City:")]
+            internal string? City { get; set; } = "";
+
+            [Required]
+            [DataType(DataType.Text)]
+            [StringLength(2, ErrorMessage = "Address must 2 characters long.", MinimumLength = 2)]
+            [DisplayName("State:")]
+            internal string? State { get; set; } = "";
+
+            [Required]
+            [DataType(DataType.Text)]
+            [StringLength(5, ErrorMessage = "Please enter a 5 digit zip code.", MinimumLength = 1)]
+            [DisplayName("Zip:")]
+
+            internal string? Zip { get; set; } = "";
+            [Required]
             [DataType(DataType.Date)]
-            [Display(Name = "Private Sobriety Date")]
+            [Display(Name = "Date of Birth")]
             [StringLength(100, ErrorMessage = "Please enter a valid date.", MinimumLength = 6)]
             public string DateofBirth { get; set; } = "";
 
@@ -97,15 +129,36 @@ namespace OnAccount.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
+            [DisplayFormat(DataFormatString = "{:dd MMM yyyy}", ApplyFormatInEditMode = true)]
+            [DataType(DataType.Date)]
+            [StringLength(100, MinimumLength = 4)]
+            [DisplayName("Suspension Date:")]
+            public string? AcctSuspensionDate { get; set; }
+
+            [DisplayFormat(DataFormatString = "{:dd MMM yyyy}", ApplyFormatInEditMode = true)]
+            [DataType(DataType.Date)]
+            [StringLength(100, MinimumLength = 4)]
+            [DisplayName("Reinstatement Date:")]
+            public string? AcctReinstatementDate { get; set; }
+
+            [DisplayFormat(DataFormatString = "{:dd MMM yyyy}", ApplyFormatInEditMode = true)]
+            [DataType(DataType.Date)]
+            [StringLength(100, MinimumLength = 4)]
+            [DisplayName("Last Password Change:")]
+            public string? LastPasswordChangedDate { get; set; }
+
+            [Required]
+            [DataType(DataType.Text)]
+            [StringLength(100, MinimumLength = 1)]
+            [DisplayName("Next Reset Days:")]
+            public string PasswordResetDays { get; set; } = "90";
+
             [Required]
             [Display(Name = "User Role")]
             public string UserRole { get; set; } = "";
 
             [ValidateNever]
             public IEnumerable<SelectListItem> RoleList { get; set; }
-
-            [ValidateNever]
-            public string PasswordResetDays { get; set; } = "90";
 
         }     
         public async Task OnGetAsync(string returnUrl = null)
@@ -122,8 +175,6 @@ namespace OnAccount.Areas.Identity.Pages.Account
                 })
 
             };
-
-
         }
         
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -133,15 +184,24 @@ namespace OnAccount.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+                user.ScreenName = Input.ScreenName;
                 user.Address = Input.Address;
+                user.City = Input.City;
+                user.State = Input.State;
+                user.Zip = Input.Zip;
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
                 user.DateofBirth = Input.DateofBirth;
                 user.Email = Input.Email;
+                user.PhoneNumber = Input.PhoneNumber;
+                string format = "dd/MM/yyyy";
+                DateTime acctSuspensionDate = DateTime.ParseExact(Input.AcctReinstatementDate, format, CultureInfo.InvariantCulture);
+                user.AcctSuspensionDate = acctSuspensionDate;
+                DateTime acctReinstatementDate = DateTime.ParseExact(Input.AcctReinstatementDate, format, CultureInfo.InvariantCulture);
+                user.AcctSuspensionDate = acctReinstatementDate;
                 user.UserRole = Input.UserRole;
                 user.LastPasswordChangedDate = System.DateTime.Now;
                 user.PasswordResetDays = Input.PasswordResetDays;
-
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
