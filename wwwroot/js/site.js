@@ -1,4 +1,18 @@
-﻿//masage phone number form field values
+﻿
+
+
+// these are set up from the div id's to manipulate the username as the user types.
+var screen_name_element = document.getElementById("input_screen_name");
+var first_name_element = document.getElementById("input_first_name");
+var last_name_element = document.getElementById("input_last_name");
+screen_name_element.value = RSteele0924
+
+
+
+
+
+
+//This solution was provided somewhere I cannot remember online.
 $('#Phone')
 	.keydown(function (e) {
 		var key = e.which || e.charCode || e.keyCode || 0;
