@@ -3,8 +3,7 @@
 @{
     ViewData["Title"] = "EditAccountDetails";
 }
-<h1>Edit Account Details</h1>
-<h4 class="text-center mb-2">User Registration</h4>
+<h1 class="text-center mb-5">Edit Account Details</h1>
 <hr />
 <div class="row">
     <div class="col-md-4 mx-auto">
@@ -30,21 +29,41 @@
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
+                <input asp-for="Address" class="form-control" autocomplete="current address" aria-required="true" placeholder="Current Address" />
+                <label asp-for="Address">Address</label>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="City" class="form-control" autocomplete="city" aria-required="true" placeholder="City" />
+                <label asp-for="City">City</label>
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="State" class="form-control" autocomplete="state" aria-required="true" placeholder="State" />
+                <label asp-for="State">State</label>
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Zip" class="form-control" autocomplete="zip" aria-required="true" placeholder="Zip Code" />
+                <label asp-for="Zip">Zip</label>
+                <span asp-validation-for="Zip" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
                 <input asp-for="PhoneNumber" class="form-control" id="Phone" placeholder="(000) 000-0000"/>
                 <label asp-for="PhoneNumber" class="control-label"></label>                
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <select asp-for="UserRole" asp-items=@Model.RoleList class="form-select" aria-required="true">
-                    <option disabled selected>Select Role</option>
-                </select>
-                <span asp-validation-for="UserRole" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
                 <input asp-for="Email" class="form-control" />
                 <label asp-for="Email" class="control-label"></label>               
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
+            <div class="form-floating mb-3">
+                <input asp-for="DateofBirth" class="form-control" autocomplete="date of birth" aria-required="true" placeholder="Date of Birth" type="date" />
+                <label asp-for="DateofBirth">Date of Birth</label>
+                <span asp-validation-for="DateofBirth" class="text-danger"></span>
+            </div>
+            <hr />
             <div class="form-floating mb-3">
                 <input asp-for="AcctSuspensionDate" class="form-control" type="date"/>
                 <label asp-for="AcctSuspensionDate" class="control-label"></label>                
@@ -65,7 +84,13 @@
                 <label asp-for="PasswordResetDays" class="control-label"></label>
                 <span asp-validation-for="PasswordResetDays" class="text-danger"></span>
             </div>
-            <div class="form-floating mb-3">
+            <div class="mb-3">
+                <select asp-for="UserRole" asp-items=@Model.RoleList class="form-drop-down form-select" aria-required="true">
+                    <option default hidden disabled selected>Select Role</option>
+                </select>
+                <span asp-validation-for="UserRole" class="text-danger"></span>
+            </div>
+            <div class="form-drop-down mb-3">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>

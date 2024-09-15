@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using OnAccount.Areas.Identity.Data;
 using OnAccount.Services;
-using OnAccount.Migrations;
 using OnAccount.Models;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -103,12 +102,16 @@ namespace OnAccount.Controllers
             return View(appUser);
         }
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> UpdateAccountDetails([Bind("Id, ScreenName, FirstName, LastName, PhoneNumber, Address, City, State, Zip, DateofBirth, UserRole, ActiveStatus, UserName, Email, NormalizedUserName, AcctSuspensionDate, AcctReinstatementDate, LastPasswordChangedDate, PasswordResetDays")] AppUserModel detailsIn)
         {
             AppUserModel appUser = new AppUserModel();
             appUser = detailsIn;
             _dbConnectorService.UpdateUserDetails(appUser);
+            var user = await _userManager.FindByIdAsync(appUser.Id);
+            if (user != null)
+            {
+                var roleResult = await _userManager.AddToRoleAsync(user, appUser.UserRole);
+            }
             return RedirectToAction(nameof(ManageAccounts));
         }
     }
