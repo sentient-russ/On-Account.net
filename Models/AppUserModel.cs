@@ -43,7 +43,7 @@ namespace OnAccount.Models
         public string? LastName { get; set; } = "";
         [Required]
         [DataType(DataType.PhoneNumber)]
-        [StringLength(11, MinimumLength = 10)]
+        [StringLength(12, MinimumLength = 12)]
         [DisplayName("Phone Number:")]
         public string? PhoneNumber { get; set; } = "";
 

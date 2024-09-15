@@ -35,6 +35,12 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ManageAccounts">Manage Users</a>
                         </li>
                         }
+                        @if (User.IsInRole("Administrator") || User.IsInRole("Manager") || User.IsInRole("Accountant"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Accounting" asp-action="Index">Accounting</a>
+                            </li>
+                        }
                     </ul>
                 </div>
                 <partial name="_LoginPartial"/>
@@ -49,7 +55,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - OnAccount - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - OnAccount - <a asp-area="" asp-controller="Home" asp-action="About">About the development team</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

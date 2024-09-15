@@ -1,99 +1,69 @@
 ﻿
-
-
+/*
+ * ensure adhearand to form input standards.
+ */
 // these are set up from the div id's to manipulate the username as the user types.
 var screen_name_element = document.getElementById("input_screen_name");
 var first_name_element = document.getElementById("input_first_name");
 var last_name_element = document.getElementById("input_last_name");
 /*screen_name_element.value = RSteele0924;*/
 var lastname = "";
+var firstname = "";
 var firstInitial = "";
 var lastNameInitial = "";
 var date = new Date();
 var currentYear = date.getFullYear();
 var currentMonth = date.getMonth();
 var username = "";
-
 var currentMonthTwoDigits = currentMonth < 10 ? '0' + currentMonth : currentMonth.toString();
-console.log(currentMonthTwoDigits);
 
 //function that combines all inputs from user to create username following first intial + last name + month + last 2 digits of year
 function usernameCreator() {
 	screen_name_element.value = firstInitial + lastname + currentMonthTwoDigits + (currentYear%100);
 }
-//assigns to lastname variable capital for username creation and capitalizes first initial 
-last_name_element.addEventListener("focusout", function () {
-	lastname = last_name_element.value;
+//assigns to lastname variable capital for username creation and capitalizes first initial
+last_name_element.addEventListener("input", function () {
+    lastname = last_name_element.value;
+    // Ensure that only apha characters can be entered into the Last Name field
+    if (/[^a-zA-Z]/.test(lastname)) {
+        // Remove non-letter characters
+        lastname = lastname.replace(/[^a-zA-Z]/g, '');
+        last_name_element.value = "";
+    }    
 	lastNameInitial = lastname[0].toUpperCase();
 	lastname = lastNameInitial + lastname.substring(1, lastname.length);
-	console.log(lastname);
 	usernameCreator();
 });
-
 //assigns to firstInitial a captal letter for use for username creation
-first_name_element.addEventListener("focusout", function () {
-	firstInitial = first_name_element.value[0];
-	firstInitial=firstInitial.toUpperCase();
-	console.log("Form ID:", first_name_element.value);
-	console.log(firstInitial);
-	usernameCreator();
+var first_name_element = document.getElementById("input_first_name");
+first_name_element.addEventListener("input", function () {
+    firstname = first_name_element.value;
+    //Ensure only alpha can be entered into the First Name field
+    if (/[^a-zA-Z]/.test(firstname)) {
+        // Remove non-letter characters
+        firstname = firstname.replace(/[^a-zA-Z]/g, '');
+        first_name_element.value = "";
+    }
+    firstInitial = firstname[0].toUpperCase();
+    usernameCreator();
 });
 
+//format phone numbers
+var phoneElement = document.getElementById("Phone");
+var phoneNo = phoneElement.value;
 
+phoneElement.addEventListener('input', function () {
+    var phoneNo = phoneElement.value.replace(/\D/g, ''); 
+    var formatNum = "";
+    if (phoneNo.length <= 3) {
+        formatNum = phoneNo;
+    } else if (phoneNo.length <= 6) {
+        formatNum = phoneNo.substr(0, 3) + '-' + phoneNo.substr(3);
+    } else if (phoneNo.length <= 10) {
+        formatNum = phoneNo.substr(0, 3) + '-' + phoneNo.substr(3, 3) + '-' + phoneNo.substr(6);
+    } else {
+        formatNum = phoneNo.substr(0, 3) + '-' + phoneNo.substr(3, 3) + '-' + phoneNo.substr(6, 4);
+    }
+    phoneElement.value = formatNum;
+});
 
-//This solution was provided somewhere I cannot remember online.
-$('#Phone')
-	.keydown(function (e) {
-		var key = e.which || e.charCode || e.keyCode || 0;
-		$phone = $(this);
-
-		// Don't let them remove the starting '('
-		if ($phone.val().length === 1 && (key === 8 || key === 46)) {
-			$phone.val('(');
-			return false;
-		}
-		// Reset if they highlight and type over first char.
-		else if ($phone.val().charAt(0) !== '(') {
-			$phone.val('(' + String.fromCharCode(e.keyCode) + '');
-		}
-
-		// Auto-format- do not expose the mask as the user begins to type
-		if (key !== 8 && key !== 9) {
-			if ($phone.val().length === 4) {
-				$phone.val($phone.val() + ')');
-			}
-			if ($phone.val().length === 5) {
-				$phone.val($phone.val() + ' ');
-			}
-			if ($phone.val().length === 9) {
-				$phone.val($phone.val() + '-');
-			}
-		}
-
-		// Allow numeric (and tab, backspace, delete) keys only
-		return (key == 8 ||
-			key == 9 ||
-			key == 46 ||
-			(key >= 48 && key <= 57) ||
-			(key >= 96 && key <= 105));
-	})
-
-	.bind('focus click', function () {
-		$phone = $(this);
-
-		if ($phone.val().length === 0) {
-			$phone.val('(');
-		}
-		else {
-			var val = $phone.val();
-			$phone.val('').val(val); // Ensure cursor remains at the end
-		}
-	})
-
-	.blur(function () {
-		$phone = $(this);
-
-		if ($phone.val() === '(') {
-			$phone.val('');
-		}
-	});

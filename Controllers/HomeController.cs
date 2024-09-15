@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnAccount.Models;
 using System.Diagnostics;
@@ -20,6 +21,11 @@ namespace OnAccount.Controllers
         }
 
         public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult FirstLogin()
         {
             return View();
         }

@@ -84,9 +84,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 
-);*/
-
-
+);
+*/
+builder.Services.AddScoped<DbConnectorService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddAuthorization();
@@ -154,14 +154,20 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=FirstLogin}/{id?}");
+app.MapControllerRoute(
     name: "Admin",
     pattern: "{controller=AdminController}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "Roles",
     pattern: "{controller=AdminController}/{action=CreateRole}/{id?}");
 app.MapControllerRoute(
-    name: "Accounts",
+    name: "UserAccounts",
     pattern: "{controller=AdminController}/{action=ManageAccounts}/{id?}");
+app.MapControllerRoute(
+    name: "Accounting",
+    pattern: "{controller=AccountingController}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 app.Run();

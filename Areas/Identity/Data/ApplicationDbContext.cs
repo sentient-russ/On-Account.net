@@ -13,13 +13,16 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
     }
 
-        
+
     //private DbSet<AIModel> AIModel { get; set; }
     //private DbSet<PostModel> PostModel { get; set; }
     //private DbSet<VoteModel> VoteModels { get; set; }
     //private DbSet<FavoritesModel> FavoritesModel { get; set; }
     //public DbSet<OnAccount.Models.AppUserModel> AppUserModel { get; set; } = default!;
-
+    public DbSet<OnAccount.Models.AccountsModel> account { get; set; } = default!;
+    public DbSet<OnAccount.Models.AccountTypeModel> account_type_options { get; set; } = default!;
+    public DbSet<OnAccount.Models.NormalSideModel> account_normal_side_options { get; set; } = default!;
+    
     //the next section overrides the default db naming // migrate and update database afterwords
     protected override void OnModelCreating(ModelBuilder builder)
     {

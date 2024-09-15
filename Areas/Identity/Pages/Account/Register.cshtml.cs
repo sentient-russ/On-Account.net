@@ -81,7 +81,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
 
             [Required]
             [DataType(DataType.PhoneNumber)]
-            [StringLength(14, MinimumLength = 13)]
+            [StringLength(12, MinimumLength = 12)]
             [DisplayName("Phone Number:")]
             public string? PhoneNumber { get; set; } = "";
 
@@ -167,6 +167,8 @@ namespace OnAccount.Areas.Identity.Pages.Account
                         pageHandler: null,
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
+
+
 
                     await _emailSender.SendEmailAsync(Input.Email, "Email confirmation from OnAccount.net (Sponsored by MagnaDigi.com)",
                         $"<center><img src='https://on-account.net/img/onaccount_logo.jpg'></center><p>Welcome to the crew!</p><p>Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.</p>");
