@@ -29,7 +29,6 @@ namespace OnAccount.Models
     public class AccountsModel
 
     {
-
         public int? id { get; set; }
 
         [Required]

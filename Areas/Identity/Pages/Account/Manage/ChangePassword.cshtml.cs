@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using OnAccount.Areas.Identity.Data;
+using OnAccount.Models;
+using OnAccount.Services;
 
 namespace OnAccount.Areas.Identity.Pages.Account.Manage
 {
@@ -29,49 +31,27 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             _logger = logger;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+
             [Required]
             [DataType(DataType.Password)]
             [Display(Name = "Current password")]
             public string OldPassword { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "New password")]
             public string NewPassword { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm new password")]
             [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
@@ -107,7 +87,25 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            //edit starts here 9-16-2024 RES
+            var currentPasswordStatus = await _userManager.CheckPasswordAsync(user, Input.NewPassword);
+            List<PassHashModel> allOldHashes = new List<PassHashModel>();
+            DbConnectorService dbConnectorService = new DbConnectorService();
+            allOldHashes = dbConnectorService.GetPassHashList();
+            bool oldPasswordCombinationFound = false;
+            for(int i = 0; i < allOldHashes.Count; i++)
+            {
+                PasswordVerificationResult result = _userManager.PasswordHasher.VerifyHashedPassword(user, allOldHashes[i].passhash, Input.NewPassword);
+                if(result.ToString() == "Success")
+                {
+                    oldPasswordCombinationFound=true;
+                    string description = "The password was previously used. Please try again.";
+                    ModelState.AddModelError(string.Empty, description);
+                    return Page();
+                } 
 
+            }
+            //edit stops here.
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.NewPassword);
             if (!changePasswordResult.Succeeded)
             {
@@ -117,10 +115,21 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
                 }
                 return Page();
             }
+            //must get the new hash and save it to the new hashes table.
 
             await _signInManager.RefreshSignInAsync(user);
             _logger.LogInformation("User changed their password successfully.");
             StatusMessage = "Your password has been changed.";
+
+            // save the new hash to the db
+            if (!oldPasswordCombinationFound)
+            {
+                var updatedUser = await _userManager.GetUserAsync(User);
+                dbConnectorService.StorePassHash(updatedUser.Id,updatedUser.PasswordHash);
+            }
+
+
+
 
             return RedirectToPage();
         }

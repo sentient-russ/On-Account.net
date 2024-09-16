@@ -84,8 +84,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 
-);
-*/
+);*/
+
 builder.Services.AddScoped<DbConnectorService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
