@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
 namespace OnAccount.Controllers
 {
     [Authorize(Roles = "Administrator")]  //[Authorize(Roles = "Administrator,Accountant")] for multiple role assignment
@@ -28,7 +27,6 @@ namespace OnAccount.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ApplicationDbContext _DbContext;
         private readonly DbConnectorService _dbConnectorService;
-
 
         public AdminController(ILogger<AdminController> logger, 
             RoleManager<IdentityRole> roleManager, 
@@ -51,18 +49,15 @@ namespace OnAccount.Controllers
             var roles = _roleManager.Roles;
             return View(roles);
         }
-        //Oddly this method is for creating roles
 
         [HttpGet]
         public IActionResult CreateRole()
         {
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> CreateRole(IdentityRole model)
         {
-
             if (!_roleManager.RoleExistsAsync(model.Name).GetAwaiter().GetResult())
             {
                 _roleManager.CreateAsync(new IdentityRole(model.Name)).GetAwaiter().GetResult();
@@ -75,7 +70,6 @@ namespace OnAccount.Controllers
             var appUsers = await _DbContext.Users.ToListAsync();
             return View(appUsers);
         }
-        
         [HttpGet]
         public async Task<IActionResult> EditAccountDetails(string? Id)
         {
@@ -94,11 +88,10 @@ namespace OnAccount.Controllers
             {
                 items.Add(new SelectListItem
                 {
-                    Text = role.Name,  // Assuming 'Name' is the property you want to display
+                    Text = role.Name,  
                 });
             }
             appUser.RoleList = items;
-
             return View(appUser);
         }
         [HttpPost]
@@ -113,6 +106,54 @@ namespace OnAccount.Controllers
                 var roleResult = await _userManager.AddToRoleAsync(user, appUser.UserRole);
             }
             return RedirectToAction(nameof(ManageAccounts));
+        }
+        [HttpGet]
+        public async Task<IActionResult> Email(string? Id)
+        {
+            var appUsers = await _DbContext.Users.ToListAsync();
+            AppUser appUser = new AppUser();
+            for (var i = 0; i < appUsers.Count; i++)
+            {
+                if (appUsers[i].Id == Id)
+                {
+                    appUser = appUsers[i];
+                }
+            }
+            var roles = await _roleManager.Roles.ToListAsync();
+            var items = new List<SelectListItem>();
+            foreach (var role in roles)
+            {
+                items.Add(new SelectListItem
+                {
+                    Text = role.Name,
+                });
+            }
+            appUser.RoleList = items;
+            return View(appUser);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendEmail([Bind("Id, Email, Subject, Message")] AppUserModel detailsIn)
+        {
+            AppUserModel appUserMessage = new AppUserModel();
+            appUserMessage = detailsIn;
+            var emailSender = new EmailService();
+            await emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message);
+            return RedirectToAction(nameof(ManageAccounts));
+        }
+        [HttpGet]
+        public async Task<IActionResult> Lock(string? Id)
+        {
+            //disable user account
+            _dbConnectorService.immediateLockout(Id);
+            return RedirectToAction(nameof(EditAccountDetails), new { Id = Id });
+        }
+        [HttpGet]
+        public async Task<IActionResult> Unlock(string? Id)
+        {
+            //disable user account
+            _dbConnectorService.disableLockout(Id);
+            return RedirectToAction(nameof(EditAccountDetails), new { Id = Id });
         }
     }
 }

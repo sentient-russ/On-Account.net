@@ -167,10 +167,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
                         pageHandler: null,
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
-
-
-
-                    await _emailSender.SendEmailAsync(Input.Email, "Email confirmation from OnAccount.net (Sponsored by MagnaDigi.com)",
+                        await _emailSender.SendEmailAsync(Input.Email, "Email confirmation from OnAccount.net (Sponsored by MagnaDigi.com)",
                         $"<center><img src='https://on-account.net/img/onaccount_logo.jpg'></center><p>Welcome to the crew!</p><p>Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.</p>");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
@@ -188,7 +185,6 @@ namespace OnAccount.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
             // If we got this far, something failed, redisplay form
             return Page();
         }

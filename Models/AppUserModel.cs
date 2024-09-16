@@ -132,6 +132,17 @@ namespace OnAccount.Models
         [NotMapped]
         public IEnumerable<SelectListItem>? RoleList { get; set; }
 
+        [NotMapped]
+        [DataType(DataType.Text)]
+        [StringLength(500, MinimumLength = 1)]
+        [DisplayName("Subject:")]
+        public string? Subject { get; set; }
+
+        [NotMapped]
+        [DataType(DataType.Text)]
+        [StringLength(500, MinimumLength = 1)]
+        [DisplayName("Message:")]
+        public string? Message { get; set; }
 
     }
 

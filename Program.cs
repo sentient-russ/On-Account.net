@@ -163,6 +163,15 @@ app.MapControllerRoute(
     name: "Roles",
     pattern: "{controller=AdminController}/{action=CreateRole}/{id?}");
 app.MapControllerRoute(
+    name: "Email",
+    pattern: "{controller=AdminController}/{action=Email}/{id?}");
+app.MapControllerRoute(
+    name: "Lock",
+    pattern: "{controller=AdminController}/{action=Lock}/{id?}");
+app.MapControllerRoute(
+    name: "Unlock",
+    pattern: "{controller=AdminController}/{action=Unlock}/{id?}");
+app.MapControllerRoute(
     name: "UserAccounts",
     pattern: "{controller=AdminController}/{action=ManageAccounts}/{id?}");
 app.MapControllerRoute(

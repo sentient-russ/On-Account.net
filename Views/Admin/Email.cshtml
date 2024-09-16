@@ -1,0 +1,60 @@
+﻿@model OnAccount.Areas.Identity.Data.AppUser
+@using Microsoft.AspNetCore.Identity
+@{
+    ViewData["Title"] = "SendEmail";
+}
+
+<h1>SendEmail</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="SendEmail">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ScreenName" />
+            <input type="hidden" asp-for="FirstName"  />
+            <input type="hidden" asp-for="LastName"  />
+            <input type="hidden" asp-for="PhoneNumber"  />
+            <input type="hidden" asp-for="Address"  />
+            <input type="hidden" asp-for="City"  />
+            <input type="hidden" asp-for="State"  />
+            <input type="hidden" asp-for="Zip"  />
+            <input type="hidden" asp-for="DateofBirth"  />
+            <input type="hidden" asp-for="UserRole"  />
+            <input type="hidden" asp-for="ActiveStatus"  />
+            <input type="hidden" asp-for="UserName" />
+            <input type="hidden" asp-for="NormalizedUserName" />
+            <input type="hidden" asp-for="AcctSuspensionDate" />
+            <input type="hidden" asp-for="AcctReinstatementDate"  />
+            <input type="hidden" asp-for="LastPasswordChangedDate"  />
+            <input type="hidden" asp-for="PasswordResetDays"  />
+            <div class="form-floating mb-3">
+                <input asp-for="Email" class="form-control" autocomplete="@Model.Email" aria-required="true" placeholder="Email" />
+                <label asp-for="Email" class="control-label"></label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Subject" class="form-control" aria-required="true" placeholder="Subject" />
+                <label asp-for="Subject" class="control-label"></label>                
+                <span asp-validation-for="Subject" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <textarea asp-for="Message" class="form-control" aria-required="true" placeholder="Message" rows="5" />
+                <label asp-for="Message" class="control-label"></label>                
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="ManageAccounts">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
