@@ -146,14 +146,59 @@ namespace OnAccount.Services
             try
             {
                 MySqlConnection conn1 = new MySqlConnection(connectionString);
-                string command = "UPDATE on_account.Users SET LockoutEnd = @LoukoutEnd, LockoutEnabled = @LockoutEnabled, AcctSuspensionDate = @AcctSuspensionDate, AccountReinstatementDate = @AccountReinstatementDate WHERE id LIKE @id";
+                string command = "UPDATE on_account.Users SET LockoutEnd = @LoukoutEnd, AcctSuspensionDate = @AcctSuspensionDate, AccountReinstatementDate = @AccountReinstatementDate WHERE id LIKE @id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@id", userIn.Id);
                 cmd1.Parameters.AddWithValue("@AcctSuspensionDate", userIn.AcctSuspensionDate);
                 cmd1.Parameters.AddWithValue("@AcctReinstatementDate", userIn.AcctReinstatementDate);
                 cmd1.Parameters.AddWithValue("@LockoutEnd", userIn.AcctReinstatementDate);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        /*
+         * Updates the database to enable scheduled user lockout events
+         */
+        public void immediateLockout(string IdIn)
+        {
+            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
+            try
+            {
+                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                string command = "UPDATE on_account.Users SET LockoutEnabled = @LockoutEnabled WHERE id LIKE @id";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@id", IdIn);
                 cmd1.Parameters.AddWithValue("@LockoutEnabled", 1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }        
+        /*
+         * Updates the database to enable scheduled user lockout events
+         */
+        public void disableLockout(string IdIn)
+        {
+            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
+            try
+            {
+                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                string command = "UPDATE on_account.Users SET LockoutEnabled = @LockoutEnabled WHERE id LIKE @id";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@id", IdIn);
+                cmd1.Parameters.AddWithValue("@LockoutEnabled", 0);
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
                 conn1.Close();

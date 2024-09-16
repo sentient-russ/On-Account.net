@@ -5,6 +5,13 @@
 }
 <h1 class="text-center mb-5">Edit Account Details</h1>
 <hr />
+<div class="container-email-btn">
+    <div class="row-email-btn">
+        <a class="btn btn-outline-danger email-btn-left" asp-action="Lock" asp-route-id="@Model.Id" role="button">Lock Account</a>
+        <a class="btn btn-outline-success email-btn-left" asp-action="Unlock" asp-route-id="@Model.Id" role="button">Unlock Account</a>
+        <a class="btn btn-outline-secondary emial-btn-right" asp-action="Email" asp-route-id="@Model.Id" role="button">Send Email</a>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-4 mx-auto">
         <form asp-action="UpdateAccountDetails">

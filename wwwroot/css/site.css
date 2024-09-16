@@ -7,18 +7,18 @@ html {
     font-size: 16px;
   }
 }
-
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+
 }
 
 .manage-container-column{
@@ -38,4 +38,22 @@ body {
 .form-drop-down {
     padding-top: 1.125rem;
     padding-bottom: 1.125rem;
+}
+.container-email-btn {
+    display: flex;
+    flex-direction: column;
+    text-align: center !important;
+}
+.row-email.btn {
+    display: flex;
+    flex-direction: row;
+    max-height: 75px;
+    padding: 10px;
+    
+}
+.email-btn-right{
+    margin-left: 15px;
+}
+.email-btn-left {
+    margin-right: 15px;
 }

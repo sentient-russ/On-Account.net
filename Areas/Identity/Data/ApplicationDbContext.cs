@@ -38,6 +38,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
         builder.Entity<IdentityUserToken<string>>(entity => { entity.ToTable(name: "UserTokens"); });
         builder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
     }
+    public DbSet<OnAccount.Models.AppUserModel> AppUserModel { get; set; } = default!;
     
 }
 

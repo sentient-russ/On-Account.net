@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -37,7 +38,17 @@ namespace OnAccount.Areas.Identity.Data
         [NotMapped]
         public IEnumerable<SelectListItem>? RoleList { get; set; }
 
+        [NotMapped]
+        [DataType(DataType.Text)]
+        [StringLength(500, MinimumLength = 1)]
+        [DisplayName("Subject:")]
+        public string? Subject { get; set; }
 
+        [NotMapped]
+        [DataType(DataType.Text)]
+        [StringLength(500, MinimumLength = 1)]
+        [DisplayName("Message:")]
+        public string? Message { get; set; }
     }
 
 }

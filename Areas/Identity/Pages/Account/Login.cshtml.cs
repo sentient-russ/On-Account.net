@@ -82,6 +82,30 @@ namespace OnAccount.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+            // apply lockout status
+            var user = await _userManager.FindByEmailAsync(Input.Email);
+            if (user.LockoutEnabled)
+            {
+                string lockoutMessage = "Locked out user attempted login: " + user.Id.ToString();
+                _logger.LogWarning(lockoutMessage);
+                return RedirectToPage("./Lockout");
+            }
+            // locks the user out password has expired.
+            DateTime lastChangedDate = (DateTime)user.LastPasswordChangedDate;
+            var notificationDate = lastChangedDate.AddDays(90);
+            if (notificationDate <= DateTime.Now)
+            {
+                string expiredPasswordLockoutMessage = "User account locked out due to expired password: " + user.Id.ToString();
+                _logger.LogWarning(expiredPasswordLockoutMessage);
+                return RedirectToPage("./Lockout");
+            }
+            // directs new unaproved accounts to a "Awaiting confirmation" message if their acount has not been approved.
+            if (user.UserRole == null || user.UserRole == "")
+            {
+                returnUrl += "Home/FirstLogin";
+                return LocalRedirect(returnUrl);
+            }
+
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -96,15 +120,14 @@ namespace OnAccount.Areas.Identity.Pages.Account
                         Input.Email = email;
                     }
                 }
+
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User authenticated. Checking authorization...");
-                    // redirects the user to a password reset if it is set to expire in the next three days.
-                    var user = await _userManager.FindByEmailAsync(Input.Email);
-                    DateTime lastChangedDate = (DateTime)user.LastPasswordChangedDate;
-                    var notificationDate = lastChangedDate.AddDays(90);
+                    // redirects the user to a password reset if it is set to expire in the next three days.                    
+                    notificationDate = lastChangedDate.AddDays(87);
                     if (notificationDate <= DateTime.Now)
                     {
                         return RedirectToPage("./Manage/PasswordExpired");
@@ -125,20 +148,10 @@ namespace OnAccount.Areas.Identity.Pages.Account
                                 return LocalRedirect(returnUrl); //working
                             }
                         }
-                        else if (user.UserRole == null || user.UserRole == "")
-                        {
-                            returnUrl += "Home/FirstLogin";
-                            return LocalRedirect(returnUrl);  //working
-                        }
                     }
                     if (result.RequiresTwoFactor)
                     {
                         return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                    }
-                    if (result.IsLockedOut)
-                    {
-                        _logger.LogWarning("User account locked out.");
-                        return RedirectToPage("./Lockout");
                     }
                     else
                     {
