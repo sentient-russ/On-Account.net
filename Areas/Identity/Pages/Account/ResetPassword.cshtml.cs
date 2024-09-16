@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using OnAccount.Areas.Identity.Data;
+using OnAccount.Models;
+using OnAccount.Services;
 
 namespace OnAccount.Areas.Identity.Pages.Account
 {
@@ -24,49 +26,26 @@ namespace OnAccount.Areas.Identity.Pages.Account
             _userManager = userManager;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+
             [Required]
             [EmailAddress]
             public string Email { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             public string Code { get; set; }
 
@@ -102,7 +81,35 @@ namespace OnAccount.Areas.Identity.Pages.Account
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
 
+            //edit starts here 9-16-2024 RES
+            var currentPasswordStatus = await _userManager.CheckPasswordAsync(user, Input.Password);
+            List<PassHashModel> allOldHashes = new List<PassHashModel>();
+            DbConnectorService dbConnectorService = new DbConnectorService();
+            allOldHashes = dbConnectorService.GetPassHashList();
+            bool oldPasswordCombinationFound = false;
+            for (int i = 0; i < allOldHashes.Count; i++)
+            {
+                PasswordVerificationResult versificationResult = _userManager.PasswordHasher.VerifyHashedPassword(user, allOldHashes[i].passhash, Input.Password);
+                if (versificationResult.ToString() == "Success")
+                {
+                    oldPasswordCombinationFound = true;
+                    string description = "The password was previously used. Please try again.";
+                    ModelState.AddModelError(string.Empty, description);
+                    return Page();
+                }
+
+            }
+            //edit stops here.
+
             var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
+
+            // save the new hash to the db
+            if (!oldPasswordCombinationFound)
+            {
+                dbConnectorService.StorePassHash(user.Id, user.PasswordHash);
+            }
+
+
             if (result.Succeeded)
             {
                 return RedirectToPage("./ResetPasswordConfirmation");

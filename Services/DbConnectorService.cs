@@ -272,6 +272,62 @@ namespace OnAccount.Services
             }
             return resultsList;
         }
+        /*
+         * Gets a list of previously used password hashes
+         */
+        public List<PassHashModel> GetPassHashList()
+        {
+            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
+            var resultsList = new List<PassHashModel>();
+            try
+            {
+                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                string command = "SELECT * FROM on_account.pass_hash;";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+
+                while (reader1.Read())
+                {
+                    PassHashModel userHash = new PassHashModel();
+                    userHash.Id = reader1.GetInt16(0);
+                    userHash.userId = reader1.GetString(1);
+                    userHash.passhash = reader1.GetString(2);
+                    resultsList.Add(userHash);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return resultsList;
+        }
+        /*
+         * Gets a add a password hash to the pass_hash table
+         */
+        public void StorePassHash(string userId, string passhash)
+        {
+            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
+            try
+            {
+                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                string command = "INSERT INTO on_account.pass_hash (userId, passhash) VALUES (@userId, @passhash)";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@userId", userId);
+                cmd1.Parameters.AddWithValue("@passhash", passhash);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
 
     }
 
