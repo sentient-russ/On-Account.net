@@ -238,6 +238,10 @@ namespace OnAccount.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("ProfileImage")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
                     b.Property<string>("ScreenName")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
@@ -385,6 +389,10 @@ namespace OnAccount.Migrations
                         .IsRequired()
                         .HasMaxLength(12)
                         .HasColumnType("varchar(12)");
+
+                    b.Property<string>("ProfileImage")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<string>("ScreenName")
                         .IsRequired()
