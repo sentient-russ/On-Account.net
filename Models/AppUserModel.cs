@@ -144,6 +144,10 @@ namespace OnAccount.Models
         [DisplayName("Message:")]
         public string? Message { get; set; }
 
+        [DataType(DataType.Text)]
+        [StringLength(500, MinimumLength = 1)]
+        public string? ProfileImage { get; set; }
+
     }
 
 }

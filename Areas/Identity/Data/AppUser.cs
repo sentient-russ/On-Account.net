@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
 
 namespace OnAccount.Areas.Identity.Data
 {
@@ -49,6 +50,16 @@ namespace OnAccount.Areas.Identity.Data
         [StringLength(500, MinimumLength = 1)]
         [DisplayName("Message:")]
         public string? Message { get; set; }
+        
+        [DataType(DataType.Text)]
+        [StringLength(500, MinimumLength = 1)]
+        public string? ProfileImage { get; set; }
+
+        //make sure this remain as is assigned to empty string to prevent down streem errors
+        [NotMapped]
+        public string? File { get; set; } = "";
+
+
     }
 
 }

@@ -77,6 +77,7 @@ namespace OnAccount.Services
                     foundUser.UserName = reader1.GetString(16);
                     foundUser.NormalizedUserName = reader1.GetString(17);
                     foundUser.Email = reader1.GetString(18);
+                    foundUser.ProfileImage = reader1.GetString(29);
                 }
                 reader1.Close();
                 conn1.Close();

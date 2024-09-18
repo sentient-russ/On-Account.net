@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OnAccount.Areas.Identity.Data;
+using Microsoft.AspNetCore.Http;
+using OnAccount.Services;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnAccount.Areas.Identity.Pages.Account.Manage
 {
@@ -26,39 +29,27 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public string Username { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [BindProperty]
+            public IFormFile FormFile { get; set; }
+
+            [NotMapped]
+            public string File { get; set; } = "";
+
         }
 
         private async Task LoadAsync(AppUser user)
@@ -66,11 +57,10 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
-            Username = userName;
-
             Input = new InputModel
             {
                 PhoneNumber = phoneNumber
+                
             };
         }
 
@@ -93,13 +83,11 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
             if (!ModelState.IsValid)
             {
                 await LoadAsync(user);
                 return Page();
             }
-
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {
@@ -109,6 +97,37 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
                     StatusMessage = "Unexpected error when trying to set phone number.";
                     return RedirectToPage();
                 }
+            }
+            if (Input.FormFile != null && Input.FormFile.Length > 0)
+            {
+                // Check file length
+                const long max_size = 3 * 1024 * 1024;
+                if (Input.FormFile.Length > max_size)
+                {
+                    StatusMessage = "The file size must be less than 3MB.";
+                    return RedirectToPage();
+                }
+                // Check file type
+                var fileExtension = Path.GetExtension(Input.FormFile.FileName).ToLowerInvariant();
+                if (fileExtension != ".jpg")
+                {
+                    StatusMessage = "The file type must be a .jpg type.";
+                    return RedirectToPage();
+                }
+                // create a new file name for security purposes
+                DateTimeOffset current_time = DateTimeOffset.UtcNow;
+                long ms_time = current_time.ToUnixTimeMilliseconds();
+                string new_file_name = ms_time.ToString() + ".jpg";
+
+                // Save the data stream to a file
+                var filePath = Path.Combine("wwwroot", "uploads", new_file_name);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await Input.FormFile.CopyToAsync(stream);
+                }
+                // Save the new file name to the users DB record.
+                user.ProfileImage = new_file_name;
+                var setUserResult = await _userManager.UpdateAsync(user);
             }
 
             await _signInManager.RefreshSignInAsync(user);

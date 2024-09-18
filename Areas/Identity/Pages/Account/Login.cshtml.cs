@@ -88,6 +88,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
             {
                 string lockoutMessage = "Locked out user attempted login: " + user.Id.ToString();
                 _logger.LogWarning(lockoutMessage);
+                ModelState.AddModelError(string.Empty, "Account locked out.");
                 return RedirectToPage("./Lockout");
             }
             // locks the user out password has expired.
@@ -96,6 +97,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
             if (notificationDate <= DateTime.Now)
             {
                 string expiredPasswordLockoutMessage = "User account locked out due to expired password: " + user.Id.ToString();
+                ModelState.AddModelError(string.Empty, "Account disabled.");
                 _logger.LogWarning(expiredPasswordLockoutMessage);
                 return RedirectToPage("./Lockout");
             }
@@ -153,13 +155,15 @@ namespace OnAccount.Areas.Identity.Pages.Account
                     {
                         return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                     }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                        return Page();
-                    }
                 }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return Page();
             }
+        }
+
+        
 
         // If we got this far, something failed, redisplay form
         return Page();
