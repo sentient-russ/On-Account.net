@@ -12,7 +12,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using OnAccount.Areas.Identity.Data;
 using Microsoft.AspNetCore.Http;
 using OnAccount.Services;
+using OnAccount.Models;
 using System.ComponentModel.DataAnnotations.Schema;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using Google.Protobuf.WellKnownTypes;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace OnAccount.Areas.Identity.Pages.Account.Manage
 {
@@ -29,6 +41,7 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
+
         public string Username { get; set; }
 
         [TempData]
@@ -36,6 +49,9 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
 
         [BindProperty]
         public InputModel Input { get; set; }
+
+        [NotMapped]
+        public string File { get; set; } // Add this property
 
         public class InputModel
         {
@@ -49,6 +65,7 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
 
             [NotMapped]
             public string File { get; set; } = "";
+
 
         }
 
@@ -71,9 +88,17 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+            
+            DbConnectorService connectorService = new DbConnectorService();
+            AppUserModel appUser = new AppUserModel();
+            appUser = connectorService.GetUserDetailsById(user.Id);
+            File = appUser.File;
+
 
             await LoadAsync(user);
-            return Page();
+
+            
+            return Page(); //<-- error here
         }
 
         public async Task<IActionResult> OnPostAsync()

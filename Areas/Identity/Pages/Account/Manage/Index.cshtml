@@ -1,9 +1,11 @@
 ﻿@page
+
 @model IndexModel
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
+
 <partial name="_StatusMessage" for="StatusMessage" />
 <div class="row">
     <div class="col-md-6">
@@ -18,12 +20,23 @@
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            <div class="profile-picture">
-
+            <div class="profile-picture-profile-container">
+                @if (!string.IsNullOrEmpty(Model.File))
+                {
+                    <div class="profile-img-profile-row">
+                        <img class="profile-picture-profile-img" src="~/uploads/@Model.File" alt="Profile Image" style="max-height:100px;max-width:100px;" />
+                    </div>
+                }
+                else
+                {
+                    <div class="profile-img-profile-row">
+                        <p class="profile-picture-profile-img">No profile image available.</p>
+                    </div>
+                }
             </div>
             <div class="mb-3">
                 <label for="formFile" class="form-label">Upload a profile image.</label>
-                <input class="form-control btn-outline-primary" asp-for="Input.File" type="file" id="file">
+                <input class="form-control btn-outline-primary" asp-for="Input.FormFile" type="file" id="file">
             </div>
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>

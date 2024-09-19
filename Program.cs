@@ -1,6 +1,4 @@
-using OnAccount.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OnAccount.Areas.Identity.Data;
 using OnAccount.Services;
@@ -13,10 +11,8 @@ using System.Security.Authentication;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
-using OnAccount.Areas.Identity.Data;
 using OnAccount.Areas.Identity.Services;
+using OnAccount.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
@@ -85,7 +81,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(
         .EnableDetailedErrors()
 
 );
-
+builder.Services.AddHttpContextAccessor(); // This is required to inject the UserService into cshtml files
+builder.Services.AddScoped<UserService>(); //This is a non-singleton class providing the current users information via dependency injection.
 builder.Services.AddScoped<DbConnectorService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IEmailSender, EmailSender>();

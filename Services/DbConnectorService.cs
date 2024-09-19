@@ -43,9 +43,9 @@ namespace OnAccount.Services
             return foundEmail;
         }
         /*
-         * Gets a users details from db given their email
+         * Gets a users details from db by Id
          */
-        public AppUserModel GetUserDetails(string userIn)
+        public AppUserModel GetUserDetailsById(string idIn)
         {
             var foundUser = new AppUserModel();
             try
@@ -54,30 +54,30 @@ namespace OnAccount.Services
                 string command = "SELECT * FROM on_account.Users WHERE Id = @Id;";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
-                cmd1.Parameters.AddWithValue("@Id", userIn);
+                cmd1.Parameters.AddWithValue("@Id", idIn);
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 while (reader1.Read())
                 {
-                    foundUser.Id = reader1.GetString(0);
-                    foundUser.ScreenName = reader1.GetString(1);
-                    foundUser.FirstName = reader1.GetString(2);
-                    foundUser.LastName = reader1.GetString(3);
-                    foundUser.PhoneNumber = reader1.GetString(4);
-                    foundUser.DateofBirth = reader1.GetString(5);
-                    foundUser.Address = reader1.GetString(6);
-                    foundUser.City = reader1.GetString(7);
-                    foundUser.State = reader1.GetString(8);
-                    foundUser.Zip = reader1.GetString(9);
-                    foundUser.UserRole = reader1.GetString(10);
-                    foundUser.ActiveStatus = reader1.GetString(11);
-                    foundUser.AcctSuspensionDate = reader1.GetString(12);
-                    foundUser.AcctReinstatementDate = reader1.GetString(13);
-                    foundUser.LastPasswordChangedDate = reader1.GetString(14);
-                    foundUser.PasswordResetDays = reader1.GetString(15);
-                    foundUser.UserName = reader1.GetString(16);
-                    foundUser.NormalizedUserName = reader1.GetString(17);
-                    foundUser.Email = reader1.GetString(18);
-                    foundUser.ProfileImage = reader1.GetString(29);
+                    foundUser.Id = reader1.IsDBNull(0) ? null : reader1.GetString(0);
+                    foundUser.ScreenName = reader1.IsDBNull(1) ? null : reader1.GetString(1);
+                    foundUser.FirstName = reader1.IsDBNull(2) ? null : reader1.GetString(2);
+                    foundUser.LastName = reader1.IsDBNull(3) ? null : reader1.GetString(3);
+                    foundUser.PhoneNumber = reader1.IsDBNull(4) ? null : reader1.GetString(4);
+                    foundUser.DateofBirth = reader1.IsDBNull(5) ? null : reader1.GetString(5);
+                    foundUser.Address = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    foundUser.City = reader1.IsDBNull(7) ? null : reader1.GetString(7);
+                    foundUser.State = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    foundUser.Zip = reader1.IsDBNull(9) ? null : reader1.GetString(9);
+                    foundUser.UserRole = reader1.IsDBNull(10) ? null : reader1.GetString(10);
+                    foundUser.ActiveStatus = reader1.IsDBNull(11) ? null : reader1.GetBoolean(11).ToString();
+                    foundUser.AcctSuspensionDate = reader1.IsDBNull(12) ? null : reader1.GetDateTime(12).ToString();
+                    foundUser.AcctReinstatementDate = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13).ToString();
+                    foundUser.LastPasswordChangedDate = reader1.IsDBNull(14) ? null : reader1.GetDateTime(14).ToString();
+                    foundUser.PasswordResetDays = reader1.IsDBNull(15) ? null : reader1.GetString(15);
+                    foundUser.UserName = reader1.IsDBNull(16) ? null : reader1.GetString(16);
+                    foundUser.NormalizedUserName = reader1.IsDBNull(17) ? null : reader1.GetString(17);
+                    foundUser.Email = reader1.IsDBNull(18) ? null : reader1.GetString(18);
+                    foundUser.File = reader1.IsDBNull(29) ? null : reader1.GetString(29);
                 }
                 reader1.Close();
                 conn1.Close();
