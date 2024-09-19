@@ -1,9 +1,25 @@
 ﻿@{
     ViewData["Title"] = "Welcome";
 }
+<style>
+.button {
+  background-color: black;
+  border:2px black;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+</style>
 
 <div class="text-center mb-5">
     <h1 class="display-4 mb-5">On-Account</h1>
-    <img class="text-center mb-5" src="~/img/OnAccount_Logo_Black.png" style="max-height: 200px;"/>
+    <img class="text-center mb-5" src="~/img/OnAccount_Logo_White_B.png" style="max-height: 200px;"/>
     <p class="text-center mb-4">Secure your future inflows with On-Account.</p>
+    <a href="/Identity/Account/Register" class="button">Register new user account</a>
 </div>
