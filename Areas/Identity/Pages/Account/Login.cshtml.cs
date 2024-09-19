@@ -4,22 +4,13 @@
 
 using System;
 
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using OnAccount.Areas.Identity.Data;
 using OnAccount.Services;
-using System.Security.Claims;
-using System.Runtime.ConstrainedExecution;
-using Microsoft.Identity.Client;
 
 namespace OnAccount.Areas.Identity.Pages.Account
 {
@@ -84,30 +75,32 @@ namespace OnAccount.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
             // apply lockout status
             var user = await _userManager.FindByEmailAsync(Input.Email);
-            if (user.LockoutEnabled)
+            if (user != null)
             {
-                string lockoutMessage = "Locked out user attempted login: " + user.Id.ToString();
-                _logger.LogWarning(lockoutMessage);
-                ModelState.AddModelError(string.Empty, "Account locked out.");
-                return RedirectToPage("./Lockout");
+                if (user.LockoutEnabled)
+                {
+                    string lockoutMessage = "Locked out user attempted login: " + user.Id.ToString();
+                    _logger.LogWarning(lockoutMessage);
+                    ModelState.AddModelError(string.Empty, "Account locked out.");
+                    return RedirectToPage("./Lockout");
+                }
+                // locks the user out password has expired.
+                DateTime lastChangedDate = (DateTime)user.LastPasswordChangedDate;
+                var notificationDate = lastChangedDate.AddDays(90);
+                if (notificationDate <= DateTime.Now)
+                {
+                    string expiredPasswordLockoutMessage = "User account locked out due to expired password: " + user.Id.ToString();
+                    ModelState.AddModelError(string.Empty, "Account disabled.");
+                    _logger.LogWarning(expiredPasswordLockoutMessage);
+                    return RedirectToPage("./Lockout");
+                }
+                // directs new unaproved accounts to a "Awaiting confirmation" message if their acount has not been approved.
+                if (user.UserRole == null || user.UserRole == "")
+                {
+                    returnUrl += "Home/FirstLogin";
+                    return LocalRedirect(returnUrl);
+                }
             }
-            // locks the user out password has expired.
-            DateTime lastChangedDate = (DateTime)user.LastPasswordChangedDate;
-            var notificationDate = lastChangedDate.AddDays(90);
-            if (notificationDate <= DateTime.Now)
-            {
-                string expiredPasswordLockoutMessage = "User account locked out due to expired password: " + user.Id.ToString();
-                ModelState.AddModelError(string.Empty, "Account disabled.");
-                _logger.LogWarning(expiredPasswordLockoutMessage);
-                return RedirectToPage("./Lockout");
-            }
-            // directs new unaproved accounts to a "Awaiting confirmation" message if their acount has not been approved.
-            if (user.UserRole == null || user.UserRole == "")
-            {
-                returnUrl += "Home/FirstLogin";
-                return LocalRedirect(returnUrl);
-            }
-
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -128,6 +121,8 @@ namespace OnAccount.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User authenticated. Checking authorization...");
+                    DateTime lastChangedDate = (DateTime)user.LastPasswordChangedDate;
+                    var notificationDate = lastChangedDate.AddDays(90);
                     // redirects the user to a password reset if it is set to expire in the next three days.                    
                     notificationDate = lastChangedDate.AddDays(87);
                     if (notificationDate <= DateTime.Now)

@@ -13,12 +13,14 @@ namespace OnAccount.Controllers
         private readonly DbConnectorService _connectorService;
         public IEnumerable<SelectListItem> NormalSideOptionsList { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> AccountTypeOptionsList { get; set; } = new List<SelectListItem>();
-
-        public AccountingController(DbConnectorService connectorService)
+        
+        private readonly UserService _userService;
+        public AccountingController(DbConnectorService connectorService, UserService userService)
         {
-            _connectorService = connectorService;
+            _connectorService = connectorService; // Database connection methods available here.
             this.NormalSideOptionsList = _connectorService.GetNormalSideOptions();
             this.AccountTypeOptionsList = _connectorService.GetAccountTypeOptions();
+            _userService = userService; // This service provides access to the currently logged in users profile data.
         }
 
         //to authorize for a specific page. [Authorize(Roles = "Administrator,Manager,Accountant")] will -
