@@ -5,7 +5,7 @@ using OnAccount.Migrations;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
-
+// SELECT FirstName,LastName,Username FROM on_account.Users Where UserRole= 'Administrator'; gets user first name/last name and email for use
 namespace OnAccount.Services
 {
     public class DbConnectorService
@@ -328,6 +328,40 @@ namespace OnAccount.Services
                 Console.WriteLine(ex.ToString());
             }
         }
+        /*
+         * Gets a list of user roles
+         */
+        public List<RoleModel> GetUserRole(string userRoleIn)
+        {
+            List<RoleModel> foundRoles = new List<RoleModel>();
+            
+            try
+            {
+                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                string command = "SELECT FirstName,LastName,Username FROM on_account.Users Where UserRole=@Role;";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@Role", userRoleIn);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    RoleModel role = new RoleModel();
+                    role.firstName = reader1.GetString(0);
+                    role.lastName = reader1.GetString(1);
+                    role.email = reader1.GetString(2);
+                    foundRoles.Add(role);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return foundRoles;
+        }
+
+
 
 
     }

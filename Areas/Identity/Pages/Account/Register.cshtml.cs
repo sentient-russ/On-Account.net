@@ -15,10 +15,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using OnAccount.Areas.Identity.Data;
+using OnAccount.Models;
 using OnAccount.Services;
+
 
 namespace OnAccount.Areas.Identity.Pages.Account
 {
@@ -30,13 +33,15 @@ namespace OnAccount.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<AppUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<AppUser> userManager,
             IUserStore<AppUser> userStore,
             SignInManager<AppUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +49,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         [BindProperty]
@@ -169,7 +175,16 @@ namespace OnAccount.Areas.Identity.Pages.Account
                         protocol: Request.Scheme);
                         await _emailSender.SendEmailAsync(Input.Email, "Email confirmation from OnAccount.net (Sponsored by MagnaDigi.com)",
                         $"<center><img src='https://on-account.net/img/onaccount_logo.jpg'></center><p>Welcome to the crew!</p><p>Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.</p>");
-
+                        DbConnectorService dbConnectorService = new DbConnectorService();
+                        List<RoleModel> adminRolesList = dbConnectorService.GetUserRole("Administrator");
+                    string adminEmailSubject = $"Account approval needed - OnAccount.net (Sponsored by MagnaDigi.com) {user.FirstName} {user.LastName}";
+                    string adminEmailBody = ""; 
+                    for (var i=0;i<adminRolesList.Count;i++)
+                    {
+                        adminEmailBody = $"Dear {adminRolesList[i].firstName} {adminRolesList[i].lastName} please unlock and assign a role to the user: {user.FirstName} {user.LastName} {user.ScreenName}";
+                        await _emailSender.SendEmailAsync(adminRolesList[i].email,adminEmailSubject,adminEmailBody);
+                    }
+                    
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
