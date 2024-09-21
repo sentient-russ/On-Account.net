@@ -242,10 +242,6 @@ namespace OnAccount.Services
         /*
          * Gets a list of normal side options
          */
-
-        /*
-         * Gets a list of normal side options
-         */
         public List<SelectListItem> GetNormalSideOptions()
         {
             string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
@@ -361,9 +357,36 @@ namespace OnAccount.Services
             return foundRoles;
         }
 
-
-
-
+        public List<AccountsModel> GetChartOfAccounts()
+        {
+            List<AccountsModel> accountsModels = new List<AccountsModel>();
+            try
+            {
+                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                string command = "SELECT * FROM on_account.account";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    //account_id	account_name	account_normal_side	account_type
+                    //foundUser.Id = reader1.IsDBNull(0) ? null : reader1.GetString(0);
+                    AccountsModel account = new AccountsModel();
+                    account.id = reader1.GetInt32(0);
+                    account.account_name = reader1.GetString(1);
+                    account.account_normal_side = reader1.GetString(2);
+                    account.account_type = reader1.GetString(3);
+                    accountsModels.Add(account);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return accountsModels;
+        }
     }
 
 }
