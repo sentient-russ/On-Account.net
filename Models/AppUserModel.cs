@@ -71,9 +71,10 @@ namespace OnAccount.Models
         [DisplayName("Zip:")]
         public string? Zip { get; set; } = "";
 
+        [DisplayFormat(DataFormatString = "{:dd MMM yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         [DisplayName("Birthday:")]
-        public string? DateofBirth { get; set; } = "";
+        public DateTime? DateofBirth { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
@@ -106,19 +107,16 @@ namespace OnAccount.Models
 
         [DisplayFormat(DataFormatString = "{:dd MMM yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
-        [StringLength(100, MinimumLength = 4)]
         [DisplayName("Suspension Date:")]
-        public string? AcctSuspensionDate { get; set; }
+        public DateTime? AcctSuspensionDate { get; set; }
 
         [DisplayFormat(DataFormatString = "{:dd MMM yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
-        [StringLength(100, MinimumLength = 4)]
         [DisplayName("Reinstatement Date:")]
-        public string? AcctReinstatementDate { get; set; }
+        public DateTime? AcctReinstatementDate { get; set; }
 
         [DisplayFormat(DataFormatString = "{:dd MMM yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
-        [StringLength(100, MinimumLength = 4)]
         [DisplayName("Last Password Change:")]
         public string? LastPasswordChangedDate { get; set; }
 
