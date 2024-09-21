@@ -1,0 +1,47 @@
+﻿@model IEnumerable<OnAccount.Models.AccountsModel>
+
+@{
+    ViewData["Title"] = "ChartOfAccounts";
+}
+
+<h1>ChartOfAccounts</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.account_name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.account_normal_side)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.account_type)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.account_name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.account_normal_side)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.account_type)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

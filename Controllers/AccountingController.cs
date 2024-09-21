@@ -4,6 +4,7 @@ using OnAccount.Services;
 using OnAccount.Models;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace OnAccount.Controllers
 {
@@ -32,6 +33,13 @@ namespace OnAccount.Controllers
             //The manager is routed to the management controller first and will have a link to use the accounting system.
 
             return View();
+        }
+
+        [Authorize(Roles = "Manager,Accountant")]
+        public async Task<IActionResult> ChartOfAccounts()
+        {
+            List<AccountsModel> accountsModels = _connectorService.GetChartOfAccounts();
+            return View(accountsModels);
         }
     }
 }
