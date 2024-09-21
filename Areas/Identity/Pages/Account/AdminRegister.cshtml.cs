@@ -117,8 +117,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
             [Required]
             [DataType(DataType.Date)]
             [Display(Name = "Date of Birth")]
-            [StringLength(100, ErrorMessage = "Please enter a valid date.", MinimumLength = 6)]
-            public string DateofBirth { get; set; } = "";
+            public DateTime DateofBirth { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
@@ -134,19 +133,19 @@ namespace OnAccount.Areas.Identity.Pages.Account
 
             [DisplayFormat(DataFormatString = "{:dd MMM yyyy}", ApplyFormatInEditMode = true)]
             [DataType(DataType.Date)]
-            [StringLength(100, MinimumLength = 4)]
+            //[StringLength(100, MinimumLength = 4)]
             [DisplayName("Suspension Date:")]
-            public string? AcctSuspensionDate { get; set; }
+            public DateTime? AcctSuspensionDate { get; set; }
 
             [DisplayFormat(DataFormatString = "{:dd MMM yyyy}", ApplyFormatInEditMode = true)]
             [DataType(DataType.Date)]
-            [StringLength(100, MinimumLength = 4)]
+            //[StringLength(100, MinimumLength = 4)]
             [DisplayName("Reinstatement Date:")]
-            public string? AcctReinstatementDate { get; set; }
+            public DateTime? AcctReinstatementDate { get; set; }
 
             [DisplayFormat(DataFormatString = "{:dd MMM yyyy}", ApplyFormatInEditMode = true)]
             [DataType(DataType.Date)]
-            [StringLength(100, MinimumLength = 4)]
+            //[StringLength(100, MinimumLength = 4)]
             [DisplayName("Last Password Change:")]
             public string? LastPasswordChangedDate { get; set; }
 
@@ -197,11 +196,8 @@ namespace OnAccount.Areas.Identity.Pages.Account
                 user.DateofBirth = Input.DateofBirth;
                 user.Email = Input.Email;
                 user.PhoneNumber = Input.PhoneNumber;
-                string format = "dd/MM/yyyy";
-                DateTime acctSuspensionDate = DateTime.ParseExact(Input.AcctReinstatementDate, format, CultureInfo.InvariantCulture);
-                user.AcctSuspensionDate = acctSuspensionDate;
-                DateTime acctReinstatementDate = DateTime.ParseExact(Input.AcctReinstatementDate, format, CultureInfo.InvariantCulture);
-                user.AcctSuspensionDate = acctReinstatementDate;
+                user.AcctSuspensionDate = Input.AcctSuspensionDate;
+                user.AcctReinstatementDate = Input.AcctReinstatementDate;
                 user.UserRole = Input.UserRole;
                 user.LastPasswordChangedDate = System.DateTime.Now;
                 user.PasswordResetDays = Input.PasswordResetDays;

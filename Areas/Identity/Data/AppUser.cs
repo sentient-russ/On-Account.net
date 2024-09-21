@@ -22,7 +22,7 @@ namespace OnAccount.Areas.Identity.Data
         public string? FirstName { get; set; } = "";
         public string? LastName { get; set; } = "";
         public override string? PhoneNumber { get; set; } = "";
-        public string? DateofBirth { get; set; } = "";
+        public DateTime? DateofBirth { get; set; }
         public string? Address { get; set; } = "";
         public string? City { get; set; } = "";
         public string? State { get; set; } = "";
