@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace OnAccount.Areas.Identity.Data
 {
@@ -18,11 +19,15 @@ namespace OnAccount.Areas.Identity.Data
     [BindProperties(SupportsGet = true)]
     public class AppUser : IdentityUser
     {
+
+        static DateTime today = System.DateTime.Now;
+        static DateTime birthdayPlaceholder = today.AddYears(-100);
+
         public string? ScreenName { get; set; } = "";
         public string? FirstName { get; set; } = "";
         public string? LastName { get; set; } = "";
         public override string? PhoneNumber { get; set; } = "";
-        public DateTime? DateofBirth { get; set; }
+        public DateTime? DateofBirth { get; set; } = birthdayPlaceholder;
         public string? Address { get; set; } = "";
         public string? City { get; set; } = "";
         public string? State { get; set; } = "";

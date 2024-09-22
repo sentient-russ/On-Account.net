@@ -65,6 +65,9 @@ namespace OnAccount.Areas.Identity.Pages.Account
 
         public class InputModel
         {
+            static DateTime today = System.DateTime.Now;
+            static DateTime birthdayPlaceholder = today.AddYears(-100);
+
             [Required]
             [DataType(DataType.Text)]
             [StringLength(100, MinimumLength = 1)]
@@ -117,7 +120,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
             [Required]
             [DataType(DataType.Date)]
             [Display(Name = "Date of Birth")]
-            public DateTime DateofBirth { get; set; }
+            public DateTime DateofBirth { get; set; } = birthdayPlaceholder;
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
@@ -178,7 +181,6 @@ namespace OnAccount.Areas.Identity.Pages.Account
 
             };
         }
-        
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
@@ -222,7 +224,6 @@ namespace OnAccount.Areas.Identity.Pages.Account
 
                     await _emailSender.SendEmailAsync(Input.Email, "Email confirmation from OnAccount.net (Sponsored by MagnaDigi.com)",
                         $"<center><img src='https://on-account.net/img/onaccount_logo.jpg'></center><p>Welcome to the crew!</p><p>Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.</p>");
-
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
