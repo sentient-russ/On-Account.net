@@ -23,6 +23,10 @@ namespace OnAccount.Models
     [BindProperties(SupportsGet = true)]
     public class AppUserModel
     {
+        static DateTime today = System.DateTime.Now;
+        static DateTime birthdayPlaceholder = today.AddYears(-100);
+        static string beginingDateFormatted = birthdayPlaceholder.ToString("yyyyMMdd");
+        static string todayDateFormatted = today.ToString("yyyyMMdd");
 
         public string? Id { get; set; }
 

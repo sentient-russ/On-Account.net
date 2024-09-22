@@ -7,16 +7,12 @@
 @{
     ViewData["Title"] = "Registration Complete";
 }
-
 <h1 class="text-center mb-2">@ViewData["Title"]</h1>
 @{
     
 }
 @if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
 {
-    <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-    </li>
     <p class="text-center">
         The users account has been created.
         <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here if you would like to auto confirm the new users account.</a>
