@@ -15,6 +15,37 @@ namespace OnAccount.Services
         {
             connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
         }
+
+
+        /*
+        * Gets a user's date of birth based on their email
+        */
+        public string GetUserDateOfBirthByEmail(string userEmail)
+        {
+            string? foundDOB = "";
+            try
+            {
+                MySqlConnection connection = new MySqlConnection(connectionString);
+                string command = "Select DateofBirth from on_account.Users where Email = @userEmail";
+                connection.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, connection);
+                cmd1.Parameters.AddWithValue("@userEmail", userEmail);
+                MySqlDataReader reader = cmd1.ExecuteReader();
+                while (reader.Read())
+                {
+                    foundDOB = reader.GetString(0);
+                }
+                reader.Close();
+                connection.Close();
+                foundDOB = foundDOB.Substring(0, 10);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return foundDOB;
+
+        }
         /*
          * Gets a users email from thier login username
          */

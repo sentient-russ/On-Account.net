@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using OnAccount.Areas.Identity.Data;
+using OnAccount.Services;
 
 namespace OnAccount.Areas.Identity.Pages.Account
 {
@@ -48,6 +49,12 @@ namespace OnAccount.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+
+            [Required]
+            [DataType(DataType.Date)]
+            [Display(Name = "Date of Birth")]
+            [StringLength(100, ErrorMessage = "Please enter a valid date.", MinimumLength = 6)]
+            public string SecurityQuestion { get; set; } = "";
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -55,7 +62,9 @@ namespace OnAccount.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                DbConnectorService dbConnectorService = new DbConnectorService();
+
+                if (user == null || (!(await _userManager.IsEmailConfirmedAsync(user) && Input.SecurityQuestion == dbConnectorService.GetUserDateOfBirthByEmail(Input.Email))))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");
