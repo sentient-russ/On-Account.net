@@ -151,7 +151,7 @@ namespace OnAccount.Controllers
         [HttpGet]
         public async Task<IActionResult> Unlock(string? Id)
         {
-            //disable user account
+            //enable user account
             _dbConnectorService.disableLockout(Id);
             return RedirectToAction(nameof(EditAccountDetails), new { Id = Id });
         }
