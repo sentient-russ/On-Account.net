@@ -44,7 +44,6 @@ namespace OnAccount.Services
                 Console.WriteLine(ex.ToString());
             }
             return foundDOB;
-
         }
         /*
          * Gets a users email from thier login username
