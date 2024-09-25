@@ -63,24 +63,23 @@ Environment.SetEnvironmentVariable("GC_Email_Pass", GC_Email_Pass);
 
 var serverVersion = new MySqlServerVersion(new Version(10, 6, 11));
 //use this option for a stable normal configuration
-/*builder.Services.AddDbContext<ApplicationDbContext>(
+builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion, options => options.EnableRetryOnFailure())
-
         .LogTo(Console.WriteLine, LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
-);*/
+);
 
 //use for code first migrations with mysql only
-builder.Services.AddDbContext<ApplicationDbContext>(
+/*builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion, options => options.SchemaBehavior(Pomelo.EntityFrameworkCore.MySql.Infrastructure.MySqlSchemaBehavior.Ignore))
         .LogTo(Console.WriteLine, LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 
-);
+);*/
 builder.Services.AddHttpContextAccessor(); // This is required to inject the UserService into cshtml files
 builder.Services.AddScoped<UserService>(); //This is a non-singleton class providing the current users information via dependency injection.
 builder.Services.AddScoped<DbConnectorService>();

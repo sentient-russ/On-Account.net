@@ -126,6 +126,16 @@ namespace OnAccount.Areas.Identity.Pages.Account
                     returnUrl += "Home/FirstLogin";
                     return LocalRedirect(returnUrl);
                 }
+                // checks to make sure the account is not suspended by date range.
+                if(user.AcctSuspensionDate <= System.DateTime.Now)
+                {
+                    if(user.AcctReinstatementDate >= System.DateTime.Now)
+                    {
+                        ModelState.AddModelError(string.Empty, "Account under temporary suspension.");
+                        return RedirectToPage("./Lockout");
+                    }
+                } 
+
             }
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
