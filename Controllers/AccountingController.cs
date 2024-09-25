@@ -38,6 +38,7 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager,Accountant")]
         public async Task<IActionResult> ChartOfAccounts()
         {
+            
             List<AccountsModel> accountsModels = _connectorService.GetChartOfAccounts();
             return View(accountsModels);
         }

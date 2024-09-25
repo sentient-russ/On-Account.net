@@ -20,13 +20,15 @@ namespace OnAccount.Areas.Identity.Pages.Account
         private readonly UserManager<AppUser> _userManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly DbConnectorService _dbConnectorService;
 
-        public LoginModel(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ILogger<LoginModel> logger, RoleManager<IdentityRole> roleManager)
+        public LoginModel(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ILogger<LoginModel> logger, RoleManager<IdentityRole> roleManager, DbConnectorService connectorService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
             _roleManager = roleManager;
+            _dbConnectorService = connectorService;
         }
 
         [BindProperty]
@@ -42,7 +44,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [StringLength(50, ErrorMessage = "Please enter a valid User Name or registration email address.", MinimumLength = 1)]
+            [StringLength(25, ErrorMessage = "Please enter a valid email address.", MinimumLength = 1)]
             public string Email { get; set; }
 
             [Required]
@@ -74,9 +76,33 @@ namespace OnAccount.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             // apply lockout status
+
+            //If a string other than an email is entered check to see if it is a valid username.
+            //If it is a username
+            //look up the email
+            //use the email to validate the account.
+            var email = _dbConnectorService.GetUserEmail(Input.Email);
+            if (!Input.Email.Contains("@"))
+            {
+                // Input.Email variable is a string that is not a valid email address at this point so check to see if it is a valid username.
+
+                //if the username is not found the email a "" or null will be returned.
+                //otherwise a valid elmail will be return which can be replace the username in the input email field.
+                if (email == "" || email == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid user name or email!");
+                    return Page();
+                }
+                else
+                {
+                    //replace the screenname with the actual email address and continue to validate the account based on the email.
+                    Input.Email = email;
+                }
+            }
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user != null)
             {
+                // directs the user to the lockout page if the account is locked.
                 if (user.LockoutEnabled)
                 {
                     string lockoutMessage = "Locked out user attempted login: " + user.Id.ToString();
@@ -84,7 +110,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, "Account locked out.");
                     return RedirectToPage("./Lockout");
                 }
-                // locks the user out password has expired.
+                // locks the user out if the password has expired.
                 DateTime lastChangedDate = (DateTime)user.LastPasswordChangedDate;
                 var notificationDate = lastChangedDate.AddDays(90);
                 if (notificationDate <= DateTime.Now)
@@ -104,18 +130,6 @@ namespace OnAccount.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                //check to see if user entered an email address.  If not check to see if it is a valide username.
-                DbConnectorService db = new DbConnectorService();
-                if (!Input.Email.Contains("@")){
-                    var email = db.GetUserEmail(Input.Email);
-                    if (email == "" || email == null)
-                    {
-                        // do nothing
-                    } else {
-                        Input.Email = email;
-                    }
-                }
-
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
