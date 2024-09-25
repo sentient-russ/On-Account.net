@@ -9,12 +9,6 @@
     <UserSecretsId>f7f35410-cde0-4da0-83eb-2be0c0d7c6bc</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Remove="wwwroot\img\OnAccount_Logo_Black.png" />
-    <Content Remove="wwwroot\img\OnAccount_Logo_White.png" />
-    <Content Remove="wwwroot\img\OnAccount_Logo_White_A.png" />
-    <Content Remove="wwwroot\img\OnAccount_Logo_White_B.png" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\img\OnAccount_Logo_Black.png" />
