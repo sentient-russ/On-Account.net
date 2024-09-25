@@ -14,7 +14,7 @@
    - A create new user button
    - A logo which will be displayed on all the pages of the application
 8. **The create a new user button will be used if the user is accessing the system for the first time.** Clicking this button should display a user interface where the user will provide personal information such as first name, last name, address, DOB, and click submit to request access to the application. The administrator should receive an email request and must approve or reject the request. If approved, an email should be sent to the user with a link to login to the system. :white_check_mark:(Presenter: Greg)
-9. **A button for forgot password.** If this button is clicked, the system should prompt the user to enter the email address and user ID the person provided when their credentials were created in the system and ask security questions to allow them to supply a new password. :bangbang:(Presentor:grey_question:)
+9. **A button for forgot password.** If this button is clicked, the system should prompt the user to enter the email address and user ID the person provided when their credentials were created in the system and ask security questions to allow them to supply a new password. :white_check_mark:(Presenter: Greg)
 10. **Passwords must be a minimum of 8 characters, must start with a letter, must have a letter, a number, and a special character.** If this requirement is not satisfied, display an appropriate error message.  :white_check_mark:(Presenter: Russell)
 11. **Passwords used in the past cannot be used when the password is reset.**  :white_check_mark:(Presenter: Russell)
 12. **Passwords must be encrypted.** :white_check_mark:(Presenter: Russell)
