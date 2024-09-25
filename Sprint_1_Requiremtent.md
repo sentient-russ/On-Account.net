@@ -1,12 +1,12 @@
 # On Account Sprint 1 Requirements
 
-1. **Allow three types of users** – administrator, manager, and regular user (accountant) to login to the system. :white_check_mark:(PresentorZachary)
-2. **The administrator user should be able to create users and assign roles.** :white_check_mark:(PresentorZachary)
-3. **The administrator user should be able to update information about a system user.** :white_check_mark:(PresentorZachary)
-4. **The administrator user should be able to activate or deactivate each kind of user.** :white_check_mark:(PresentorZachary)
-5. **Each kind of user should be able to log in to the system once credentials are created in the system.** :white_check_mark:(PresentorZachary)
-6. **The login username and picture should be displayed clearly on the top right corner of the login page once they have successfully logged into the system.** :white_check_mark:(PresentorZachary)
-7. **The login page should have:** :bangbang:(Presentor:grey_question:)
+1. **Allow three types of users** – administrator, manager, and regular user (accountant) to login to the system. :white_check_mark:(Presentor: Zachary)
+2. **The administrator user should be able to create users and assign roles.** :white_check_mark:(Presentor: Zachary)
+3. **The administrator user should be able to update information about a system user.** :white_check_mark:(Presentor: Zachary)
+4. **The administrator user should be able to activate or deactivate each kind of user.** :white_check_mark:(Presentor: Zachary)
+5. **Each kind of user should be able to log in to the system once credentials are created in the system.** :white_check_mark:(Presentor: Zachary)
+6. **The login username and picture should be displayed clearly on the top right corner of the login page once they have successfully logged into the system.** :white_check_mark:(Presentor: Zachary)
+7. **The login page should have:** :white_check_mark:(Presentor: Zachary)
    - A text box to enter the username
    - A textbox to enter a password which will be hidden as the user keys in the password
    - A submit button
