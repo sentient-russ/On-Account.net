@@ -66,15 +66,12 @@ body {
 .profile-picture-profile-row{
     display: flex;
     flex-direction:row;
-
-
 }
 .profile-picture-profile-img {
     max-height: 400px;
     min-height: 400px;
     max-width: 400px;
     min-width: 400px;
-
 }
 .profile-picture-header-img {
     max-width: 25px;
