@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using OnAccount.Areas.Identity.Data;
+using OnAccount.Models;
 using OnAccount.Services;
 
 namespace OnAccount.Areas.Identity.Pages.Account
@@ -22,11 +23,13 @@ namespace OnAccount.Areas.Identity.Pages.Account
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly DbConnectorService _dbConnectorService;
 
-        public ForgotPasswordModel(UserManager<AppUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<AppUser> userManager, IEmailSender emailSender, DbConnectorService dbConnectorService)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _dbConnectorService = dbConnectorService;
         }
 
         [BindProperty]
@@ -51,10 +54,14 @@ namespace OnAccount.Areas.Identity.Pages.Account
         {
             if (ModelState.IsValid)
             {
+                
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-                DbConnectorService dbConnectorService = new DbConnectorService();
+                var birthdayConfirmed = _dbConnectorService.GetUserDateOfBirthByEmail(Input.Email);
+                DateTime dbDate = DateTime.Parse(birthdayConfirmed);
+                DateTime enteredDate = DateTime.Parse(Input.SecurityQuestion);
+                var matchFound = enteredDate.CompareTo(dbDate);
 
-                if (user == null || (!(await _userManager.IsEmailConfirmedAsync(user) && Input.SecurityQuestion == dbConnectorService.GetUserDateOfBirthByEmail(Input.Email))))
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)) || matchFound == -1)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");
