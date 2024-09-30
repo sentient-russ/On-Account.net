@@ -1,42 +1,39 @@
-﻿using OnAccount.Models;
+﻿using oa.Models;
 using MySql.Data.MySqlClient;
-using OnAccount.Areas.Identity.Data;
-using OnAccount.Migrations;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using oa.Areas.Identity.Data;
+using oa.Migrations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
-// SELECT FirstName,LastName,Username FROM on_account.Users Where UserRole= 'Administrator'; gets user first name/last name and email for use
-namespace OnAccount.Services
+using System.Diagnostics;
+using System.Collections;
+
+namespace oa.Services
 {
     public class DbConnectorService
     {
-        public string? connectionString;
-        public DbConnectorService()
-        {
-            connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
-        }
-
-
+        public DbConnectorService() { }
         /*
         * Gets a user's date of birth based on their email
         */
-        public string GetUserDateOfBirthByEmail(string userEmail)
+        public async Task<string> GetUserDateOfBirthByEmailAsync(string userEmail)
         {
             string? foundDOB = "";
             try
             {
-                MySqlConnection connection = new MySqlConnection(connectionString);
-                string command = "Select DateofBirth from on_account.Users where Email = @userEmail";
-                connection.Open();
-                MySqlCommand cmd1 = new MySqlCommand(command, connection);
-                cmd1.Parameters.AddWithValue("@userEmail", userEmail);
-                MySqlDataReader reader = cmd1.ExecuteReader();
-                while (reader.Read())
+                using var connection = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                await connection.OpenAsync();
+                using var cmd = new MySqlCommand();
+                cmd.Connection = connection;
+                cmd.CommandText = "Select DateofBirth from on_account.Users WHERE Email = @userEmail";
+                cmd.Parameters.AddWithValue("@userEmail", userEmail);
+                await cmd.ExecuteNonQueryAsync();
+                using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
                 {
                     foundDOB = reader.GetString(0);
                 }
-                reader.Close();
-                connection.Close();
+
                 foundDOB = foundDOB.Substring(0, 10);
             }
             catch (Exception ex)
@@ -53,7 +50,7 @@ namespace OnAccount.Services
             string? foundEmail = "";
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "SELECT Email FROM on_account.Users WHERE ScreenName = @ScreenName;";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
@@ -80,7 +77,7 @@ namespace OnAccount.Services
             var foundUser = new AppUserModel();
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "SELECT * FROM on_account.Users WHERE Id = @Id;";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
@@ -123,11 +120,10 @@ namespace OnAccount.Services
          */
         public bool UpdateUserDetails(AppUserModel userIn)
         {
-            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
             bool Succeeded = false;
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "UPDATE on_account.Users SET ScreenName = @ScreenName, FirstName = @FirstName, " +
                 "LastName = @LastName, PhoneNumber = @PhoneNumber, Address = @Address, City = @City, State = @State, " +
                 "Zip = @Zip, DateofBirth = @DateofBirth, UserRole = @UserRole, UserName = @UserName, " +
@@ -173,10 +169,9 @@ namespace OnAccount.Services
          */
         public void UpdateLockout(AppUser userIn)
         {
-            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "UPDATE on_account.Users SET LockoutEnd = @LoukoutEnd, AcctSuspensionDate = @AcctSuspensionDate, AccountReinstatementDate = @AccountReinstatementDate WHERE id LIKE @id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
@@ -198,10 +193,9 @@ namespace OnAccount.Services
          */
         public void immediateLockout(string IdIn)
         {
-            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "UPDATE on_account.Users SET LockoutEnabled = @LockoutEnabled WHERE id LIKE @id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
@@ -215,16 +209,15 @@ namespace OnAccount.Services
             {
                 Console.WriteLine(ex.ToString());
             }
-        }        
+        }
         /*
          * Updates the database to enable scheduled user lockout events
          */
         public void disableLockout(string IdIn)
         {
-            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "UPDATE on_account.Users SET LockoutEnabled = @LockoutEnabled WHERE id LIKE @id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
@@ -244,16 +237,15 @@ namespace OnAccount.Services
          */
         public List<SelectListItem> GetAccountTypeOptions()
         {
-            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
             var resultsList = new List<SelectListItem>();
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "SELECT * FROM on_account.account_type_options;";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
-                
+
                 while (reader1.Read())
                 {
                     SelectListItem item = new SelectListItem();
@@ -274,11 +266,10 @@ namespace OnAccount.Services
          */
         public List<SelectListItem> GetNormalSideOptions()
         {
-            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
             var resultsList = new List<SelectListItem>();
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "SELECT * FROM on_account.account_normal_side_options;";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
@@ -304,11 +295,10 @@ namespace OnAccount.Services
          */
         public List<PassHashModel> GetPassHashList()
         {
-            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
             var resultsList = new List<PassHashModel>();
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "SELECT * FROM on_account.pass_hash;";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
@@ -336,10 +326,9 @@ namespace OnAccount.Services
          */
         public void StorePassHash(string userId, string passhash)
         {
-            string connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "INSERT INTO on_account.pass_hash (userId, passhash) VALUES (@userId, @passhash)";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
@@ -360,10 +349,10 @@ namespace OnAccount.Services
         public List<RoleModel> GetUserRole(string userRoleIn)
         {
             List<RoleModel> foundRoles = new List<RoleModel>();
-            
+
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "SELECT FirstName,LastName,Username FROM on_account.Users Where UserRole=@Role;";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
@@ -392,7 +381,7 @@ namespace OnAccount.Services
             List<AccountsModel> accountsModels = new List<AccountsModel>();
             try
             {
-                MySqlConnection conn1 = new MySqlConnection(connectionString);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 string command = "SELECT * FROM on_account.account";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);

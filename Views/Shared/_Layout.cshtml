@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using OnAccount.Areas.Identity.Data
+@using oa.Areas.Identity.Data
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
 <!DOCTYPE html>
@@ -53,7 +53,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer text-muted" style="bottom: 0px; position:fixed;">
         <div style="padding-left:20px;">
             &copy; 2024 - OnAccount - <a asp-area="" asp-controller="Home" asp-action="About">About the development team</a>
         </div>

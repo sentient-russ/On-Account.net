@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using OnAccount.Areas.Identity.Data;
-using OnAccount.Services;
-using OnAccount.Models;
+using oa.Areas.Identity.Data;
+using oa.Services;
+using oa.Models;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using oa.Areas.Identity.Services;
 namespace OnAccount.Controllers
 {
     [Authorize(Roles = "Administrator")]  //[Authorize(Roles = "Administrator,Accountant")] for multiple role assignment
@@ -33,7 +33,9 @@ namespace OnAccount.Controllers
             UserManager<AppUser> userManager,
             IUserStore<AppUser> userStore,
             SignInManager<AppUser> signInManager,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            DbConnectorService dbConnectorService,
+            IEmailSender EmailSender)
         {
             this.logger = logger;
             this._roleManager = roleManager;
@@ -41,7 +43,8 @@ namespace OnAccount.Controllers
             this._userStore = userStore;
             this._signInManager = signInManager;
             this._DbContext = context;
-            this._dbConnectorService = new DbConnectorService();
+            this._dbConnectorService = dbConnectorService;
+            this._emailSender = EmailSender;
         }
 
         public IActionResult Index()
@@ -137,8 +140,7 @@ namespace OnAccount.Controllers
         {
             AppUserModel appUserMessage = new AppUserModel();
             appUserMessage = detailsIn;
-            var emailSender = new EmailService();
-            await emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message);
+            await _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message);
             return RedirectToAction(nameof(ManageAccounts));
         }
         [HttpGet]

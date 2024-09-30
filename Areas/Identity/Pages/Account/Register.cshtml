@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Register";
 }
-<h1 class="text-center mb-2">@ViewData["Title"]</h1>
+<h1 class="text-center mb-5">@ViewData["Title"]</h1>
 
 <div class="row">
     <div class="col-md-4  mx-auto">
@@ -12,7 +12,7 @@
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.ScreenName" class="form-control" autocomplete="screanname" aria-required="true" placeholder="User Name (Automatic)" id="input_screen_name" readonly="true"/>
+                <input asp-for="Input.ScreenName" class="form-control" autocomplete="screanname" aria-required="true" placeholder="User Name (Automatic)" id="input_screen_name" readonly="true" />
                 <label asp-for="Input.ScreenName"> (auto updated) User Name </label>
                 <span asp-validation-for="Input.ScreenName" class="text-danger"></span>
             </div>
@@ -22,12 +22,12 @@
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.FirstName" class="form-control" autocomplete="first name" aria-required="true" placeholder="First Name" id="input_first_name"/>
+                <input asp-for="Input.FirstName" class="form-control" autocomplete="first name" aria-required="true" placeholder="First Name" id="input_first_name" />
                 <label asp-for="Input.FirstName">First Name</label>
                 <span asp-validation-for="Input.FirstName" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.LastName" class="form-control" autocomplete="last name" aria-required="true" placeholder="Last Name" id="input_last_name"/>
+                <input asp-for="Input.LastName" class="form-control" autocomplete="last name" aria-required="true" placeholder="Last Name" id="input_last_name" />
                 <label asp-for="Input.LastName">Last Name</label>
                 <span asp-validation-for="Input.LastName" class="text-danger"></span>
             </div>
@@ -52,12 +52,12 @@
                 <span asp-validation-for="Input.Zip" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="phone number" aria-required="true" placeholder="000-000-0000" id="Phone"/>
+                <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="phone number" aria-required="true" placeholder="000-000-0000" id="Phone" />
                 <label asp-for="Input.PhoneNumber">Phone Number</label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.DateofBirth" class="form-control" autocomplete="date of birth" aria-required="true" placeholder="Date of Birth" type="date"/>
+                <input asp-for="Input.DateofBirth" class="form-control" autocomplete="date of birth" aria-required="true" placeholder="Date of Birth" type="date" />
                 <label asp-for="Input.DateofBirth">Date of Birth</label>
                 <span asp-validation-for="Input.DateofBirth" class="text-danger"></span>
             </div>

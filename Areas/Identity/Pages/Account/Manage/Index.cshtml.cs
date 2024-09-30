@@ -2,43 +2,30 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OnAccount.Areas.Identity.Data;
-using Microsoft.AspNetCore.Http;
-using OnAccount.Services;
-using OnAccount.Models;
 using System.ComponentModel.DataAnnotations.Schema;
+using oa.Areas.Identity.Data;
+using oa.Models;
+using oa.Services;
 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.AspNetCore.Mvc.Rendering;
-
-
-namespace OnAccount.Areas.Identity.Pages.Account.Manage
+namespace oa.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-
+        private readonly DbConnectorService _dbConnectorService;
         public IndexModel(
             UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager)
+            SignInManager<AppUser> signInManager,
+            DbConnectorService dbConnectorService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _dbConnectorService = dbConnectorService;
         }
 
 
@@ -66,7 +53,6 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             [NotMapped]
             public string File { get; set; } = "";
 
-
         }
 
         private async Task LoadAsync(AppUser user)
@@ -77,7 +63,7 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             Input = new InputModel
             {
                 PhoneNumber = phoneNumber
-                
+
             };
         }
 
@@ -88,16 +74,12 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            
-            DbConnectorService connectorService = new DbConnectorService();
+
             AppUserModel appUser = new AppUserModel();
-            appUser = connectorService.GetUserDetailsById(user.Id);
+            appUser = _dbConnectorService.GetUserDetailsById(user.Id);
             File = appUser.File;
-
-
             await LoadAsync(user);
 
-            
             return Page(); //<-- error here
         }
 

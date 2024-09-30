@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace OnAccount.Models
+namespace oa.Models
 {
     public class NormalSideModel
     {

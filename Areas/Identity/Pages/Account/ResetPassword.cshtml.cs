@@ -11,19 +11,22 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using OnAccount.Areas.Identity.Data;
-using OnAccount.Models;
-using OnAccount.Services;
+using oa.Areas.Identity.Data;
+using oa.Models;
+using oa.Services;
 
-namespace OnAccount.Areas.Identity.Pages.Account
+namespace oa.Areas.Identity.Pages.Account
 {
     public class ResetPasswordModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly DbConnectorService _dbConnectorService;
 
-        public ResetPasswordModel(UserManager<AppUser> userManager)
+        public ResetPasswordModel(UserManager<AppUser> userManager,
+            DbConnectorService dbConnectorService)
         {
             _userManager = userManager;
+            _dbConnectorService = dbConnectorService;
         }
 
         [BindProperty]
@@ -84,8 +87,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
             //edit starts here 9-16-2024 RES
             var currentPasswordStatus = await _userManager.CheckPasswordAsync(user, Input.Password);
             List<PassHashModel> allOldHashes = new List<PassHashModel>();
-            DbConnectorService dbConnectorService = new DbConnectorService();
-            allOldHashes = dbConnectorService.GetPassHashList();
+            allOldHashes = _dbConnectorService.GetPassHashList();
             bool oldPasswordCombinationFound = false;
             for (int i = 0; i < allOldHashes.Count; i++)
             {
@@ -106,9 +108,8 @@ namespace OnAccount.Areas.Identity.Pages.Account
             // save the new hash to the db
             if (!oldPasswordCombinationFound)
             {
-                dbConnectorService.StorePassHash(user.Id, user.PasswordHash);
+                _dbConnectorService.StorePassHash(user.Id, user.PasswordHash);
             }
-
 
             if (result.Succeeded)
             {

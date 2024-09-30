@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OnAccount.Areas.Identity.Data;
+using oa.Areas.Identity.Data;
 
-namespace OnAccount.Areas.Identity.Pages.Account.Manage
+namespace oa.Areas.Identity.Pages.Account.Manage
 {
     public class ExternalLoginsModel : PageModel
     {

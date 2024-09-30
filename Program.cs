@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using OnAccount.Areas.Identity.Data;
-using OnAccount.Services;
+using oa.Areas.Identity.Data;
+using oa.Services;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
@@ -11,11 +11,17 @@ using System.Security.Authentication;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.ResponseCompression;
-using OnAccount.Areas.Identity.Services;
-using OnAccount.Models;
+using oa.Areas.Identity.Services;
+using System.Collections;
+using NuGet.Common;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddEnvironmentVariables();
+Environment.SetEnvironmentVariable("ASPNETCORE_FORWARDEDHEADERS_ENABLED", "true");
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .AddUserSecrets<Program>();
+
 //required for Apache reverse proxy
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -25,9 +31,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.RequireHeaderSymmetry = false;
     options.ForwardLimit = 2;
     options.KnownProxies.Add(IPAddress.Parse("127.0.0.1")); //reverse proxy, Kestrel defaults to port 5000 which is also set in apsettings.json
-    options.KnownProxies.Add(IPAddress.Parse("162.205.232.98")); //server IP public
+    options.KnownProxies.Add(IPAddress.Parse("162.205.232.101")); //server IP public
 });
-Environment.SetEnvironmentVariable("ASPNETCORE_FORWARDEDHEADERS_ENABLED", "true");
 //configure listen protocals and assert SSL/TLS requirement
 builder.WebHost.ConfigureKestrel((context, serverOptions) =>
 {
@@ -37,54 +42,53 @@ builder.WebHost.ConfigureKestrel((context, serverOptions) =>
         listenOptions.ClientCertificateMode = ClientCertificateMode.AllowCertificate;//requires certificate from client
     });
 });
-//configure connection string from environment variables thus hidding it from production
-var environ = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+//configure connection string from environment variables
 var connectionString = "";
-var GC_Email_Pass = "";
-if (environ == "Production")
-{
-    //pulls connection string from environment variables
-    connectionString = Environment.GetEnvironmentVariable("MariaDbConnectionStringLocal");
-    GC_Email_Pass = Environment.GetEnvironmentVariable(GC_Email_Pass);
-}
-else
-{
-    //pulls connection string from development local version of secrets.json
-    connectionString = builder.Configuration.GetConnectionString("MariaDbConnectionStringRemote");
-    GC_Email_Pass = builder.Configuration.GetConnectionString("GC_Email_Pass");
+var emailPass = "";
 
+if (builder.Configuration["ASPNETCORE_ENVIRONMENT"] == "Production")
+{
+    connectionString = Environment.GetEnvironmentVariable("OA_Local");
+    emailPass = Environment.GetEnvironmentVariable("GC_Email_Pass");
+    if (connectionString == "")
+    {
+        throw new Exception("ProgramCS: The connection string was null!");
+    }
+} else {
+    //pulls connection string from development local version of secrets.json
+    connectionString = builder.Configuration.GetConnectionString("OA_Remote");
+    emailPass = builder.Configuration["GC_Email_Pass"];
 }
-builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddDefaultTokenProviders()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
 Environment.SetEnvironmentVariable("DbConnectionString", connectionString);//this is used in services to access the string
-Environment.SetEnvironmentVariable("GC_Email_Pass", GC_Email_Pass);
+Environment.SetEnvironmentVariable("GC_Email_Pass", emailPass);//this is used in services to access the string
 
 var serverVersion = new MySqlServerVersion(new Version(10, 6, 11));
-//use this option for a stable normal configuration
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(10, 6, 11)), options => options.EnableRetryOnFailure()));
+
+//use for code first migrations with mysql only
 builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion, options => options.EnableRetryOnFailure())
-        .LogTo(Console.WriteLine, LogLevel.Information)
+        .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 );
-
-//use for code first migrations with mysql only
+//use this option for a stable normal configuration
 /*builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion, options => options.SchemaBehavior(Pomelo.EntityFrameworkCore.MySql.Infrastructure.MySqlSchemaBehavior.Ignore))
         .LogTo(Console.WriteLine, LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
-
 );*/
+
+builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultTokenProviders()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddHttpContextAccessor(); // This is required to inject the UserService into cshtml files
-builder.Services.AddScoped<UserService>(); //This is a non-singleton class providing the current users information via dependency injection.
-builder.Services.AddScoped<DbConnectorService>();
-builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 builder.Services.AddAuthorization();
 builder.Services.AddHttpClient();
 builder.Services.AddResponseCompression(options =>
@@ -97,10 +101,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 3;
     options.Lockout.AllowedForNewUsers = true;
-
 });
 builder.Services.AddAuthorization();
-
 //addition of encryption methods for deployment on linux
 builder.Services.AddDataProtection().UseCryptographicAlgorithms(
     new AuthenticatedEncryptorConfiguration
@@ -113,6 +115,12 @@ builder.Services.AddResponseCompression(options =>
  options.MimeTypes = ResponseCompressionDefaults
  .MimeTypes.Concat(new[] { "application/octet-stream:" })
 );
+builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<UserService>(); //This is a non-singleton class providing the current users information via dependency injection.
+builder.Services.AddSingleton<DbConnectorService>(); //Cannot be a singleton because it will miss the conn str
+builder.Services.AddTransient<IEmailSender, EmailService>();
+
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -144,6 +152,7 @@ app.UseEndpoints(endpoints =>
 app.UseResponseCompression();
 app.UseStaticFiles();
 app.UseCookiePolicy();
+
 app.MapRazorPages();
 
 app.MapControllerRoute(

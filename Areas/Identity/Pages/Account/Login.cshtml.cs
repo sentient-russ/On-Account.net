@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OnAccount.Areas.Identity.Data;
-using OnAccount.Services;
+using oa.Areas.Identity.Data;
+using oa.Services;
 
-namespace OnAccount.Areas.Identity.Pages.Account
+
+namespace oa.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
@@ -127,14 +128,14 @@ namespace OnAccount.Areas.Identity.Pages.Account
                     return LocalRedirect(returnUrl);
                 }
                 // checks to make sure the account is not suspended by date range.
-                if(user.AcctSuspensionDate <= System.DateTime.Now)
+                if (user.AcctSuspensionDate <= System.DateTime.Now)
                 {
-                    if(user.AcctReinstatementDate >= System.DateTime.Now)
+                    if (user.AcctReinstatementDate >= System.DateTime.Now)
                     {
                         ModelState.AddModelError(string.Empty, "Account under temporary suspension.");
                         return RedirectToPage("./Lockout");
                     }
-                } 
+                }
 
             }
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -175,18 +176,18 @@ namespace OnAccount.Areas.Identity.Pages.Account
                         return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                     }
                 }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                return Page();
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return Page();
+                }
             }
-        }
 
-        
 
-        // If we got this far, something failed, redisplay form
-        return Page();
-            
+
+            // If we got this far, something failed, redisplay form
+            return Page();
+
         }
     }
 }

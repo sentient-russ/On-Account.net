@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OnAccount.Models
+namespace oa.Models
 {
     public class PassHashModel
     {

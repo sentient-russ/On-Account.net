@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnAccount.Models;
+using oa.Models;
 using System.Diagnostics;
 
-namespace OnAccount.Controllers
+namespace oa.Controllers
 {
     public class HomeController : Controller
     {
@@ -16,7 +16,7 @@ namespace OnAccount.Controllers
 
         public IActionResult Index()
         {
-            
+
             return View();
         }
 

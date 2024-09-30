@@ -13,18 +13,17 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using OnAccount.Areas.Identity.Data;
-using OnAccount.Models;
-using OnAccount.Services;
+using oa.Areas.Identity.Data;
+using oa.Services;
 
-namespace OnAccount.Areas.Identity.Pages.Account
+
+namespace oa.Areas.Identity.Pages.Account
 {
     public class ForgotPasswordModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly DbConnectorService _dbConnectorService;
-
         public ForgotPasswordModel(UserManager<AppUser> userManager, IEmailSender emailSender, DbConnectorService dbConnectorService)
         {
             _userManager = userManager;
@@ -34,7 +33,6 @@ namespace OnAccount.Areas.Identity.Pages.Account
 
         [BindProperty]
         public InputModel Input { get; set; }
-
 
         public class InputModel
         {
@@ -54,14 +52,10 @@ namespace OnAccount.Areas.Identity.Pages.Account
         {
             if (ModelState.IsValid)
             {
-                
+                Task<string> task = _dbConnectorService.GetUserDateOfBirthByEmailAsync(Input.Email);
+                string dob = await task;
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-                var birthdayConfirmed = _dbConnectorService.GetUserDateOfBirthByEmail(Input.Email);
-                DateTime dbDate = DateTime.Parse(birthdayConfirmed);
-                DateTime enteredDate = DateTime.Parse(Input.SecurityQuestion);
-                var matchFound = enteredDate.CompareTo(dbDate);
-
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)) || matchFound == -1)
+                if (user == null || (!(await _userManager.IsEmailConfirmedAsync(user) && Input.SecurityQuestion == dob)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");

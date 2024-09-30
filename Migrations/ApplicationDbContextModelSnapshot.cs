@@ -2,13 +2,12 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OnAccount.Areas.Identity.Data;
+using oa.Areas.Identity.Data;
 
 #nullable disable
 
-namespace OnAccount.Migrations
+namespace oa.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -18,10 +17,8 @@ namespace OnAccount.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("Identity")
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "6.0.33")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -55,8 +52,6 @@ namespace OnAccount.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("ClaimType")
                         .HasColumnType("longtext");
 
@@ -79,8 +74,6 @@ namespace OnAccount.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("longtext");
@@ -159,7 +152,7 @@ namespace OnAccount.Migrations
                     b.ToTable("UserTokens", "Identity");
                 });
 
-            modelBuilder.Entity("OnAccount.Areas.Identity.Data.AppUser", b =>
+            modelBuilder.Entity("oa.Areas.Identity.Data.AppUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
@@ -188,9 +181,9 @@ namespace OnAccount.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("DateofBirth")
+                    b.Property<DateTime?>("DateofBirth")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -280,31 +273,11 @@ namespace OnAccount.Migrations
                     b.ToTable("Users", "Identity");
                 });
 
-            modelBuilder.Entity("OnAccount.Models.AccountTypeModel", b =>
+            modelBuilder.Entity("oa.Models.AccountsModel", b =>
                 {
                     b.Property<int?>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int?>("id"));
-
-                    b.Property<string>("account_option")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.HasKey("id");
-
-                    b.ToTable("account_type_options", "Identity");
-                });
-
-            modelBuilder.Entity("OnAccount.Models.AccountsModel", b =>
-                {
-                    b.Property<int?>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int?>("id"));
 
                     b.Property<string>("account_name")
                         .IsRequired()
@@ -326,18 +299,32 @@ namespace OnAccount.Migrations
                     b.ToTable("account", "Identity");
                 });
 
-            modelBuilder.Entity("OnAccount.Models.AppUserModel", b =>
+            modelBuilder.Entity("oa.Models.AccountTypeModel", b =>
+                {
+                    b.Property<int?>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("account_option")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("account_type_options", "Identity");
+                });
+
+            modelBuilder.Entity("oa.Models.AppUserModel", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("AcctReinstatementDate")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                    b.Property<DateTime?>("AcctReinstatementDate")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<string>("AcctSuspensionDate")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                    b.Property<DateTime?>("AcctSuspensionDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("ActiveStatus")
                         .IsRequired()
@@ -354,13 +341,17 @@ namespace OnAccount.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("DateofBirth")
-                        .HasColumnType("longtext");
+                    b.Property<DateTime?>("DateofBirth")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
+
+                    b.Property<string>("File")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -373,8 +364,7 @@ namespace OnAccount.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("LastPasswordChangedDate")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(100)
@@ -389,10 +379,6 @@ namespace OnAccount.Migrations
                         .IsRequired()
                         .HasMaxLength(12)
                         .HasColumnType("varchar(12)");
-
-                    b.Property<string>("ProfileImage")
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
 
                     b.Property<string>("ScreenName")
                         .IsRequired()
@@ -424,13 +410,11 @@ namespace OnAccount.Migrations
                     b.ToTable("AppUserModel", "Identity");
                 });
 
-            modelBuilder.Entity("OnAccount.Models.NormalSideModel", b =>
+            modelBuilder.Entity("oa.Models.NormalSideModel", b =>
                 {
                     b.Property<int?>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int?>("id"));
 
                     b.Property<string>("side_option")
                         .IsRequired()
@@ -442,13 +426,11 @@ namespace OnAccount.Migrations
                     b.ToTable("account_normal_side_options", "Identity");
                 });
 
-            modelBuilder.Entity("OnAccount.Models.PassHashModel", b =>
+            modelBuilder.Entity("oa.Models.PassHashModel", b =>
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int?>("Id"));
 
                     b.Property<string>("passhash")
                         .HasColumnType("longtext");
@@ -472,7 +454,7 @@ namespace OnAccount.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("OnAccount.Areas.Identity.Data.AppUser", null)
+                    b.HasOne("oa.Areas.Identity.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -481,7 +463,7 @@ namespace OnAccount.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("OnAccount.Areas.Identity.Data.AppUser", null)
+                    b.HasOne("oa.Areas.Identity.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -496,7 +478,7 @@ namespace OnAccount.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OnAccount.Areas.Identity.Data.AppUser", null)
+                    b.HasOne("oa.Areas.Identity.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -505,7 +487,7 @@ namespace OnAccount.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("OnAccount.Areas.Identity.Data.AppUser", null)
+                    b.HasOne("oa.Areas.Identity.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -1,5 +1,4 @@
-﻿
-/*
+﻿/*
  * ensure adhearand to form input standards.
  */
 // these are set up from the div id's to manipulate the username as the user types.
@@ -19,7 +18,7 @@ var currentMonthTwoDigits = currentMonth < 10 ? '0' + currentMonth : currentMont
 
 //function that combines all inputs from user to create username following first intial + last name + month + last 2 digits of year
 function usernameCreator() {
-	screen_name_element.value = firstInitial + lastname + currentMonthTwoDigits + (currentYear%100);
+    screen_name_element.value = firstInitial + lastname + currentMonthTwoDigits + (currentYear % 100);
 }
 //assigns to lastname variable capital for username creation and capitalizes first initial
 last_name_element.addEventListener("input", function () {
@@ -29,10 +28,10 @@ last_name_element.addEventListener("input", function () {
         // Remove non-letter characters
         lastname = lastname.replace(/[^a-zA-Z]/g, '');
         last_name_element.value = "";
-    }    
-	lastNameInitial = lastname[0].toUpperCase();
-	lastname = lastNameInitial + lastname.substring(1, lastname.length);
-	usernameCreator();
+    }
+    lastNameInitial = lastname[0].toUpperCase();
+    lastname = lastNameInitial + lastname.substring(1, lastname.length);
+    usernameCreator();
 });
 //assigns to firstInitial a captal letter for use for username creation
 var first_name_element = document.getElementById("input_first_name");
@@ -53,7 +52,7 @@ var phoneElement = document.getElementById("Phone");
 var phoneNo = phoneElement.value;
 
 phoneElement.addEventListener('input', function () {
-    var phoneNo = phoneElement.value.replace(/\D/g, ''); 
+    var phoneNo = phoneElement.value.replace(/\D/g, '');
     var formatNum = "";
     if (phoneNo.length <= 3) {
         formatNum = phoneNo;
