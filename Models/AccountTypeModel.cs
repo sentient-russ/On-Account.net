@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace OnAccount.Models
+namespace oa.Models
 {
     /*
      * Class used to pupulate account type options lists. 

@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+
 /*
  This model serves as the primary module for housing system user information.  
  The fields reflect all attributes in the Users database table.
  Changes here may also impact the identity authentication and authorization process - 
  and will be included in the database midgrations process that changes the users table.
  */
-namespace OnAccount.Models
+namespace oa.Models
 {
     [ApiController]
     [BindProperties(SupportsGet = true)]

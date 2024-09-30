@@ -1,16 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using OnAccount.Areas.Identity.Data;
-using OnAccount.Models;
+using oa.Areas.Identity.Data;
+using oa.Models;
 using System.Security.Claims;
 
-namespace OnAccount.Services;
+namespace oa.Services;
 public class UserService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private DbConnectorService _connectorService;
 
-    public UserService(IHttpContextAccessor httpContextAccessor)
+    public UserService(IHttpContextAccessor httpContextAccessor, DbConnectorService dbConnectorService)
     {
         _httpContextAccessor = httpContextAccessor;
+        _connectorService = dbConnectorService;
     }
 
     public AppUserModel GetUser()
@@ -24,8 +26,7 @@ public class UserService
     private AppUserModel GetUserById(string userId)
     {
 
-        DbConnectorService dbConnectorService = new DbConnectorService();
-        AppUserModel user = dbConnectorService.GetUserDetailsById(userId);
+        AppUserModel user = _connectorService.GetUserDetailsById(userId);
         return user;
     }
 }

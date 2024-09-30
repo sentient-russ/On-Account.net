@@ -8,27 +8,33 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using OnAccount.Areas.Identity.Data;
-using OnAccount.Models;
-using OnAccount.Services;
+using oa.Areas.Identity.Data;
+using oa.Models;
+using oa.Services;
+using oa.Areas.Identity.Data;
 
-namespace OnAccount.Areas.Identity.Pages.Account.Manage
+
+namespace oa.Areas.Identity.Pages.Account.Manage
 {
     public class ChangePasswordModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
+        private readonly DbConnectorService _dbConnectionService;
 
         public ChangePasswordModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            ILogger<ChangePasswordModel> logger)
+            ILogger<ChangePasswordModel> logger,
+            IConfiguration configuration, DbConnectorService dbConnectorService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _dbConnectionService = dbConnectorService;
         }
 
         [BindProperty]
@@ -65,13 +71,11 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
             var hasPassword = await _userManager.HasPasswordAsync(user);
             if (!hasPassword)
             {
                 return RedirectToPage("./SetPassword");
             }
-
             return Page();
         }
 
@@ -90,20 +94,18 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             //edit starts here 9-16-2024 RES
             var currentPasswordStatus = await _userManager.CheckPasswordAsync(user, Input.NewPassword);
             List<PassHashModel> allOldHashes = new List<PassHashModel>();
-            DbConnectorService dbConnectorService = new DbConnectorService();
-            allOldHashes = dbConnectorService.GetPassHashList();
+            allOldHashes = _dbConnectionService.GetPassHashList();
             bool oldPasswordCombinationFound = false;
-            for(int i = 0; i < allOldHashes.Count; i++)
+            for (int i = 0; i < allOldHashes.Count; i++)
             {
                 PasswordVerificationResult result = _userManager.PasswordHasher.VerifyHashedPassword(user, allOldHashes[i].passhash, Input.NewPassword);
-                if(result.ToString() == "Success")
+                if (result.ToString() == "Success")
                 {
-                    oldPasswordCombinationFound=true;
+                    oldPasswordCombinationFound = true;
                     string description = "The password was previously used. Please try again.";
                     ModelState.AddModelError(string.Empty, description);
                     return Page();
-                } 
-
+                }
             }
             //edit stops here.
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.NewPassword);
@@ -116,7 +118,6 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
             //must get the new hash and save it to the new hashes table.
-
             await _signInManager.RefreshSignInAsync(user);
             _logger.LogInformation("User changed their password successfully.");
             StatusMessage = "Your password has been changed.";
@@ -125,11 +126,8 @@ namespace OnAccount.Areas.Identity.Pages.Account.Manage
             if (!oldPasswordCombinationFound)
             {
                 var updatedUser = await _userManager.GetUserAsync(User);
-                dbConnectorService.StorePassHash(updatedUser.Id,updatedUser.PasswordHash);
+                _dbConnectionService.StorePassHash(updatedUser.Id, updatedUser.PasswordHash);
             }
-
-
-
 
             return RedirectToPage();
         }

@@ -1,4 +1,4 @@
-﻿namespace OnAccount.Models
+﻿namespace oa.Models
 {
     public class RoleModel
     {

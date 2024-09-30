@@ -3,19 +3,18 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MailKit.Net.Smtp;
+using oa;
 
-namespace OnAccount.Areas.Identity.Services;
-public class EmailSender : IEmailSender
+namespace oa.Areas.Identity.Services;
+public class EmailService : IEmailSender
 {
-    private readonly ILogger _logger;
-    private string GC_Email_Pass;
+    private string emailPass;
 
-    public EmailSender(ILogger<EmailSender> logger)
+    public EmailService(IConfiguration configuration)
     {
-        _logger = logger;
-        GC_Email_Pass = Environment.GetEnvironmentVariable("GC_Email_Pass");
-        _logger = logger;
+        emailPass = Environment.GetEnvironmentVariable("GC_Email_Pass");
     }
+
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
         await Execute(subject, message, toEmail);
@@ -32,10 +31,9 @@ public class EmailSender : IEmailSender
         };
         using var smtp = new SmtpClient();
         smtp.Connect("us2.smtp.mailhostbox.com", 587, SecureSocketOptions.StartTls);
-        smtp.Authenticate("cs@magnadigi.com", GC_Email_Pass);
+        smtp.Authenticate("cs@magnadigi.com", emailPass);
         var response = smtp.Send(email);
         smtp.Disconnect(true);
-        _logger.LogInformation("The message smtp send to " + toEmail + "was attempted and returned a status of: " + response);
     }
 }
 

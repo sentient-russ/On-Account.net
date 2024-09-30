@@ -1,14 +1,15 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
+
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
@@ -18,20 +19,21 @@ html {
 
 body {
     margin-bottom: 60px;
-
 }
 
-.manage-container-column{
-    display:flex;
-    flex-direction:column;
+.manage-container-column {
+    display: flex;
+    flex-direction: column;
 }
-.manage-container-row{
-    display:flex;
-    flex-direction:row;
-    max-height:75px;
-    padding:10px;
+
+.manage-container-row {
+    display: flex;
+    flex-direction: row;
+    max-height: 75px;
+    padding: 10px;
 }
-.manage-btn-cntr{
+
+.manage-btn-cntr {
     padding-right: 20px;
 }
 
@@ -39,45 +41,53 @@ body {
     padding-top: 1.125rem;
     padding-bottom: 1.125rem;
 }
+
 .container-email-btn {
     display: flex;
     flex-direction: column;
     text-align: center !important;
 }
+
 .row-email.btn {
     display: flex;
     flex-direction: row;
     max-height: 75px;
     padding: 10px;
-    
 }
-.email-btn-right{
+
+.email-btn-right {
     margin-left: 15px;
 }
+
 .email-btn-left {
     margin-right: 15px;
 }
-.profile-picture-profile-container{
+
+.profile-picture-profile-container {
     display: flex;
-    flex-direction:column;
-    justify-content:center;
-    text-align:center;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
 }
-.profile-picture-profile-row{
+
+.profile-picture-profile-row {
     display: flex;
-    flex-direction:row;
+    flex-direction: row;
 }
+
 .profile-picture-profile-img {
     max-height: 400px;
     min-height: 400px;
     max-width: 400px;
     min-width: 400px;
 }
+
 .profile-picture-header-img {
     max-width: 25px;
     max-height: 25px;
     border-radius: 50%;
 }
+
 .button {
     background-color: black;
     border: black;
@@ -92,10 +102,12 @@ body {
     transition-duration: 0.4s;
     cursor: pointer;
 }
+
 .NavButton {
     border: 1px black;
     border-radius: 5px 5px 5px 5px;
 }
 
-
-
+.border-top {
+    border-top: 0px !important;
+}

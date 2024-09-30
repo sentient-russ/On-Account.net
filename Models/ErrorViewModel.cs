@@ -1,4 +1,4 @@
-namespace OnAccount.Models
+namespace oa.Models
 {
     public class ErrorViewModel
     {
@@ -7,3 +7,4 @@ namespace OnAccount.Models
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
     }
 }
+ 

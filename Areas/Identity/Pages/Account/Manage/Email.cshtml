@@ -8,14 +8,14 @@
 <div class="row">
     <div class="col-md-6">
         <form id="email-form" method="post">
-            
+
             @if (Model.IsEmailConfirmed)
             {
                 <div class="form-floating mb-3 input-group">
                     <input asp-for="Email" class="form-control" placeholder="Please enter your email." disabled />
-                        <div class="input-group-append">
-                            <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
-                        </div>
+                    <div class="input-group-append">
+                        <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
+                    </div>
                     <label asp-for="Email" class="form-label"></label>
                 </div>
             }

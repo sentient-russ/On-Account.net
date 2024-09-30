@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using OnAccount.Areas.Identity.Data;
+using oa.Areas.Identity.Data;
 
-namespace OnAccount.Areas.Identity.Pages.Account
+namespace oa.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel

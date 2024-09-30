@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace OnAccount.Services
+namespace oa.Services
 {
     public class FirstLetterCapitalValidator : ValidationAttribute
     {

@@ -1,22 +1,29 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using OnAccount.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using oa.Areas.Identity.Data;
+using oa.Services;
+using oa.Areas.Identity.Data;
 using System;
 /*
  This service runs once per hour to update scheduled account lockout events.
  */
-namespace OnAccount.Services
+namespace oa.Services
 {
     public class AcctSuspensionService : IHostedService, IDisposable
     {
         private Timer? _timer;
         private readonly UserManager<AppUser> _userManager;
-        
         private DbConnectorService _dbConnectorService;
-        public AcctSuspensionService(UserManager<AppUser> userManager) 
+        private readonly IEmailSender _emailService;
+        public AcctSuspensionService(UserManager<AppUser> userManager,
+            DbConnectorService dbConnectorService,
+            IEmailSender emailSender)
         {
             this._userManager = userManager;
-            this._dbConnectorService = new DbConnectorService();
+            this._dbConnectorService = dbConnectorService;
+            this._emailService = emailSender;
         }
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(864000)); //runs once perday from the last start time.
@@ -39,7 +46,7 @@ namespace OnAccount.Services
         private void UpdateLockouts()
         {
             var users = this._userManager.Users.ToList();
-            for (var i =0; i < users.Count; i++)
+            for (var i = 0; i < users.Count; i++)
             {
                 if (users[i].AcctSuspensionDate >= System.DateTime.Now && users[i].AcctReinstatementDate >= System.DateTime.Now)
                 {
@@ -57,14 +64,13 @@ namespace OnAccount.Services
                 if (nextExpiration <= System.DateTime.Now)
                 {
                     _dbConnectorService.UpdateLockout(users[i]);
-                    Services.EmailService sendit = new EmailService();
                     var subject = "Alert! Your OnAccount password is about to expire! (Sent on behalf of On-Account from Magnadigi.com";
                     var body = "Dear " + users[i].FirstName + ", \n" + "Your password expires on " + nextExpiration + ".\n" + "Please vist https://www.on-account.net to update your password. \nThank You,\nThe on-account team.";
-                    await sendit.SendEmailAsync(users[i].Email, subject, body);
+                    await _emailService.SendEmailAsync(users[i].Email, subject, body);
                 }
             }
         }
-        
+
     }
 }
 

@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OnAccount.Areas.Identity.Data;
-using OnAccount.Models;
+using oa.Areas.Identity.Data;
+using oa.Models;
 
-namespace OnAccount.Areas.Identity.Data;
+namespace oa.Areas.Identity.Data;
 public class ApplicationDbContext : IdentityDbContext<AppUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -13,10 +13,10 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
     }
 
-    public DbSet<OnAccount.Models.AccountsModel> account { get; set; } = default!;
-    public DbSet<OnAccount.Models.AccountTypeModel> account_type_options { get; set; } = default!;
-    public DbSet<OnAccount.Models.NormalSideModel> account_normal_side_options { get; set; } = default!;
-    public DbSet<OnAccount.Models.PassHashModel> pass_hash { get; set; } = default!;
+    public DbSet<oa.Models.AccountsModel> account { get; set; } = default!;
+    public DbSet<oa.Models.AccountTypeModel> account_type_options { get; set; } = default!;
+    public DbSet<oa.Models.NormalSideModel> account_normal_side_options { get; set; } = default!;
+    public DbSet<oa.Models.PassHashModel> pass_hash { get; set; } = default!;
 
     //the next section overrides the default db naming // migrate and update database afterwords
     protected override void OnModelCreating(ModelBuilder builder)
@@ -33,8 +33,8 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
         builder.Entity<IdentityUserToken<string>>(entity => { entity.ToTable(name: "UserTokens"); });
         builder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
     }
-    public DbSet<OnAccount.Models.AppUserModel> AppUserModel { get; set; } = default!;
-    
+    public DbSet<oa.Models.AppUserModel> AppUserModel { get; set; } = default!;
+
 }
 
 internal class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<AppUser>

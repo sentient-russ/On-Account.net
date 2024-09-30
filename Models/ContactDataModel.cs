@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace OnAccount.Models
+namespace oa.Models
 {
     public class ContactDataModel
 

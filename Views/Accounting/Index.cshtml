@@ -1,10 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using OnAccount.Areas.Identity.Data
+@using oa.Areas.Identity.Data
 @inject UserManager<AppUser> UserManager
-
 <h1 class="text-center">Congratulations @UserManager.GetUserName(User)!</h1>
 <p class="text-center">You have gained access to the OnAccount accounting system.</p>
-
 <li class="nav-item">
     <a class="nav-link text-dark"  asp-controller="Accounting" asp-action="ChartOfAccounts">Chart Of Accounts</a>
 </li>

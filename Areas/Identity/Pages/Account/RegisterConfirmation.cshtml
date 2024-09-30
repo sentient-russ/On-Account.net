@@ -1,15 +1,15 @@
 ﻿@page
 @model RegisterConfirmationModel
 @using Microsoft.AspNetCore.Identity
-@using OnAccount.Areas.Identity.Data
+@using oa.Areas.Identity.Data
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
 @{
     ViewData["Title"] = "Registration Complete";
 }
-<h1 class="text-center mb-2">@ViewData["Title"]</h1>
+<h1 class="text-center mb-5">@ViewData["Title"]</h1>
 @{
-    
+
 }
 @if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
 {

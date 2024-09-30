@@ -19,15 +19,15 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using OnAccount.Areas.Identity.Data;
+using oa.Areas.Identity.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel;
 using System.Globalization;
 using Microsoft.CodeAnalysis.Editing;
-using OnAccount.Services;
+using oa.Services;
 
 
-namespace OnAccount.Areas.Identity.Pages.Account
+namespace oa.Areas.Identity.Pages.Account
 {
     public class AdminRegisterModel : PageModel
     {
@@ -165,7 +165,7 @@ namespace OnAccount.Areas.Identity.Pages.Account
             [ValidateNever]
             public IEnumerable<SelectListItem> RoleList { get; set; }
 
-        }     
+        }
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
