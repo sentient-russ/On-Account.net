@@ -21,48 +21,101 @@ function usernameCreator() {
     screen_name_element.value = firstInitial + lastname + currentMonthTwoDigits + (currentYear % 100);
 }
 //assigns to lastname variable capital for username creation and capitalizes first initial
-last_name_element.addEventListener("input", function () {
-    lastname = last_name_element.value;
-    // Ensure that only apha characters can be entered into the Last Name field
-    if (/[^a-zA-Z]/.test(lastname)) {
-        // Remove non-letter characters
-        lastname = lastname.replace(/[^a-zA-Z]/g, '');
-        last_name_element.value = "";
-    }
-    lastNameInitial = lastname[0].toUpperCase();
-    lastname = lastNameInitial + lastname.substring(1, lastname.length);
-    usernameCreator();
-});
+if (last_name_element != null) {
+    last_name_element.addEventListener("input", function () {
+        lastname = last_name_element.value;
+        // Ensure that only apha characters can be entered into the Last Name field
+        if (/[^a-zA-Z]/.test(lastname)) {
+            // Remove non-letter characters
+            lastname = lastname.replace(/[^a-zA-Z]/g, '');
+            last_name_element.value = "";
+        }
+        lastNameInitial = lastname[0].toUpperCase();
+        lastname = lastNameInitial + lastname.substring(1, lastname.length);
+        usernameCreator();
+    });
+}
+
 //assigns to firstInitial a captal letter for use for username creation
 var first_name_element = document.getElementById("input_first_name");
-first_name_element.addEventListener("input", function () {
-    firstname = first_name_element.value;
-    //Ensure only alpha can be entered into the First Name field
-    if (/[^a-zA-Z]/.test(firstname)) {
-        // Remove non-letter characters
-        firstname = firstname.replace(/[^a-zA-Z]/g, '');
-        first_name_element.value = "";
-    }
-    firstInitial = firstname[0].toUpperCase();
-    usernameCreator();
-});
-
+if (last_name_element != null) {
+    first_name_element.addEventListener("input", function () {
+        firstname = first_name_element.value;
+        //Ensure only alpha can be entered into the First Name field
+        if (/[^a-zA-Z]/.test(firstname)) {
+            // Remove non-letter characters
+            firstname = firstname.replace(/[^a-zA-Z]/g, '');
+            first_name_element.value = "";
+        }
+        firstInitial = firstname[0].toUpperCase();
+        usernameCreator();
+    });
+}
 //format phone numbers
 var phoneElement = document.getElementById("Phone");
-var phoneNo = phoneElement.value;
 
-phoneElement.addEventListener('input', function () {
-    var phoneNo = phoneElement.value.replace(/\D/g, '');
-    var formatNum = "";
-    if (phoneNo.length <= 3) {
-        formatNum = phoneNo;
-    } else if (phoneNo.length <= 6) {
-        formatNum = phoneNo.substr(0, 3) + '-' + phoneNo.substr(3);
-    } else if (phoneNo.length <= 10) {
-        formatNum = phoneNo.substr(0, 3) + '-' + phoneNo.substr(3, 3) + '-' + phoneNo.substr(6);
-    } else {
-        formatNum = phoneNo.substr(0, 3) + '-' + phoneNo.substr(3, 3) + '-' + phoneNo.substr(6, 4);
+if (phoneElement != null) {
+    var phoneNo = phoneElement.value;
+    phoneElement.addEventListener('input', function () {
+        var phoneNo = phoneElement.value.replace(/\D/g, '');
+        var formatNum = "";
+        if (phoneNo.length <= 3) {
+            formatNum = phoneNo;
+        } else if (phoneNo.length <= 6) {
+            formatNum = phoneNo.substr(0, 3) + '-' + phoneNo.substr(3);
+        } else if (phoneNo.length <= 10) {
+            formatNum = phoneNo.substr(0, 3) + '-' + phoneNo.substr(3, 3) + '-' + phoneNo.substr(6);
+        } else {
+            formatNum = phoneNo.substr(0, 3) + '-' + phoneNo.substr(3, 3) + '-' + phoneNo.substr(6, 4);
+        }
+        phoneElement.value = formatNum;
+    });
+}
+
+/*Begin Munu Buttons*/
+document.addEventListener('DOMContentLoaded', function () {
+    var accountingBtns = document.querySelectorAll('#accounting-btn, .accounting-btn');
+    var accountingMenu = document.getElementById('accounting-menu');
+
+    function toggleMenu(menu) {
+        if (menu.style.display === 'none' || menu.style.display === '') {
+            menu.style.display = 'block';
+        } else {
+            menu.style.display = 'none';
+        }
     }
-    phoneElement.value = formatNum;
+    accountingBtns.forEach(function (btn) {
+        btn.addEventListener('click', function (event) {
+            event.stopPropagation();
+            toggleMenu(accountingMenu);
+        });
+    });
+    document.addEventListener('click', function (event) {
+        if (!accountingMenu.contains(event.target) && !Array.from(accountingBtns).includes(event.target)) {
+            accountingMenu.style.display = 'none';
+        }
+    });
 });
-
+document.addEventListener('DOMContentLoaded', function () {
+    var managementBtns = document.querySelectorAll('#management-btn, .management-btn');
+    var managementMenu = document.getElementById('management-menu');
+    function toggleMenu(menu) {
+        if (menu.style.display === 'none' || menu.style.display === '') {
+            menu.style.display = 'block';
+        } else {
+            menu.style.display = 'none';
+        }
+    }
+    managementBtns.forEach(function (btn) {
+        btn.addEventListener('click', function (event) {
+            event.stopPropagation();
+            toggleMenu(managementMenu);
+        });
+    });
+    document.addEventListener('click', function (event) {
+        if (!managementMenu.contains(event.target) && !Array.from(managementBtns).includes(event.target)) {
+            managementMenu.style.display = 'none';
+        }
+    });
+});
+/*End Munu Buttons*/

@@ -35,7 +35,7 @@ namespace OnAccount.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Manager,Accountant")]
+        [Authorize(Roles = "Administrator, Manager,Accountant")]
         public async Task<IActionResult> ChartOfAccounts()
         {
             

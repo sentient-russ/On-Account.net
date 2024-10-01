@@ -1,10 +1,9 @@
 ﻿@model oa.Areas.Identity.Data.AppUser
 @using Microsoft.AspNetCore.Identity
 @{
-    ViewData["Title"] = "EditAccountDetails";
+    ViewData["Title"] = "Edit Account Details";
 }
-<h1 class="text-center mb-5">Edit Account Details</h1>
-<hr />
+<h1 class="text-center mb-5  margin-top-120">Edit Account Details</h1>
 <div class="container-email-btn">
     <div class="row-email-btn">
         <a class="btn btn-outline-danger email-btn-left" asp-action="Lock" asp-route-id="@Model.Id" role="button">Lock Account</a>
@@ -15,6 +14,7 @@
 <div class="row">
     <div class="col-md-4 mx-auto">
         <form asp-action="UpdateAccountDetails">
+            <hr />
            <div class="form-floating mb-3">
                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                 <input asp-for="Id" class="form-control" autocomplete="Id" placeholder="Id" type="hidden" />

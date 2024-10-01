@@ -87,7 +87,6 @@ body {
     max-height: 25px;
     border-radius: 50%;
 }
-
 .button {
     background-color: black;
     border: black;
@@ -110,4 +109,144 @@ body {
 
 .border-top {
     border-top: 0px !important;
+}
+
+/*  Nav begin */
+header {
+    border-bottom: 1px solid;
+    border-color: black;
+    margin-bottom: 50px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1;
+    background-color: #ffffffe0;
+}
+.nav-container{
+    display:flex;
+    flex-direction:column;
+    width: 120%;
+    height: 50px;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+.nav-row{
+    display:flex;
+    flex-direction: row;
+}
+.nav-inner-col-left{
+    display:flex;
+    justify-content: left;
+    max-height: 50px;
+    min-width: min-content;
+}
+.nav-inner-col-center{
+    display:flex;
+    max-height:100px;
+    width: auto;
+}
+.nav-inner-col-right {
+    display: flex;
+    justify-content: right;
+    max-height: 50px;
+    min-width: min-content;
+    position:fixed;
+    right:0;
+}
+
+.nav-inner-col-left-item-column{
+    display: flex;
+    flex-direction:column;
+
+}
+.login-name-container {
+    display:flex;
+    flex-direction:column;
+}
+.login-name-container-inner-row{
+    display: flex;
+    flex-direction: row;
+    max-height: 50px;
+}
+
+.user-login-name {
+    padding-left: 20px;
+}
+
+.margin-right-5{
+    margin-right: 5px;
+}
+.margin-right-20 {
+    margin-right: 20px;
+}
+.margin-top-120{
+    margin-top:120px;
+}
+
+.background-white{
+    background-color: white;
+}
+
+.management-menu-container {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 55px;
+    right: 97px;
+    min-width: 150px;
+    max-width: 150px;
+    border: 1px solid;
+    border-radius: 5px 5px 5px 5px;
+    border-color: var(--bs-blue);
+    background-color: white;
+    z-index: 2;
+}
+.management-menu-row > a {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    padding:5px;
+    text-decoration: none;
+}
+.management-menu-row:hover > a {
+    background-color: var(--bs-blue);
+    color: white !important;
+    font-weight: 500;
+    width: 100%;
+}
+
+
+.accounting-menu-container {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 55px;
+    right: 100px;
+    min-width: 150px;
+    max-width: 150px;
+    border: 1px solid;
+    border-radius: 5px 5px 5px 5px;
+    border-color: var(--bs-blue);
+    background-color: white;
+    z-index: 2;
+}
+
+.accounting-menu-row > a {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    padding: 5px;
+    text-decoration: none;
+}
+
+.accounting-menu-row:hover > a {
+    background-color: var(--bs-blue);
+    color: white !important;
+    font-weight: 500;
+    width: 100%;
+}
+
+@media (max-width: 575px) {
 }
