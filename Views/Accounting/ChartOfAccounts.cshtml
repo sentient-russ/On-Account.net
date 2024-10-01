@@ -1,16 +1,13 @@
 ﻿@using oa.Models;
 @model IEnumerable<oa.Models.AccountsModel>
-
-
 @{
     ViewData["Title"] = "Chart Of Accounts";
 }
+    <h1 class="text-center mb-4 margin-top-120">Chart Of Accounts</h1>
+<div class="manage-btn-cntr">
+    <a class="btn btn-primary" id="register" asp-area="Accounting" asp-page="/Accounting/CreateNewAccount" role="button">Add New</a>
+</div>
 
-<h1 class="text-center mb-4">Chart Of Accounts</h1>
-
-<p>
-    @* <a asp-action="Create">Create New</a> *@
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -40,9 +37,11 @@
                     @Html.DisplayFor(modelItem => item.account_type)
                 </td>
                 <td>
-@*                     <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.id">Delete</a> *@
+
+                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
+                <a asp-action="Deactivate" asp-route-id="@item.id">Deactivate</a> 
+
                 </td>
             </tr>
         }
