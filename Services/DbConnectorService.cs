@@ -152,7 +152,10 @@ namespace oa.Services
                 }
                 else
                 {
-                    DeleteUserRole(currentUserModel.Id);
+                    //DeleteUserRole(currentUserModel.Id);
+                    AssignUserRole(currentUserModel.Id, userIn.UserRole);
+                    //get roles list with id's
+                    //update the roles table with user id and role.
                 }
 
                 cmd1.Parameters.AddWithValue("@UserRole", userIn.UserRole);
@@ -431,6 +434,60 @@ namespace oa.Services
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 conn1.Open();
                 cmd1.Parameters.AddWithValue("@UserId", uidIn);
+                cmd1.ExecuteNonQuery();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+        }
+
+        /*
+         * Gets a role id based on the role type as a string
+         */
+        public string GetRoleId(string userRoleIn)
+        {
+            string foundId = "";
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.UserRoles;";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    if(reader1.GetString(1) == userRoleIn)
+                    {
+                        foundId = reader1.GetString(0);
+                    } 
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return foundId;
+        }
+        /*
+         * Updates a users role in the UserRoles juntion table
+         */
+        public void AssignUserRole(string uidIn, string uRoleIn)
+        {
+            //get role id
+            string newRoleId = GetRoleId(uRoleIn);
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "UPDATE on_account.UserRoles SET RoleId = @RoleId WHEREUserId = @UserId;";
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                conn1.Open();
+                cmd1.Parameters.AddWithValue("@UserId", uidIn);
+                cmd1.Parameters.AddWithValue("@RoleId", newRoleId);
                 cmd1.ExecuteNonQuery();
                 conn1.Close();
             }

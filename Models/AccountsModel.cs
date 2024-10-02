@@ -68,7 +68,7 @@ namespace oa.Models
         [Required]
         [DataType(DataType.DateTime)]
         [DisplayName("Account created on:")]
-        public int? account_creation_date { get; set; }
+        public DateTime? account_creation_date { get; set; }
 
         [Required]
         [IntegerValidator(MinValue = 1, MaxValue = 10000000, ExcludeRange = true)]
