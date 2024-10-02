@@ -76,8 +76,11 @@
     <p class="text-center mb-4">Secure your future inflows with On-Account.</p>
     <div class="home-button-container">
         <div class="home-button-row">
-            <a href="/Identity/Account/Register" class="register-button mb-4">Register</a>
-            
+
+            <a href="/Identity/Account/Register?url" class="register-button mb-4">Register</a>
+@*             <a class="naregister-button mb-4" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="flexbox-item-text" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register</a> *@
+             
         </div>
         <div class="home-button-row">
             <a href="/Identity/Account/Login" class="login-button mb-4">Login</a>

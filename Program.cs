@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using oa.Areas.Identity.Services;
 using System.Collections;
 using NuGet.Common;
+//using Microsoft.EntityFrameworkCore.Design
 
 var builder = WebApplication.CreateBuilder(args);
 Environment.SetEnvironmentVariable("ASPNETCORE_FORWARDEDHEADERS_ENABLED", "true");
@@ -62,8 +63,7 @@ if (builder.Configuration["ASPNETCORE_ENVIRONMENT"] == "Production")
 Environment.SetEnvironmentVariable("DbConnectionString", connectionString);//this is used in services to access the string
 Environment.SetEnvironmentVariable("GC_Email_Pass", emailPass);//this is used in services to access the string
 
-var serverVersion = new MySqlServerVersion(new Version(10, 6, 11));
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(10, 6, 11)), options => options.EnableRetryOnFailure()));
+var serverVersion = new MySqlServerVersion(new Version(8, 8, 39));
 
 //use for code first migrations with mysql only
 builder.Services.AddDbContext<ApplicationDbContext>(
@@ -77,24 +77,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 /*builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion, options => options.SchemaBehavior(Pomelo.EntityFrameworkCore.MySql.Infrastructure.MySqlSchemaBehavior.Ignore))
-        .LogTo(Console.WriteLine, LogLevel.Information)
+        .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
-);*/
-
+);
+*/
 builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddDefaultTokenProviders()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddHttpContextAccessor(); // This is required to inject the UserService into cshtml files
 
-builder.Services.AddAuthorization();
-builder.Services.AddHttpClient();
-builder.Services.AddResponseCompression(options =>
-{
-    options.EnableForHttps = true;
-});
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Default Lockout settings.
@@ -110,16 +103,24 @@ builder.Services.AddDataProtection().UseCryptographicAlgorithms(
         EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
         ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
     });
-builder.Services.AddMvc();
+
+
+builder.Services.AddScoped<UserService>(); //This is a non-singleton class providing the current users information via dependency injection.
+builder.Services.AddSingleton<DbConnectorService>(); //Cannot be a singleton because it will miss the conn str
+builder.Services.AddTransient<IEmailSender, EmailService>();
+builder.Services.AddAuthorization();
+builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor(); // This is required to inject the UserService into cshtml files
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+});
+
 builder.Services.AddResponseCompression(options =>
  options.MimeTypes = ResponseCompressionDefaults
  .MimeTypes.Concat(new[] { "application/octet-stream:" })
 );
-builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<UserService>(); //This is a non-singleton class providing the current users information via dependency injection.
-builder.Services.AddSingleton<DbConnectorService>(); //Cannot be a singleton because it will miss the conn str
-builder.Services.AddTransient<IEmailSender, EmailService>();
-
+builder.Services.AddMvc();
 
 var app = builder.Build();
 
@@ -136,24 +137,20 @@ else
     //app.UseHsts(); <-- Do not use! This is retained as a reminder.
 }
 
-var configuration = builder.Configuration;
-var value = configuration.GetValue<string>("value");
+
+
+
 app.UseResponseCompression();
-app.UseAuthorization();
+app.UseCookiePolicy();
+
+app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
-
-app.UseResponseCompression();
-app.UseStaticFiles();
-app.UseCookiePolicy();
-
-app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",

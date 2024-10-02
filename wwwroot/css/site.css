@@ -187,14 +187,23 @@ header {
     background-color: white;
 }
 
+.background-default-b {
+    background-color: #0d6efd;
+    color: white;
+}
+.background-default-b:hover {
+    background-color: #0067ff;
+    color: white;
+}
+
 .management-menu-container {
     display: none;
     flex-direction: column;
     position: fixed;
     top: 55px;
     right: 97px;
-    min-width: 150px;
-    max-width: 150px;
+    min-width: 170px;
+    max-width: 170px;
     border: 1px solid;
     border-radius: 5px 5px 5px 5px;
     border-color: var(--bs-blue);
@@ -216,7 +225,6 @@ header {
     width: 100%;
 }
 
-
 .accounting-menu-container {
     display: none;
     flex-direction: column;
@@ -233,6 +241,7 @@ header {
 }
 
 .accounting-menu-row > a {
+    color:#0f5dd1;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -248,5 +257,17 @@ header {
     width: 100%;
 }
 
-@media (max-width: 575px) {
+.menu-manager-options{
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+    text-align:center;
+    font-size: 12px;
+    font-weight:600;
+    opacity:.35;
 }
+.menu-hr{
+    margin-bottom:2px;
+}
+    @media (max-width: 575px) {
+    }

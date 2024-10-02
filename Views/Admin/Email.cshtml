@@ -3,13 +3,12 @@
 @{
     ViewData["Title"] = "Send Email";
 }
-
-<h1 class=" margin-top-120">Send Email</h1>
-
-<hr />
 <div class="row">
-    <div class="col-md-4">
+            <div class="col-md-4 mx-auto">
+        <h1 class=" margin-top-120">Send Email</h1>
         <form asp-action="SendEmail">
+            <hr />
+            <span>Emails sent from this form are deliverd through the cs@magnadigi.com partner account.</span>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="ScreenName" />
@@ -48,13 +47,11 @@
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
+        <div>
+            <a asp-action="ManageAccounts">Back to List</a>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="ManageAccounts">Back to List</a>
-</div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

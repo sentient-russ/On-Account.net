@@ -11,7 +11,7 @@ using oa.Areas.Identity.Data;
 namespace oa.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240929030200_init")]
+    [Migration("20241002005034_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -281,20 +281,65 @@ namespace oa.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("account_name")
+                    b.Property<int?>("account_creation_date")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<string>("account_status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("created_by")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<int?>("current_balance")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<string>("account_normal_side")
+                    b.Property<string>("normal_side")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("account_type")
+                    b.Property<int?>("number")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("opening_transaction_num")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("sort_priority")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<string>("statement_type")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<string>("term")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("id");
 
@@ -443,6 +488,46 @@ namespace oa.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("pass_hash", "Identity");
+                });
+
+            modelBuilder.Entity("oa.Models.TransactionModel", b =>
+                {
+                    b.Property<int?>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("created_by")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("credit_account")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("credit_amount")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<string>("debit_account")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("debit_amount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("journal_id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("transaction_date")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.ToTable("transaction", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
