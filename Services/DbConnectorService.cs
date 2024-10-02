@@ -143,6 +143,18 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@State", userIn.State);
                 cmd1.Parameters.AddWithValue("@Zip", userIn.Zip);
                 cmd1.Parameters.AddWithValue("@DateofBirth", userIn.DateofBirth);
+
+                //remove the old role before setting a new one.
+                AppUserModel currentUserModel = GetUserDetailsById(userIn.Id);
+                if (currentUserModel.UserRole == null || currentUserModel.UserRole == "")
+                {
+                    //do nothing
+                }
+                else
+                {
+                    DeleteUserRole(currentUserModel.Id);
+                }
+
                 cmd1.Parameters.AddWithValue("@UserRole", userIn.UserRole);
                 cmd1.Parameters.AddWithValue("@UserName", userIn.Email);
                 cmd1.Parameters.AddWithValue("@Email", userIn.Email);
@@ -406,6 +418,27 @@ namespace oa.Services
                 Console.WriteLine(ex.ToString());
             }
             return accountsModels;
+        }
+        /*
+         * Deletes one users record from the UserRoles table. This helps to prevent the user from having more than on role asssigned to a single account.
+         */
+        public void DeleteUserRole(string uidIn)
+        {
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "DELETE FROM on_account.UserRoles WHERE UserId = @UserId;";
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                conn1.Open();
+                cmd1.Parameters.AddWithValue("@UserId", uidIn);
+                cmd1.ExecuteNonQuery();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
         }
     }
 
