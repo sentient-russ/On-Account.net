@@ -11,10 +11,10 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/OnAccount.styles.css" asp-append-version="true" />
+    
 </head>
 <body>
     <header>
-        @* begin mod left nav *@
           <nav class="nav-container">
             <div class="nav-row">
                 <div class="nav-inner-col-left">
@@ -29,61 +29,64 @@
                <div class="nav-inner-col-right">
                     @if (SignInManager.IsSignedIn(User))
                     {
-                        @* Management Menu *@
-                        @if (User.IsInRole("Administrator"))
+                       @if (User.IsInRole("Manager") || User.IsInRole("Accountant") || User.IsInRole("Administrator"))
                         {
-                            <div class="btn btn-outline-primary margin-right-5 background-white" id="management-btn">
-                                <span class="management-btn">Managent Menu</span>
-                            </div>
-                            <div class="management-menu-container" style="display:none" id="management-menu">
-                                <div class="management-menu-row">
-                                    <a class="" asp-area="" asp-controller="Admin" asp-action="ManageAccounts">Users</a>
-                                </div>
-                                <div class="management-menu-row">
-                                    <a class="" asp-area="" asp-controller="Admin" asp-action="Index" role="button">Roles</a>
-                                </div>
-                            </div>
-                        }
-                        @* Accounting Menu *@
-                        @if (User.IsInRole("Manager") || User.IsInRole("Accountant"))
-                        {
-                            <div class="btn btn-outline-primary margin-right-5 background-white" id="accounting-btn">
-                                <span class="">Accounting Menu</span>
+                            <div class="btn btn-outline-primary margin-right-5 background-default-b" id="accounting-btn">
+                                <span class="">Action Menu</span>
                             </div>
                             <div class="accounting-menu-container" style="display:none" id="accounting-menu">
-                                <div class="accounting-menu-row">
-                                    <a class="" asp-area="" asp-controller="Accounting" asp-action="Index">Accounting Home</a>
-                                </div>
-                                <div class="accounting-menu-row">
-                                    <a class="" asp-area="" asp-controller="Accounting" asp-action="ChartOfAccounts">Chart of Accounts</a>
-                                </div>
+
+                                    <div class="menu-manager-options">Accounting</div>
+                                    <div class="accounting-menu-row">
+                                        <div class="accounting-menu-row">
+                                            <a class="" asp-area="" asp-controller="Accounting" asp-action="Index">Accounting Home</a>
+                                        </div>
+                                        <div class="accounting-menu-row">
+                                            <a class="" asp-area="" asp-controller="Accounting" asp-action="ChartOfAccounts">Chart of Accounts</a>
+                                        </div>
+                                        <div class="accounting-menu-row">
+                                            <a class="" asp-area="" asp-controller="Accounting" asp-action="ChartOfAccounts">Journal Entry</a>
+                                        </div>
+
+                                        <hr class="menu-hr" />
+                                        <div class="menu-manager-options">Reporting</div>
+                                        <div class="accounting-menu-row">
+                                            <a class="" asp-area="" asp-controller="Accounting" asp-action="ChartOfAccounts">Trial Balance</a>
+                                        </div>
+                                        <div class="accounting-menu-row">
+                                            <a class="" asp-area="" asp-controller="Accounting" asp-action="ChartOfAccounts">Profit & Loss</a>
+                                        </div>
+                                        <div class="accounting-menu-row">
+                                            <a class="" asp-area="" asp-controller="Accounting" asp-action="ChartOfAccounts">Balance Sheet </a>
+                                        </div>
+                                        <div class="accounting-menu-row">
+                                            <a class="" asp-area="" asp-controller="Accounting" asp-action="ChartOfAccounts">Owner's Equity</a>
+                                        </div>
+                                        @if (User.IsInRole("Administrator"))
+                                        {
+                                            <hr class="menu-hr" />
+                                            <div class="menu-manager-options">Administration</div>
+                                            <div class="accounting-menu-row">
+                                                <a class="" asp-area="" asp-controller="Admin" asp-action="ManageAccounts">Users</a>
+                                            </div>
+                                            <div class="accounting-menu-row">
+                                                <a class="" asp-area="" asp-controller="Admin" asp-action="Index" role="button">Roles</a>
+                                            </div>
+                                            <div class="accounting-menu-row">
+                                                <a class="" asp-area="" asp-controller="Admin" asp-action="EventLogs" role="button">Event Logs</a>
+                                            </div>
+                                        }
+
+                                    </div>
                             </div>
                         }
-                        <a asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                            <div class="btn btn-outline-primary background-white margin-right-20" style="min-height: 40px;">
-                                Logout
-                            </div>
-                             
-                        </a>                            
+                    <a asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <div class="btn btn-outline-primary background-white margin-right-20" style="min-height: 40px;">
+                            Logout
+                        </div>
+                    </a>
+                      
                     }
-
-
-                    @*@if (User.IsInRole("Administrator"))
-                    {       
-                        
-                        
-                    }
-                    @if (User.IsInRole("Manager") || User.IsInRole("Accountant"))
-                    {                 
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Accounting" asp-action="Index">Accounting</a>            
-                    }
-                    @if (User.IsInRole("Administrator") || User.IsInRole("Accountant") || User.IsInRole("Accountant"))
-                    {                 
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Accounting" asp-action="ChartOfAccounts">Chart of Accounts</a>            
-                    } *@
-
-
-
                </div> 
             </div>
           </nav>

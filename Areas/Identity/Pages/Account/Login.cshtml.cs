@@ -82,8 +82,8 @@ namespace oa.Areas.Identity.Pages.Account
             //If it is a username
             //look up the email
             //use the email to validate the account.
-            var email = _dbConnectorService.GetUserEmail(Input.Email);
-            if (!Input.Email.Contains("@"))
+            var email = Input.Email;
+            if (!email.Contains("@"))
             {
                 // Input.Email variable is a string that is not a valid email address at this point so check to see if it is a valid username.
 
@@ -97,6 +97,7 @@ namespace oa.Areas.Identity.Pages.Account
                 else
                 {
                     //replace the screenname with the actual email address and continue to validate the account based on the email.
+                    email = _dbConnectorService.GetUserEmail(email);
                     Input.Email = email;
                 }
             }

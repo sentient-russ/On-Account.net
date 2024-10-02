@@ -101,10 +101,11 @@ namespace oa.Services
                     foundUser.AcctReinstatementDate = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     foundUser.LastPasswordChangedDate = reader1.IsDBNull(14) ? null : reader1.GetDateTime(14).ToString();
                     foundUser.PasswordResetDays = reader1.IsDBNull(15) ? null : reader1.GetString(15);
-                    foundUser.UserName = reader1.IsDBNull(16) ? null : reader1.GetString(16);
-                    foundUser.NormalizedUserName = reader1.IsDBNull(17) ? null : reader1.GetString(17);
-                    foundUser.Email = reader1.IsDBNull(18) ? null : reader1.GetString(18);
-                    foundUser.File = reader1.IsDBNull(29) ? null : reader1.GetString(29);
+                    foundUser.File = reader1.IsDBNull(29) ? null : reader1.GetString(16);
+                    foundUser.UserName = reader1.IsDBNull(16) ? null : reader1.GetString(17);
+                    foundUser.NormalizedUserName = reader1.IsDBNull(17) ? null : reader1.GetString(18);
+                    foundUser.Email = reader1.IsDBNull(18) ? null : reader1.GetString(19);
+                    
                 }
                 reader1.Close();
                 conn1.Close();
@@ -392,9 +393,9 @@ namespace oa.Services
                     //foundUser.Id = reader1.IsDBNull(0) ? null : reader1.GetString(0);
                     AccountsModel account = new AccountsModel();
                     account.id = reader1.GetInt32(0);
-                    account.account_name = reader1.GetString(1);
-                    account.account_normal_side = reader1.GetString(2);
-                    account.account_type = reader1.GetString(3);
+                    account.name = reader1.GetString(1);
+                    account.normal_side = reader1.GetString(2);
+                    account.type = reader1.GetString(3);
                     accountsModels.Add(account);
                 }
                 reader1.Close();

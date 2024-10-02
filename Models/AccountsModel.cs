@@ -5,12 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using oa.Services;
-
-
+using System.Configuration;
+using System.Transactions;
 
 /*
  This model serves as the primary module for working with the accounting system accounts.
- The fields reflect all attributes in the accounting database table.
+ The fields reflect all attributes in the on_account.account database table.
  */
 namespace oa.Models
 {
@@ -22,20 +22,75 @@ namespace oa.Models
         [Required]
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 1)]
-        [DisplayName("Account Name:")]
-        public string? account_name { get; set; }
+        [DisplayName("Acct. Name:")]
+        public string? name { get; set; }
+
+        [Required]
+        [IntegerValidator(MinValue = 1, MaxValue = 1000, ExcludeRange = true)]
+        [DisplayName("Acct. Number:")]
+        public int? number { get; set; }
+
+        [Required]
+        [IntegerValidator(MinValue = 1, MaxValue = 1000, ExcludeRange = true)]
+        [DisplayName("Sort priority:")]
+        public int? sort_priority { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
         [StringLength(50, MinimumLength = 1)]
-        [DisplayName("Normal Side:")]
-        public string? account_normal_side { get; set; }
+        [DisplayName("Normal side:")]
+        public string? normal_side { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
+        [StringLength(1000, MinimumLength = 1)]
+        [DisplayName("Description:")]
+        public string? description { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
+        [StringLength(100, MinimumLength = 1)]
+        [DisplayName("Type:")]
+        public string? type { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
+        [StringLength(100, MinimumLength = 1)]
+        [DisplayName("Term:")]
+        public string? term { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
         [StringLength(50, MinimumLength = 1)]
-        [DisplayName("Account Type:")]
-        public string? account_type { get; set; }
+        [DisplayName("Account statement type:")]
+        public string? statement_type { get; set; }
+
+        [Required]
+        [DataType(DataType.DateTime)]
+        [DisplayName("Account created on:")]
+        public int? account_creation_date { get; set; }
+
+        [Required]
+        [IntegerValidator(MinValue = 1, MaxValue = 10000000, ExcludeRange = true)]
+        [DisplayName("Starting balance:")]
+        public int? opening_transaction_num { get; set; }
+
+        [Required]
+        [IntegerValidator(MinValue = 1, MaxValue = 1000000000, ExcludeRange = true)]
+        [DisplayName("Current Balance:")]
+        public int? current_balance { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
+        [StringLength(50, MinimumLength = 1)]
+        [DisplayName("Account created by:")]
+        public string? created_by { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
+        [StringLength(50, MinimumLength = 1)]
+        [DisplayName("Status:")]
+        public string? account_status { get; set; }
 
         [ValidateNever]
         [NotMapped]

@@ -1,15 +1,16 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @model IdentityRole
 
-<div class="row  margin-top-120">
-    <div class="col-md-4">
+<div class="row margin-top-120">
+    <div class="col-md-4 mx-auto">
         <form method="post">
             <h2 class="text-center mb-2">Create Role</h2>
             <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
-                <input asp-for="Name" class="form-control" aria-required="true" />
-                <label asp-for="Name"></label>
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <span>Please enter a new role name.</span>
+             <div class="form-floating mb-3">
+                <input asp-for="Name" class="form-control" autocomplete="New Account Name" placeholder="Name" id="Name" minlength="1" required/>
+                <label asp-for="Name" class="control-label"></label>
                 <span asp-validation-for="Name" class="test-damger"></span>
              <div>
              <button type="submit" class="btn btn-primary mt-2">Save</button>

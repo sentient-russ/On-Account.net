@@ -16,7 +16,7 @@ namespace oa.Controllers
 
         public IActionResult Index()
         {
-
+            
             return View();
         }
 

@@ -12,16 +12,15 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     : base(options)
     {
     }
+    public virtual DbSet<oa.Models.AccountsModel> account { get; set; } = default!;
+    public virtual DbSet<oa.Models.AccountTypeModel> account_type_options { get; set; } = default!;
+    public virtual DbSet<oa.Models.NormalSideModel> account_normal_side_options { get; set; } = default!;
+    public virtual DbSet<oa.Models.PassHashModel> pass_hash { get; set; } = default!;
+    public virtual DbSet<oa.Models.TransactionModel> transaction { get; set; } = default!;
 
-    public DbSet<oa.Models.AccountsModel> account { get; set; } = default!;
-    public DbSet<oa.Models.AccountTypeModel> account_type_options { get; set; } = default!;
-    public DbSet<oa.Models.NormalSideModel> account_normal_side_options { get; set; } = default!;
-    public DbSet<oa.Models.PassHashModel> pass_hash { get; set; } = default!;
-
-    //the next section overrides the default db naming // migrate and update database afterwords
+    //the next section overrides the default db naming
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        
         base.OnModelCreating(builder);
         builder.HasDefaultSchema("Identity");
         builder.Entity<AppUser>(entity => { entity.ToTable(name: "Users"); });
@@ -33,10 +32,8 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
         builder.Entity<IdentityUserToken<string>>(entity => { entity.ToTable(name: "UserTokens"); });
         builder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
     }
-    public DbSet<oa.Models.AppUserModel> AppUserModel { get; set; } = default!;
-
+    public virtual DbSet<oa.Models.AppUserModel> AppUserModel { get; set; } = default!;
 }
-
 internal class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<AppUser>
 {
     public void Configure(EntityTypeBuilder<AppUser> builder)

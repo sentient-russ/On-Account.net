@@ -23,11 +23,26 @@ namespace oa.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    account_name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                    name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    account_normal_side = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                    number = table.Column<int>(type: "int", nullable: false),
+                    sort_priority = table.Column<int>(type: "int", nullable: false),
+                    normal_side = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    account_type = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                    description = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    type = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    term = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    statement_type = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    account_creation_date = table.Column<int>(type: "int", nullable: false),
+                    opening_transaction_num = table.Column<int>(type: "int", nullable: false),
+                    current_balance = table.Column<int>(type: "int", nullable: false),
+                    created_by = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    account_status = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -152,6 +167,30 @@ namespace oa.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "transaction",
+                schema: "Identity",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    journal_id = table.Column<int>(type: "int", nullable: true),
+                    debit_account = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    debit_amount = table.Column<int>(type: "int", nullable: true),
+                    credit_account = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    credit_amount = table.Column<int>(type: "int", nullable: false),
+                    transaction_date = table.Column<int>(type: "int", nullable: false),
+                    created_by = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_transaction", x => x.id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -423,6 +462,10 @@ namespace oa.Migrations
 
             migrationBuilder.DropTable(
                 name: "RoleClaims",
+                schema: "Identity");
+
+            migrationBuilder.DropTable(
+                name: "transaction",
                 schema: "Identity");
 
             migrationBuilder.DropTable(
