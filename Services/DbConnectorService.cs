@@ -121,6 +121,32 @@ namespace oa.Services
          */
         public bool UpdateUserDetails(AppUserModel userIn)
         {
+            // sudo code illustrating two methods for capturing data for a change log.
+            // So this is one way you can do it.
+            DateTime today = DateTime.Now;
+            List<LogModel> NewList = new List<LogModel>();
+            AppUserModel oldUserInfo = GetUserDetailsById(userIn.Id);
+            if (userIn.ScreenName != oldUserInfo.ScreenName)
+            {
+                LogModel newLog = new LogModel();
+                newLog.ChangeDate = today;
+                newLog.UserId = userIn.Id;
+                newLog.ChangedFrom = oldUserInfo.ScreenName;
+                newLog.ChangedTo = userIn.ScreenName;
+                newLog.UserId = userIn.Id;
+                NewList.Add(newLog);
+            }
+            //then over and over again or.......
+
+            // This is another way.  See the UserModelComparer class that is being called. Pretty sure this is the better option. The results need to be sanitized a bit more.
+            UserModelComparer userModelComparer = new UserModelComparer();
+            List<LogModel> anotherLogList = userModelComparer.Compare(oldUserInfo, userIn);
+            // becuase anotherLogList is a list you can iterate and send it to a logging method.
+            if (anotherLogList.Count > 0)
+            {
+                //send the list to a method that inserts the logged endtries into the database.
+            }
+
             bool Succeeded = false;
             try
             {
