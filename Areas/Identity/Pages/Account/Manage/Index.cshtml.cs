@@ -47,6 +47,10 @@ namespace oa.Areas.Identity.Pages.Account.Manage
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
 
+            [NotMapped]
+            [Display(Name = "UserName")]
+            public string Username { get; set; }
+
             [BindProperty]
             public IFormFile FormFile { get; set; }
 
@@ -59,10 +63,12 @@ namespace oa.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                Username = user.ScreenName
 
             };
         }

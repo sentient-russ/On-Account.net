@@ -101,11 +101,10 @@ namespace oa.Services
                     foundUser.AcctReinstatementDate = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     foundUser.LastPasswordChangedDate = reader1.IsDBNull(14) ? null : reader1.GetDateTime(14).ToString();
                     foundUser.PasswordResetDays = reader1.IsDBNull(15) ? null : reader1.GetString(15);
-                    foundUser.File = reader1.IsDBNull(29) ? null : reader1.GetString(16);
-                    foundUser.UserName = reader1.IsDBNull(16) ? null : reader1.GetString(17);
-                    foundUser.NormalizedUserName = reader1.IsDBNull(17) ? null : reader1.GetString(18);
-                    foundUser.Email = reader1.IsDBNull(18) ? null : reader1.GetString(19);
-                    
+                    foundUser.File = reader1.IsDBNull(16) ? null : reader1.GetString(16);
+                    foundUser.UserName = reader1.IsDBNull(17) ? null : reader1.GetString(17);
+                    foundUser.NormalizedUserName = reader1.IsDBNull(18) ? null : reader1.GetString(18);
+                    foundUser.Email = reader1.IsDBNull(19) ? null : reader1.GetString(19);
                 }
                 reader1.Close();
                 conn1.Close();
@@ -430,13 +429,22 @@ namespace oa.Services
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 while (reader1.Read())
                 {
-                    //account_id	account_name	account_normal_side	account_type
-                    //foundUser.Id = reader1.IsDBNull(0) ? null : reader1.GetString(0);
                     AccountsModel account = new AccountsModel();
-                    account.id = reader1.GetInt32(0);
-                    account.name = reader1.GetString(1);
-                    account.normal_side = reader1.GetString(2);
-                    account.type = reader1.GetString(3);
+                    account.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    account.name = reader1.IsDBNull(1) ? null : reader1.GetString(1);
+                    account.number = reader1.IsDBNull(2) ? null : reader1.GetInt32(2);
+                    account.sort_priority = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+                    account.normal_side = reader1.IsDBNull(4) ? null : reader1.GetString(4);
+                    account.description = reader1.IsDBNull(5) ? null : reader1.GetString(5);
+                    account.type = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    account.term = reader1.IsDBNull(7) ? null : reader1.GetString(7);
+                    account.statement_type = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    account.account_creation_date = reader1.IsDBNull(9) ? null : reader1.GetDateTime(9);
+                    account.opening_transaction_num = reader1.IsDBNull(10) ? null : reader1.GetString(10);
+                    account.current_balance = reader1.IsDBNull(11) ? null : reader1.GetDecimal(11);
+                    account.created_by = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    account.account_status = reader1.IsDBNull(13) ? null : reader1.GetString(13);
+                    account.starting_balance = reader1.IsDBNull(14) ? null : reader1.GetDecimal(14);
                     accountsModels.Add(account);
                 }
                 reader1.Close();
@@ -523,6 +531,7 @@ namespace oa.Services
             }
 
         }
+
     }
 
 }

@@ -8,7 +8,7 @@
         <h1 class=" margin-top-120">Send Email</h1>
         <form asp-action="SendEmail">
             <hr />
-            <span>Emails sent from this form are deliverd through the cs@magnadigi.com partner account.</span>
+            <span style="margin-bottom:20px;">Emails sent from this form are deliverd through the cs@magnadigi.com partner account.</span>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="ScreenName" />
@@ -28,7 +28,7 @@
             <input type="hidden" asp-for="AcctReinstatementDate"  />
             <input type="hidden" asp-for="LastPasswordChangedDate"  />
             <input type="hidden" asp-for="PasswordResetDays"  />
-            <div class="form-floating mb-3">
+            <div class="form-floating mb-3" style="margin-top: 20px;">
                 <input asp-for="Email" class="form-control" autocomplete="@Model.Email" aria-required="true" placeholder="Email" />
                 <label asp-for="Email" class="control-label"></label>
                 <span asp-validation-for="Email" class="text-danger"></span>
@@ -39,7 +39,7 @@
                 <span asp-validation-for="Subject" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <textarea asp-for="Message" class="form-control" aria-required="true" placeholder="Message" rows="5"></textarea>
+                <textarea asp-for="Message" class="form-control" aria-required="true" placeholder="Message" style="height:200px;"></textarea>
                 <label asp-for="Message" class="control-label"></label>                
                 <span asp-validation-for="Message" class="text-danger"></span>
             </div>

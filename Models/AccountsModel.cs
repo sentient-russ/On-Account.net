@@ -14,6 +14,8 @@ using System.Transactions;
  */
 namespace oa.Models
 {
+    [ApiController]
+    [BindProperties(SupportsGet = true)]
     public class AccountsModel
 
     {
@@ -22,12 +24,12 @@ namespace oa.Models
         [Required]
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 1)]
-        [DisplayName("Acct. Name:")]
+        [DisplayName("Account Name:")]
         public string? name { get; set; }
 
         [Required]
         [IntegerValidator(MinValue = 1, MaxValue = 1000, ExcludeRange = true)]
-        [DisplayName("Acct. Number:")]
+        [DisplayName("Account Number:")]
         public int? number { get; set; }
 
         [Required]
@@ -67,23 +69,22 @@ namespace oa.Models
 
         [Required]
         [DataType(DataType.DateTime)]
-        [DisplayName("Account created on:")]
-        public DateTime? account_creation_date { get; set; }
+        [DisplayName("Creation Date:")]
+        public DateTime? account_creation_date { get; set; } = System.DateTime.Now;
 
-        [Required]
-        [IntegerValidator(MinValue = 1, MaxValue = 10000000, ExcludeRange = true)]
-        [DisplayName("Starting balance:")]
-        public int? opening_transaction_num { get; set; }
+        [DisplayName("Opening Transaction Number: (Auto assigned)")]
+        public string? opening_transaction_num { get; set; }
 
-        [Required]
-        [IntegerValidator(MinValue = 1, MaxValue = 1000000000, ExcludeRange = true)]
+        //[Required]
+        [Range(0.01, 1000.00, ErrorMessage = "Please enter a valid dollar amount.")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
         [DisplayName("Current Balance:")]
-        public int? current_balance { get; set; }
+        public decimal? current_balance { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
         [StringLength(50, MinimumLength = 1)]
-        [DisplayName("Account created by:")]
+        [DisplayName("Account created by:  (Auto assigned)")]
         public string? created_by { get; set; }
 
         [Required]
@@ -92,15 +93,12 @@ namespace oa.Models
         [DisplayName("Status:")]
         public string? account_status { get; set; }
 
-        [ValidateNever]
-        [NotMapped]
-        public IEnumerable<SelectListItem>? normal_side_options_list { get; set; }
+        //[Required]
+        [Range(0.01, 1000.00, ErrorMessage = "Please enter a valid dollar amount.")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        [DisplayName("Starting Balance:")]
+        public decimal? starting_balance { get; set; }
 
-        [ValidateNever]
-        [NotMapped]
-        public IEnumerable<SelectListItem>? account_type_options_list { get; set; }
-
-        
 
 
     }
