@@ -14,20 +14,21 @@
 
 <div class="form-container  margin-top-120">
     <form asp-action="SaveNewAccountDetails" class="add-account-form-container">
-        <h3 class="text-center">Update Account</h3>
+        <h3 class="text-center">Create Account</h3>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @* row 1 *@
         <div class="row g-2">
             <div class="col-md">
-                <div class="form-floating mb-3">
-                    <input asp-for="number" class="form-control" placeholder="number" />
+                <div class="form-floating mb-2">
+                    <input asp-for="number" class="form-control form-control-sm" placeholder="number" />
                     <label asp-for="number" class="control-label"></label>
                     <span asp-validation-for="number" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md">
-                <div class="form-floating mb-3">
-                    <input asp-for="created_by" class="form-control" placeholder="created_by" value="@UserName" disabled />
+                <div class="form-floating mb-2">
+                    <input asp-for="created_by" class="form-control form-control-sm" placeholder="created_by" value="@UserName" disabled />
                     <label asp-for="created_by" class="control-label"></label>
                     <span asp-validation-for="created_by" class="text-danger"></span>
                 </div>
@@ -36,16 +37,15 @@
         @* row 2 *@
          <div class="row g-2">
             <div class="col-md">
-                <div class="form-floating mb-3">
-                    <input asp-for="name" class="form-control" placeholder="name" />
+                <div class="form-floating mb-2">
+                    <input asp-for="name" class="form-control form-control-sm" placeholder="name" />
                     <label asp-for="name" class="control-label"></label>
                     <span asp-validation-for="name" class="text-danger"></span>
                 </div>
-
             </div>
             <div class="col-md">
-                <div class="form-floating mb-3">
-                    <input asp-for="account_creation_date" class="form-control" placeholder="account_creation_date" disabled />
+                <div class="form-floating mb-2">
+                    <input asp-for="account_creation_date" class="form-control form-control-sm" placeholder="account_creation_date" disabled />
                     <label asp-for="account_creation_date" class="control-label"></label>
                     <span asp-validation-for="account_creation_date" class="text-danger"></span>
                 </div>
@@ -54,15 +54,15 @@
         @* row 3 *@
         <div class="row g-2">
             <div class="col-md">
-                <div class="form-floating mb-3">
-                    <input asp-for="description" class="form-control" placeholder="description" />
+                <div class="form-floating mb-2">
+                    <input asp-for="description" class="form-control form-control-sm" placeholder="description" />
                     <label asp-for="description" class="control-label"></label>
                     <span asp-validation-for="description" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md">
-                <div class="form-floating mb-3">
-                    <input asp-for="starting_balance" class="form-control currencyField" placeholder="starting_balance" data-val="false" disabled />
+                <div class="form-floating mb-2">
+                    <input asp-for="starting_balance" class="form-control form-control-sm currencyField" placeholder="starting_balance" data-val="false" disabled />
                     <label asp-for="starting_balance" class="control-label"></label>
                     <span asp-validation-for="starting_balance" class="text-danger"></span>
                 </div>
@@ -71,7 +71,7 @@
         @* row 4 *@
         <div class="row g-2">
             <div class="col-md">
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-2">
                     <select asp-for="type" class="form-select">
                         <option value=""></option>
                         <option value="Asset">Asset</option>
@@ -86,8 +86,8 @@
                 </div>
             </div>
             <div class="col-md">
-                <div class="form-floating mb-3">
-                    <input asp-for="current_balance" class="form-control currencyField" placeholder="current_balance" data-val="false" disabled />
+                <div class="form-floating mb-2">
+                    <input asp-for="current_balance" class="form-control form-control-sm currencyField" placeholder="current_balance" data-val="false" disabled />
                     <label asp-for="current_balance" class="control-label"></label>
                     <span asp-validation-for="current_balance" class="text-danger"></span>
                 </div>
@@ -96,8 +96,8 @@
         @* row 5 *@
         <div class="row g-2">
             <div class="col-md">
-                <div class="form-floating mb-3">
-                    <select asp-for="term" class="form-select">
+                <div class="form-floating">
+                    <select asp-for="term" class="form-select form-control-sm">
                         <option value=""></option>
                         <option value="Short">Short Term</option>
                         <option value="Long">Long Term</option>
@@ -107,8 +107,8 @@
                 </div>
             </div>
             <div class="col-md">
-                <div class="form-floating mb-3">
-                    <select asp-for="sort_priority" class="form-select">
+                <div class="form-floating mb-2">
+                    <select asp-for="sort_priority" class="form-select form-control-sm">
                         <option value=""></option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -125,8 +125,8 @@
         @* row 6 *@
         <div class="row g-2">
             <div class="col-md">
-                <div class="form-floating mb-3">
-                    <select asp-for="statement_type" class="form-select">
+                <div class="form-floating mb-2">
+                    <select asp-for="statement_type" class="form-select form-control-sm">
                         <option value=""></option>
                         <option value="pl">Profit & Loss</option>
                         <option value="bs">Balance Sheet</option>
@@ -137,8 +137,8 @@
                 </div>
             </div>
             <div class="col-md">
-                <div class="form-floating mb-3">
-                    <select asp-for="account_status" class="form-select">
+                <div class="form-floating mb-2">
+                    <select asp-for="account_status" class="form-select form-control-sm">
                         <option value=""></option>
                         <option value="Active">Active</option>
                         <option value="Inactive">Inactive</option>
@@ -151,8 +151,8 @@
         @* row 7 *@
         <div class="row g-2">
             <div class="col-md">
-                    <div class="form-floating mb-3">
-                        <select asp-for="normal_side" class="form-select">
+                <div class="form-floating mb-2">
+                    <select asp-for="normal_side" class="form-select form-control-sm">
                             <option value=""></option>
                             <option value="Debit">Debit</option>
                             <option value="Credit">Credit</option>
@@ -162,14 +162,224 @@
                     </div>
             </div>
             <div class="col-md">
-                    @* //empty spot *@
+                    @* empty spot *@
             </div>
         </div>
-        <div class="form-floating mb-3">
-            <input type="submit" value="Create" class="btn btn-primary" />
+        <hr />
+        <h3 class="text-center mb-4 margin-top-20">Begining/Ending Journal</h3>
+        @* begin journal entry *@
+        @* transaction group 1 *@
+        <div class="journal-container text-center">            
+            @* heading row *@
+            <div class="journal-row-heading">
+                <div class="row g-1">
+                    <div class="col-00 heading-col-00">
+                        <span class="journl-number-col"></span>
+                    </div>
+                    <div class="col-md-2 margin-left-5">
+                        <div>
+                            <span>Date:</span>
+                        </div>                        
+                    </div>
+                    <div class="col-md-3 margin-left-5">
+                        <div>
+                            <span>Debit Account:</span>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-3 margin-left-5">
+                        <div>
+                            <span>Credit Account:</span>
+                        </div>                        
+                    </div>
+                    <div class="col-md-1 margin-left-5">
+                        <div>
+                            <span>Post Ref:</span>
+                        </div>                        
+                    </div>
+                    <div class="col-md-1 margin-left-5">
+                        <div>
+                            <span>Dr.</span>
+                        </div>                        
+                    </div>
+                    <div class="col-md-1 margin-left-5">
+                        <div>
+                            <span>Cr.</span>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+            <div class="journal-row">
+            @* entry 1.1 row *@
+            <div class="row g-1 journal-item-row">
+                <div class="col-00">
+                    <span class="journl-number-col">1</span>
+                </div>
+                <div class="col-md-2">
+                    <div class="">
+                        <input type="date" class="form-control" id="InputDate1">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select md-3" aria-label="Small select example">
+                        <option selected>Select a debit account</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="">
+                        <input type="text" class="form-control empty" id="empt1" disabled>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="number" class="form-control" id="PostRef1-1">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="number" class="form-control" id="Dr1">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="text" class="form-control empty" id="empt2" disabled>
+                    </div>
+                </div>
+            </div>
+            @* entry 1.2 row *@
+                <div class="row g-1 journal-item-row">
+                <div class="col-00">
+                    <span class="journl-number-col"></span>
+                </div>
+                <div class="col-md-2">
+                    <div class="">
+                        <input type="number" class="form-control empty" id="empty3" disabled>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="">
+                        <input type="number" class="form-control empty" id="empty4" disabled>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" aria-label="Small select example">
+                        <option selected>Select a debit account</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="number" class="form-control" id="PostRef1-2">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="text" class="form-control empty" id="empt2" disabled>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="number" class="form-control" id="Cr1">
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="journal-row ">
+            @* transaction group 2 *@
+            @* heading row *@
+            @* entry 2.1 row *@
+                <div class="row g-1 journal-item-row">
+                <div class="col-00">
+                    <span class="journl-number-col">2</span>
+                </div>
+                <div class="col-md-2">
+                    <div class="md-2">
+                        <input type="date" class="form-control" id="InputDat2">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select md-3" aria-label="Small select example">
+                        <option selected>Select a debit account</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-1">
+                        <input type="text" class="form-control empty" id="empt2-1" disabled>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="number" class="form-control" id="PostRef2-1">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="number" class="form-control" id="Dr2">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="text" class="form-control empty" id="empt2-2" disabled>
+                    </div>
+                </div>
+            </div>
+            @* entry 2.2 row *@
+                <div class="row g-1 journal-item-row">
+                <div class="col-00">
+                    <span class="journl-number-col"></span>
+                </div>
+                <div class="col-md-2">
+                    <div class="">
+                        <input type="number" class="form-control empty" id="empty2-3" disabled>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="">
+                        <input type="number" class="form-control empty" id="empty2-4" disabled>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" aria-label="Small select example">
+                        <option selected>Select a debit account</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="number" class="form-control" id="PostRef2-2">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="text" class="form-control empty" id="empt2-5" disabled>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="">
+                        <input type="number" class="form-control" id="Cr2">
+                    </div>
+                </div>
+                </<div>
+            </div>
         </div>
-        <div>
-            <a asp-action="ChartOfAccounts">Back to List</a>
+        @* save btn *@
+        <div class="mt-3 text-align-l">
+            <div class="form-floating">
+                <input type="submit" value="Create" class="btn btn-primary"/>
+            </div>
+            <div>        
+                <a asp-action="ChartOfAccounts">Back to List</a>
+            </div>
         </div>
     </form>
 </div>
