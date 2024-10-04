@@ -71,16 +71,16 @@
 </style>
 
 <div class="text-center mb-5  margin-top-120">
-    <h1 class="display-4 mb-5">On-Account</h1>
-    <img class="text-center mb-5" src="~/img/OnAccount_Logo_White_B.png" style="max-height: 200px;" />
+    <div class="landing-logo-text">
+         <img class="text-center mb-2" src="~/img/on_account_logo_lable.png" style="max-height: 120px;" />
+    </div
+    <div class="=landing-logo">
+        <img class="text-center mb-2" src="~/img/OnAccount_Logo_White_B.png" style="max-height: 200px;" />
+    </div>
     <p class="text-center mb-4">Secure your future inflows with On-Account.</p>
-    <div class="home-button-container">
+    <div class="text-center home-button-container">
         <div class="home-button-row">
-
             <a href="/Identity/Account/Register?url" class="register-button mb-4">Register</a>
-@*             <a class="naregister-button mb-4" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-            <a class="flexbox-item-text" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register</a> *@
-             
         </div>
         <div class="home-button-row">
             <a href="/Identity/Account/Login" class="login-button mb-4">Login</a>

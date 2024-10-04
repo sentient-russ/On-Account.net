@@ -96,26 +96,94 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-document.addEventListener('DOMContentLoaded', function () {
-    var managementBtns = document.querySelectorAll('#management-btn, .management-btn');
-    var managementMenu = document.getElementById('management-menu');
-    function toggleMenu(menu) {
-        if (menu.style.display === 'none' || menu.style.display === '') {
-            menu.style.display = 'block';
-        } else {
-            menu.style.display = 'none';
+
+/*End Munu Buttons*/
+
+////////////////////
+document.querySelectorAll('.currencyField').forEach(function (input) {
+    input.addEventListener('input', function (e) {
+        let input = e.target;
+        let value = input.value;
+        let selectionEnd = input.selectionEnd;
+        let selectionStart = input.selectionStart;
+        let cursorPosition = input.selectionStart;
+        var newTail = "";
+        if (value.includes(".")) {
+            var split = value.split(".");
+            if (split[1] === "") {
+                newTail = ".";
+            }
         }
-    }
-    managementBtns.forEach(function (btn) {
-        btn.addEventListener('click', function (event) {
-            event.stopPropagation();
-            toggleMenu(managementMenu);
-        });
-    });
-    document.addEventListener('click', function (event) {
-        if (!managementMenu.contains(event.target) && !Array.from(managementBtns).includes(event.target)) {
-            managementMenu.style.display = 'none';
+        value = value.replace(/[^0-9.]/g, '');
+        let parts = value.split('.');
+        let integerPart = parts[0];
+        let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        let formattedValue = integerPart;
+        if (decimalPart) {
+            formattedValue += '.' + decimalPart;
         }
+        if (formattedValue.length >= 1) {
+            formattedValue = '$' + formattedValue;
+        }
+        formattedValue = formattedValue + newTail;
+        input.value = formattedValue;
+        let newPosition = 0;
+        if (formattedValue.length >= value.length) {
+            const diff = formattedValue.length - value.length;
+            cursorPosition = cursorPosition + diff;
+        }
+        if (formattedValue.length < value.length) {
+            const diff = formattedValue.length - value.length;
+            cursorPosition = cursorPosition - diff;
+        }
+
+        input.setSelectionRange(cursorPosition, cursorPosition);
     });
 });
-/*End Munu Buttons*/
+
+
+
+/*
+///////////////
+
+document.getElementById('current_balance').addEventListener('input', function (e) {
+    let input = e.target;
+    let value = input.value;
+    let selectionEnd = input.selectionEnd;
+    let selectionStart = input.selectionStart;
+    let cursorPosition = input.selectionStart;
+    var newTail = "";
+    if (value.includes(".")) {
+        var split = value.split(".");
+        if (split[1] === "") {
+            newTail = ".";
+        } 
+    }
+    value = value.replace(/[^0-9.]/g, '');
+    let parts = value.split('.');
+    let integerPart = parts[0];
+    let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    let formattedValue = integerPart;
+    if (decimalPart) {
+        formattedValue += '.' + decimalPart;
+    }
+    if (formattedValue.length >= 1) {
+        formattedValue = '$' + formattedValue;
+    }
+    formattedValue = formattedValue + newTail;
+    input.value = formattedValue;
+    let newPosition = 0;
+    if (formattedValue.length >= value.length) {
+        const diff = formattedValue.length - value.length;
+        cursorPosition = cursorPosition + diff;
+    } 
+    if (formattedValue.length < value.length) {
+        const diff = formattedValue.length - value.length;
+        cursorPosition = cursorPosition - diff;
+    } 
+
+    input.setSelectionRange(cursorPosition, cursorPosition);
+});
+*/

@@ -10,12 +10,13 @@
         <form id="profile-form" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." hidden />
-                <label asp-for="Username" class="form-label"></label>
+                <input asp-for="Input.Username" class="form-control" placeholder="Username" disabled />
+                <label asp-for="Input.Username" class="form-label"></label>
+                <span asp-validation-for="Input.Username" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
                 <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number." />
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                <label asp-for="Input.PhoneNumber" class="control-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="profile-picture-profile-container">

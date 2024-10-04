@@ -7,8 +7,7 @@ namespace oa.Services
     {
         public UserModelComparer() { }
         public List<LogModel> Compare(AppUserModel oldUser, AppUserModel newUser)
-        {
-            
+        {            
             List<LogModel> logList = new List<LogModel>();
             PropertyInfo[] properties = typeof(AppUserModel).GetProperties();
             foreach(PropertyInfo property in properties)
@@ -38,8 +37,6 @@ namespace oa.Services
                     logList.RemoveAt(i);
                 }
             }
-
-
             return logList;
         }
     }

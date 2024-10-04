@@ -1,0 +1,178 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using oa.Areas.Identity.Data
+@using oa.Services
+@using oa.Models;
+@model oa.Models.AccountsModel
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+@inject UserService CurrentUser
+@{
+    AppUserModel currentUser = CurrentUser.GetUser();
+    var UsersEmail = currentUser.Email;
+    var UserName = currentUser.ScreenName;
+}
+
+<div class="form-container  margin-top-120">
+    <form asp-action="SaveNewAccountDetails" class="add-account-form-container">
+        <h3 class="text-center">Update Account</h3>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input asp-for="number" class="form-control" placeholder="number" />
+                    <label asp-for="number" class="control-label"></label>
+                    <span asp-validation-for="number" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input asp-for="created_by" class="form-control" placeholder="created_by" value="@UserName" disabled />
+                    <label asp-for="created_by" class="control-label"></label>
+                    <span asp-validation-for="created_by" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        @* row 2 *@
+         <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input asp-for="name" class="form-control" placeholder="name" />
+                    <label asp-for="name" class="control-label"></label>
+                    <span asp-validation-for="name" class="text-danger"></span>
+                </div>
+
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input asp-for="account_creation_date" class="form-control" placeholder="account_creation_date" disabled />
+                    <label asp-for="account_creation_date" class="control-label"></label>
+                    <span asp-validation-for="account_creation_date" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        @* row 3 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input asp-for="description" class="form-control" placeholder="description" />
+                    <label asp-for="description" class="control-label"></label>
+                    <span asp-validation-for="description" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input asp-for="starting_balance" class="form-control currencyField" placeholder="starting_balance" data-val="false" disabled />
+                    <label asp-for="starting_balance" class="control-label"></label>
+                    <span asp-validation-for="starting_balance" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        @* row 4 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <select asp-for="type" class="form-select">
+                        <option value=""></option>
+                        <option value="Asset">Asset</option>
+                        <option value="Liability">Liability</option>
+                        <option value="Equity">Equity</option>
+                        <option value="Revenue">Revenue</option>
+                        <option value="Expense">Expense</option>
+                        <option value="Non-operating">Non-operating</option>
+                    </select>
+                    <label asp-for="type" class="control-label"></label>
+                    <span asp-validation-for="type" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <input asp-for="current_balance" class="form-control currencyField" placeholder="current_balance" data-val="false" disabled />
+                    <label asp-for="current_balance" class="control-label"></label>
+                    <span asp-validation-for="current_balance" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        @* row 5 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <select asp-for="term" class="form-select">
+                        <option value=""></option>
+                        <option value="Short">Short Term</option>
+                        <option value="Long">Long Term</option>
+                    </select>
+                    <label asp-for="term" class="control-label"></label>
+                    <span asp-validation-for="term" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <select asp-for="sort_priority" class="form-select">
+                        <option value=""></option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                    <label asp-for="sort_priority" class="control-label"></label>
+                    <span asp-validation-for="sort_priority" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        @* row 6 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <select asp-for="statement_type" class="form-select">
+                        <option value=""></option>
+                        <option value="pl">Profit & Loss</option>
+                        <option value="bs">Balance Sheet</option>
+                        <option value="oe">Owner's Equity</option>
+                    </select>
+                    <label asp-for="statement_type" class="control-label"></label>
+                    <span asp-validation-for="statement_type" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-3">
+                    <select asp-for="account_status" class="form-select">
+                        <option value=""></option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                    <label asp-for="account_status" class="control-label"></label>
+                    <span asp-validation-for="account_status" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        @* row 7 *@
+        <div class="row g-2">
+            <div class="col-md">
+                    <div class="form-floating mb-3">
+                        <select asp-for="normal_side" class="form-select">
+                            <option value=""></option>
+                            <option value="Debit">Debit</option>
+                            <option value="Credit">Credit</option>
+                        </select>
+                        <label asp-for="normal_side" class="control-label"></label>
+                        <span asp-validation-for="normal_side" class="text-danger"></span>
+                    </div>
+            </div>
+            <div class="col-md">
+                    @* //empty spot *@
+            </div>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+        <div>
+            <a asp-action="ChartOfAccounts">Back to List</a>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
