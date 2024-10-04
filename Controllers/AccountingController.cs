@@ -41,7 +41,6 @@ namespace OnAccount.Controllers
             return View(accountsModels);
         }
 
-
         [Authorize(Roles = "Administrator, Manager")]
         public async Task<IActionResult> AddAccount()
         {
@@ -52,13 +51,9 @@ namespace OnAccount.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveNewAccountDetails([Bind("id, name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance")] AccountsModel newaccountDetailsIn)
         {
-
             AccountsModel newAccountModel = new AccountsModel();
-            newAccountModel = newaccountDetailsIn;
-            Console.WriteLine("it worked");
-
-
-
+            newAccountModel = _dbConnectorService.CreateNewAccount(newaccountDetailsIn);
+            //add code here to add the first accounts journal entry.
             return RedirectToAction(nameof(ChartOfAccounts));
         }
 

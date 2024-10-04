@@ -416,46 +416,6 @@ namespace oa.Services
             }
             return foundRoles;
         }
-
-        public List<AccountsModel> GetChartOfAccounts()
-        {
-            List<AccountsModel> accountsModels = new List<AccountsModel>();
-            try
-            {
-                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "SELECT * FROM on_account.account";
-                conn1.Open();
-                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
-                MySqlDataReader reader1 = cmd1.ExecuteReader();
-                while (reader1.Read())
-                {
-                    AccountsModel account = new AccountsModel();
-                    account.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
-                    account.name = reader1.IsDBNull(1) ? null : reader1.GetString(1);
-                    account.number = reader1.IsDBNull(2) ? null : reader1.GetInt32(2);
-                    account.sort_priority = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
-                    account.normal_side = reader1.IsDBNull(4) ? null : reader1.GetString(4);
-                    account.description = reader1.IsDBNull(5) ? null : reader1.GetString(5);
-                    account.type = reader1.IsDBNull(6) ? null : reader1.GetString(6);
-                    account.term = reader1.IsDBNull(7) ? null : reader1.GetString(7);
-                    account.statement_type = reader1.IsDBNull(8) ? null : reader1.GetString(8);
-                    account.account_creation_date = reader1.IsDBNull(9) ? null : reader1.GetDateTime(9);
-                    account.opening_transaction_num = reader1.IsDBNull(10) ? null : reader1.GetString(10);
-                    account.current_balance = reader1.IsDBNull(11) ? null : reader1.GetDecimal(11);
-                    account.created_by = reader1.IsDBNull(12) ? null : reader1.GetString(12);
-                    account.account_status = reader1.IsDBNull(13) ? null : reader1.GetString(13);
-                    account.starting_balance = reader1.IsDBNull(14) ? null : reader1.GetDecimal(14);
-                    accountsModels.Add(account);
-                }
-                reader1.Close();
-                conn1.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            return accountsModels;
-        }
         /*
          * Deletes one users record from the UserRoles table. This helps to prevent the user from having more than on role asssigned to a single account.
          */
@@ -531,7 +491,165 @@ namespace oa.Services
             }
 
         }
+        /*
+         * Gets all accounts
+         */
+        public List<AccountsModel> GetChartOfAccounts()
+        {
+            List<AccountsModel> accountsModels = new List<AccountsModel>();
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.account";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    AccountsModel account = new AccountsModel();
+                    account.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    account.name = reader1.IsDBNull(1) ? null : reader1.GetString(1);
+                    account.number = reader1.IsDBNull(2) ? null : reader1.GetInt32(2);
+                    account.sort_priority = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+                    account.normal_side = reader1.IsDBNull(4) ? null : reader1.GetString(4);
+                    account.description = reader1.IsDBNull(5) ? null : reader1.GetString(5);
+                    account.type = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    account.term = reader1.IsDBNull(7) ? null : reader1.GetString(7);
+                    account.statement_type = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    account.account_creation_date = reader1.IsDBNull(9) ? null : reader1.GetDateTime(9);
+                    account.opening_transaction_num = reader1.IsDBNull(10) ? null : reader1.GetString(10);
+                    account.current_balance = reader1.IsDBNull(11) ? null : reader1.GetDecimal(11);
+                    account.created_by = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    account.account_status = reader1.IsDBNull(13) ? null : reader1.GetString(13);
+                    account.starting_balance = reader1.IsDBNull(14) ? null : reader1.GetDecimal(14);
+                    accountsModels.Add(account);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return accountsModels;
+        }
 
+        /*
+         *      
+         * Gets a sindgle account based on its name
+         */
+        public AccountsModel GetAccount(string nameIn)
+        {
+            AccountsModel account = new AccountsModel();
+            try
+            {                
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.account WHERE name = @name";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@name", nameIn);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {                    
+                    account.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    account.name = reader1.IsDBNull(1) ? null : reader1.GetString(1);
+                    account.number = reader1.IsDBNull(2) ? null : reader1.GetInt32(2);
+                    account.sort_priority = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+                    account.normal_side = reader1.IsDBNull(4) ? null : reader1.GetString(4);
+                    account.description = reader1.IsDBNull(5) ? null : reader1.GetString(5);
+                    account.type = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    account.term = reader1.IsDBNull(7) ? null : reader1.GetString(7);
+                    account.statement_type = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    account.account_creation_date = reader1.IsDBNull(9) ? null : reader1.GetDateTime(9);
+                    account.opening_transaction_num = reader1.IsDBNull(10) ? null : reader1.GetString(10);
+                    account.current_balance = reader1.IsDBNull(11) ? null : reader1.GetDecimal(11);
+                    account.created_by = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    account.account_status = reader1.IsDBNull(13) ? null : reader1.GetString(13);
+                    account.starting_balance = reader1.IsDBNull(14) ? null : reader1.GetDecimal(14);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return account;
+        }
+        /*
+         * Creates a new account in the db and return the updated model with a new accountId number
+         */
+        public AccountsModel CreateNewAccount(AccountsModel accountModelIn)
+        {
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "UPDATE on_account.account SET name = @name, number = @number, sort_priority = @sort_priority, normal_side = @normal_side, description = @description, type = @type, term = @term, statement_type = @statement_type, opening_transaction_num = @opening_transaction_num, current_balance = @current_balance, created_by = @created_by, account_status = @account_status, starting_balance = @starting_balance";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@name", accountModelIn.name);
+                cmd1.Parameters.AddWithValue("@number", accountModelIn.number);
+                cmd1.Parameters.AddWithValue("@sort_priority", accountModelIn.sort_priority);
+                cmd1.Parameters.AddWithValue("@normal_side", accountModelIn.normal_side);
+                cmd1.Parameters.AddWithValue("@description", accountModelIn.description);
+                cmd1.Parameters.AddWithValue("@type", accountModelIn.type);
+                cmd1.Parameters.AddWithValue("@term", accountModelIn.term);
+                cmd1.Parameters.AddWithValue("@statement_type", accountModelIn.statement_type);
+                cmd1.Parameters.AddWithValue("@opening_transaction_num", accountModelIn.opening_transaction_num);
+                cmd1.Parameters.AddWithValue("@current_balance", accountModelIn.current_balance);
+                cmd1.Parameters.AddWithValue("@created_by", accountModelIn.created_by);
+                cmd1.Parameters.AddWithValue("@account_status", accountModelIn.account_status);
+                cmd1.Parameters.AddWithValue("@starting_balance", accountModelIn.starting_balance);
+
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            AccountsModel modelWithId = GetAccount(accountModelIn.name);
+            return modelWithId;
+        }
+        /*
+         * Updates account in the db and return the updated model with a new accountId number
+         */
+        public bool UpdateExistingAccount(AccountsModel acountModelIn)
+        {
+            bool Succeeded = false;
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "UPDATE on_account.account SET name = @name, number = @number, sort_priority = @sort_priority, normal_side = @normal_side, description = @description, type = @type, term = @term, statement_type = @statement_type, opening_transaction_num = @opening_transaction_num, current_balance = @current_balance, created_by = @created_by, account_status = @account_status, starting_balance = @starting_balance WHERE id = @id";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@id", acountModelIn.id);
+                cmd1.Parameters.AddWithValue("@name", acountModelIn.name);
+                cmd1.Parameters.AddWithValue("@number", acountModelIn.number);
+                cmd1.Parameters.AddWithValue("@sort_priority", acountModelIn.sort_priority);
+                cmd1.Parameters.AddWithValue("@normal_side", acountModelIn.normal_side);
+                cmd1.Parameters.AddWithValue("@description", acountModelIn.description);
+                cmd1.Parameters.AddWithValue("@type", acountModelIn.type);
+                cmd1.Parameters.AddWithValue("@term", acountModelIn.term);
+                cmd1.Parameters.AddWithValue("@statement_type", acountModelIn.statement_type);
+                cmd1.Parameters.AddWithValue("@opening_transaction_num", acountModelIn.opening_transaction_num);
+                cmd1.Parameters.AddWithValue("@current_balance", acountModelIn.current_balance);
+                cmd1.Parameters.AddWithValue("@created_by", acountModelIn.created_by);
+                cmd1.Parameters.AddWithValue("@account_status", acountModelIn.account_status);
+                cmd1.Parameters.AddWithValue("@starting_balance", acountModelIn.starting_balance);
+
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+                Succeeded = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return Succeeded;
+        }
     }
 
 }

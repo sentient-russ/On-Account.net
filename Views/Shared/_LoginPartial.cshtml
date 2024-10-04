@@ -22,9 +22,9 @@
                 @if (!string.IsNullOrEmpty(currentUser.File)){
                     
                     <img class="profile-picture-header-img" src="~/uploads/@currentUser.File" alt="Profile Image"  />
-                    <span> @UserName</span>
+                    <span class="screenname-text"> @UserName</span>
                 } else {
-                    <span> @UserName</span>
+                     <span class ="screenname-text"> @UserName</span>
                 }
             </div>
         </a>

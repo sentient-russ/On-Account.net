@@ -4,6 +4,7 @@
 @inject UserManager<AppUser> UserManager
 <!DOCTYPE html>
 <html lang="en">
+@* <html lang="en" data-bs-theme="dark"> *@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,7 +31,7 @@
                     @{
                         @if (User.IsInRole("Manager") || User.IsInRole("Accountant") || User.IsInRole("Administrator"))
                         {
-                            <div class="btn btn-outline-primary margin-right-5 background-default-b" id="accounting-btn">
+                            <div class="btn btn-outline-primary margin-right-5 background-default-b accounting-btn" id="accounting-btn">
                                 <span class="">Action Menu</span>
                             </div>
                             <div class="accounting-menu-container" style="display:none" id="accounting-menu">
@@ -78,12 +79,11 @@
                                 </div>
                             </div>
                             <a asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                                <div class="btn btn-outline-primary background-white margin-right-20" style="min-height: 40px;">
+                                <div class="btn btn-outline-primary background-white margin-right-20  accounting-btn" style="min-height: 40px;">
                                     Logout
                                 </div>
                             </a>
-                        }
-                      
+                        }                      
                     }
                </div> 
             </div>
