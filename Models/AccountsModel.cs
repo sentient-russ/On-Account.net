@@ -99,7 +99,8 @@ namespace oa.Models
         [DisplayName("Starting Balance:")]
         public decimal? starting_balance { get; set; }
 
-
+        [NotMapped]
+        public string? dr1 { get; set; }
 
     }
 }
