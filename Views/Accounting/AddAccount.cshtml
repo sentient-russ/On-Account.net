@@ -62,7 +62,7 @@
             </div>
             <div class="col-md">
                 <div class="form-floating mb-2">
-                    <input asp-for="starting_balance" class="form-control form-control-sm currencyField" placeholder="starting_balance" data-val="false" disabled />
+                    <input asp-for="starting_balance" class="form-control form-control-sm currencyField" placeholder="starting_balance" data-val="false"  />
                     <label asp-for="starting_balance" class="control-label"></label>
                     <span asp-validation-for="starting_balance" class="text-danger"></span>
                 </div>
@@ -87,7 +87,7 @@
             </div>
             <div class="col-md">
                 <div class="form-floating mb-2">
-                    <input asp-for="current_balance" class="form-control form-control-sm currencyField" placeholder="current_balance" data-val="false" disabled />
+                    <input asp-for="current_balance" class="form-control form-control-sm currencyField" placeholder="current_balance" data-val="false" />
                     <label asp-for="current_balance" class="control-label"></label>
                     <span asp-validation-for="current_balance" class="text-danger"></span>
                 </div>
@@ -239,8 +239,8 @@
                     </div>
                 </div>
                 <div class="col-md-1">
-                    <div class="">
-                        <input type="number" class="form-control" id="Dr1">
+                    <div class="text-center">
+                        <input asp-for="dr1" class="form-control form-control-sm currencyField" value="$0.00" data-val="false"/>
                     </div>
                 </div>
                 <div class="col-md-1">
@@ -284,7 +284,7 @@
                 </div>
                 <div class="col-md-1">
                     <div class="">
-                        <input type="number" class="form-control" id="Cr1">
+                        <input type="number" class="form-control  currencyField" id="Cr1">
                     </div>
                 </div>
             </div>
@@ -322,7 +322,7 @@
                 </div>
                 <div class="col-md-1">
                     <div class="">
-                        <input type="number" class="form-control" id="Dr2">
+                        <input type="number" class="form-control currencyField" id="Dr2">
                     </div>
                 </div>
                 <div class="col-md-1">
@@ -366,7 +366,7 @@
                 </div>
                 <div class="col-md-1">
                     <div class="">
-                        <input type="number" class="form-control" id="Cr2">
+                        <input type="number" class="form-control currencyField" id="Cr2">
                     </div>
                 </div>
                 </<div>

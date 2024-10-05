@@ -101,89 +101,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
 ////////////////////
 document.querySelectorAll('.currencyField').forEach(function (input) {
-    input.addEventListener('input', function (e) {
+    input.addEventListener('blur', function (e) {
         let input = e.target;
         let value = input.value;
-        let selectionEnd = input.selectionEnd;
-        let selectionStart = input.selectionStart;
-        let cursorPosition = input.selectionStart;
-        var newTail = "";
-        if (value.includes(".")) {
-            var split = value.split(".");
-            if (split[1] === "") {
-                newTail = ".";
-            }
-        }
+
         value = value.replace(/[^0-9.]/g, '');
         let parts = value.split('.');
         let integerPart = parts[0];
         let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
         integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         let formattedValue = integerPart;
-        if (decimalPart) {
-            formattedValue += '.' + decimalPart;
-        }
+        
         if (formattedValue.length >= 1) {
             formattedValue = '$' + formattedValue;
         }
+
+        let newTail = "";
+        if (decimalPart === "") {
+            newTail = ".00";
+        } else if (decimalPart.length == 1) {
+            newTail = "." + decimalPart + "0";
+        } else if (decimalPart.length == 2) {
+            newTail = "." + decimalPart;
+        } else if (decimalPart.length > 2) {
+            newTail = "." + decimalPart.substring(0, 2);
+        }
+
         formattedValue = formattedValue + newTail;
         input.value = formattedValue;
-        let newPosition = 0;
-        if (formattedValue.length >= value.length) {
-            const diff = formattedValue.length - value.length;
-            cursorPosition = cursorPosition + diff;
-        }
-        if (formattedValue.length < value.length) {
-            const diff = formattedValue.length - value.length;
-            cursorPosition = cursorPosition - diff;
-        }
-
-        input.setSelectionRange(cursorPosition, cursorPosition);
     });
 });
-
-
-
-/*
-///////////////
-
-document.getElementById('current_balance').addEventListener('input', function (e) {
-    let input = e.target;
-    let value = input.value;
-    let selectionEnd = input.selectionEnd;
-    let selectionStart = input.selectionStart;
-    let cursorPosition = input.selectionStart;
-    var newTail = "";
-    if (value.includes(".")) {
-        var split = value.split(".");
-        if (split[1] === "") {
-            newTail = ".";
-        } 
-    }
-    value = value.replace(/[^0-9.]/g, '');
-    let parts = value.split('.');
-    let integerPart = parts[0];
-    let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    let formattedValue = integerPart;
-    if (decimalPart) {
-        formattedValue += '.' + decimalPart;
-    }
-    if (formattedValue.length >= 1) {
-        formattedValue = '$' + formattedValue;
-    }
-    formattedValue = formattedValue + newTail;
-    input.value = formattedValue;
-    let newPosition = 0;
-    if (formattedValue.length >= value.length) {
-        const diff = formattedValue.length - value.length;
-        cursorPosition = cursorPosition + diff;
-    } 
-    if (formattedValue.length < value.length) {
-        const diff = formattedValue.length - value.length;
-        cursorPosition = cursorPosition - diff;
-    } 
-
-    input.setSelectionRange(cursorPosition, cursorPosition);
-});
-*/
