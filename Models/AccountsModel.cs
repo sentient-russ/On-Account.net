@@ -99,8 +99,44 @@ namespace oa.Models
         [DisplayName("Starting Balance:")]
         public decimal? starting_balance { get; set; }
 
+        [Required]
         [NotMapped]
-        public string? dr1 { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime? transaction_1_date { get; set; } = System.DateTime.Today;
+
+        [Required]
+        [NotMapped]
+        public string? transaction_1_dr { get; set; }
+
+        [Required]
+        [NotMapped]
+        public string? transaction_1_cr { get; set; }
+
+
+        [Required]
+        [NotMapped]
+        [DataType(DataType.Date)]
+        public DateTime? transaction_2_date { get; set; } = System.DateTime.Today;
+
+        [Required]
+        [NotMapped]
+        public string? transaction_2_dr { get; set; }
+
+        [Required]
+        [NotMapped]
+        public string? transaction_2_cr { get; set; }
+
+        [Required]
+        [NotMapped]
+        public string? transaction_dr_total { get; set; }
+
+        [Required]
+        [NotMapped]
+        public string? transaction_cr_total { get; set; }
+
+        [ValidateNever]
+        [NotMapped]
+        public List<AccountsModel>? accounts_list { get; set; }
 
     }
 }

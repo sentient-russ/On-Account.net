@@ -98,24 +98,21 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /*End Munu Buttons*/
-
-////////////////////
 document.querySelectorAll('.currencyField').forEach(function (input) {
     input.addEventListener('blur', function (e) {
         let input = e.target;
         let value = input.value;
-
         value = value.replace(/[^0-9.]/g, '');
         let parts = value.split('.');
         let integerPart = parts[0];
         let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
         integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         let formattedValue = integerPart;
-        
         if (formattedValue.length >= 1) {
             formattedValue = '$' + formattedValue;
+        } else {
+            formattedValue = '$0';
         }
-
         let newTail = "";
         if (decimalPart === "") {
             newTail = ".00";
@@ -126,7 +123,6 @@ document.querySelectorAll('.currencyField').forEach(function (input) {
         } else if (decimalPart.length > 2) {
             newTail = "." + decimalPart.substring(0, 2);
         }
-
         formattedValue = formattedValue + newTail;
         input.value = formattedValue;
     });
