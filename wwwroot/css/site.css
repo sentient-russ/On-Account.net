@@ -234,8 +234,8 @@ header {
     flex-direction: column;
     width: 120%;
     height: 50px;
-    margin-left: 10px;
-    margin-top: 10px;
+    padding-left: 10px;
+    padding-top: 6px;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
 }
 .nav-row{
@@ -268,8 +268,9 @@ header {
 
 }
 .login-name-container {
-    display:flex;
-    flex-direction:column;
+    display: flex;
+    flex-direction: column;
+    margin-top: 3px;
 }
 .login-name-container-inner-row{
     display: flex;

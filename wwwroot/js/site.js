@@ -5,7 +5,6 @@
 var screen_name_element = document.getElementById("input_screen_name");
 var first_name_element = document.getElementById("input_first_name");
 var last_name_element = document.getElementById("input_last_name");
-/*screen_name_element.value = RSteele0924;*/
 var lastname = "";
 var firstname = "";
 var firstInitial = "";
@@ -106,7 +105,16 @@ document.querySelectorAll('.currencyField').forEach(function (input) {
         let parts = value.split('.');
         let integerPart = parts[0];
         let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+        
+
+        //remove leading zero's
+        var flt = parseInt(integerPart);
+        console.log(flt);
+        //back to str
+        integerPart = flt.toString()
+
         integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
         let formattedValue = integerPart;
         if (formattedValue.length >= 1) {
             formattedValue = '$' + formattedValue;
@@ -126,4 +134,155 @@ document.querySelectorAll('.currencyField').forEach(function (input) {
         formattedValue = formattedValue + newTail;
         input.value = formattedValue;
     });
+});
+
+/*Create Account Form*/
+var starting_balance = document.getElementById('starting_balance');
+var transaction_1_cr = document.getElementById('transaction_1_cr');
+var transaction_2_cr = document.getElementById('transaction_2_cr');
+var transaction_1_dr = document.getElementById('transaction_1_dr');
+var transaction_2_dr = document.getElementById('transaction_2_dr');
+var transaction_dr_total = document.getElementById('transaction_dr_total');
+var transaction_cr_total = document.getElementById('transaction_cr_total');
+transaction_1_cr.addEventListener('focusout', function (e) {
+    //calculate the column total and update the sum
+    let input = e.target;
+    var cr1 = input.value;
+    var cr2 = transaction_2_cr.value;
+    cr1 = cr1.replace(/[^0-9.]/g, '');
+    cr2 = cr2.replace(/[^0-9.]/g, '');
+    var total = parseFloat(cr1) + parseFloat(cr2);
+    transaction_cr_total.value = total;
+    //format the line total
+    let value = transaction_cr_total.value;
+    value = value.replace(/[^0-9.]/g, '');
+    let parts = value.split('.');
+    let integerPart = parts[0];
+    let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    let formattedValue = integerPart;
+    if (formattedValue.length >= 1) {
+        formattedValue = '$' + formattedValue;
+    } else {
+        formattedValue = '$0';
+    }
+    let newTail = "";
+    if (decimalPart === "") {
+        newTail = ".00";
+    } else if (decimalPart.length == 1) {
+        newTail = "." + decimalPart + "0";
+    } else if (decimalPart.length == 2) {
+        newTail = "." + decimalPart;
+    } else if (decimalPart.length > 2) {
+        newTail = "." + decimalPart.substring(0, 2);
+    }
+    formattedValue = formattedValue + newTail;
+    transaction_cr_total.value = formattedValue;
+    starting_balance.value = formattedValue;
+});
+transaction_2_cr.addEventListener('focusout', function (e) {
+    //calculate the column total and update the sum
+    let input = e.target;
+    var cr1 = input.value;
+    var cr2 = transaction_1_cr.value;
+    cr1 = cr1.replace(/[^0-9.]/g, '');
+    cr2 = cr2.replace(/[^0-9.]/g, '');
+    var total = parseFloat(cr1) + parseFloat(cr2);
+    transaction_cr_total.value = total;
+    //format the line total
+    let value = transaction_cr_total.value;
+    value = value.replace(/[^0-9.]/g, '');
+    let parts = value.split('.');
+    let integerPart = parts[0];
+    let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    let formattedValue = integerPart;
+    if (formattedValue.length >= 1) {
+        formattedValue = '$' + formattedValue;
+    } else {
+        formattedValue = '$0';
+    }
+    let newTail = "";
+    if (decimalPart === "") {
+        newTail = ".00";
+    } else if (decimalPart.length == 1) {
+        newTail = "." + decimalPart + "0";
+    } else if (decimalPart.length == 2) {
+        newTail = "." + decimalPart;
+    } else if (decimalPart.length > 2) {
+        newTail = "." + decimalPart.substring(0, 2);
+    }
+    formattedValue = formattedValue + newTail;
+    transaction_cr_total.value = formattedValue;
+
+});
+transaction_1_dr.addEventListener('focusout', function (e) {
+    //calculate the column total and update the sum
+    let input = e.target;
+    var dr1 = input.value;
+    var dr2 = transaction_2_dr.value;
+    dr1 = dr1.replace(/[^0-9.]/g, '');
+    dr2 = dr2.replace(/[^0-9.]/g, '');
+    var total = parseFloat(dr1) + parseFloat(dr2);
+    transaction_dr_total.value = total;
+    //format the line total
+    let value = transaction_dr_total.value;
+    value = value.replace(/[^0-9.]/g, '');
+    let parts = value.split('.');
+    let integerPart = parts[0];
+    let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    let formattedValue = integerPart;
+    if (formattedValue.length >= 1) {
+        formattedValue = '$' + formattedValue;
+    } else {
+        formattedValue = '$0';
+    }
+    let newTail = "";
+    if (decimalPart === "") {
+        newTail = ".00";
+    } else if (decimalPart.length == 1) {
+        newTail = "." + decimalPart + "0";
+    } else if (decimalPart.length == 2) {
+        newTail = "." + decimalPart;
+    } else if (decimalPart.length > 2) {
+        newTail = "." + decimalPart.substring(0, 2);
+    }
+    formattedValue = formattedValue + newTail;
+    transaction_dr_total.value = formattedValue;
+});
+transaction_2_dr.addEventListener('focusout', function (e) {
+    //calculate the column total and update the sum
+    let input = e.target;
+    var dr1 = input.value;
+    var dr2 = transaction_1_dr.value;
+    dr1 = dr1.replace(/[^0-9.]/g, '');
+    dr2 = dr2.replace(/[^0-9.]/g, '');
+    var total = parseFloat(dr1) + parseFloat(dr2);
+    transaction_dr_total.value = total;
+    //format the line total
+    let value = transaction_dr_total.value;
+    value = value.replace(/[^0-9.]/g, '');
+    let parts = value.split('.');
+    let integerPart = parts[0];
+    let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    let formattedValue = integerPart;
+    if (formattedValue.length >= 1) {
+        formattedValue = '$' + formattedValue;
+    } else {
+        formattedValue = '$0';
+    }
+    let newTail = "";
+    if (decimalPart === "") {
+        newTail = ".00";
+    } else if (decimalPart.length == 1) {
+        newTail = "." + decimalPart + "0";
+    } else if (decimalPart.length == 2) {
+        newTail = "." + decimalPart;
+    } else if (decimalPart.length > 2) {
+        newTail = "." + decimalPart.substring(0, 2);
+    }
+    formattedValue = formattedValue + newTail;
+    transaction_dr_total.value = formattedValue;
 });
