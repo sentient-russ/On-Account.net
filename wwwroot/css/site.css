@@ -437,8 +437,9 @@ input.currency {
     background-color: #6c757d0b;
     border-radius: 5px;
     height: 100px;
-    padding-top: 2.5px;
+    padding-top: 6.5px;
 }
+
 .journal-row-heading {
     display: grid;
     padding-left: 20px;
@@ -470,9 +471,36 @@ input.currency {
     margin-left: 5px;
 }
 .empty {
-    background-color: #6c757d0b;
+    background-color: transparent !important;
+    border-color: transparent !important;
     opacity: 1;
 }
 .text-align-l{
     text-align: left;
+}
+/*///////////////////////////*/
+.journal-row-bottom {
+    margin-top: 5px;
+    border: 1px solid #6c757d31;
+    background-color: #6c757d0b;
+    border-radius: 5px;
+    height: 150px;
+    padding-top: 2.5px;
+}
+.hr-journal-totals{
+    margin-top:2px;
+    margin-bottom:2px;
+    font-weight:900;
+}
+.journal-totals {
+    display:flex;
+    font-weight: 800 !important;
+    font-size: 28px !important;
+    justify-content: end !important;
+    padding-top:7.5px;
+    padding-left:20px;
+    font-size: 24px !important;
+}
+.text-end{
+    text-align:end;
 }

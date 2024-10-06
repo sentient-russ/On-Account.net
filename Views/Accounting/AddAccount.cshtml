@@ -10,6 +10,9 @@
     AppUserModel currentUser = CurrentUser.GetUser();
     var UsersEmail = currentUser.Email;
     var UserName = currentUser.ScreenName;
+
+    DateTime today = System.DateTime.Today;
+
 }
 
 <div class="form-container  margin-top-120">
@@ -62,7 +65,7 @@
             </div>
             <div class="col-md">
                 <div class="form-floating mb-2">
-                    <input asp-for="starting_balance" class="form-control form-control-sm currencyField" placeholder="starting_balance" data-val="false"  />
+                    <input asp-for="starting_balance" class="form-control form-control-sm currencyField" placeholder="starting_balance" data-val="false" id="starting_balance" />
                     <label asp-for="starting_balance" class="control-label"></label>
                     <span asp-validation-for="starting_balance" class="text-danger"></span>
                 </div>
@@ -217,15 +220,23 @@
                 </div>
                 <div class="col-md-2">
                     <div class="">
-                        <input type="date" class="form-control" id="InputDate1">
+
+                            <input asp-for="transaction_1_date" class="form-control" value=" @Html.TextBoxFor(model => model.transaction_1_date, "{0:d/M/yyyy}", new { id = "datepicker" })" placeholder="transaction_1_date" />
                     </div>
                 </div>
                 <div class="col-md-3">
                     <select class="form-select md-3" aria-label="Small select example">
                         <option selected>Select a debit account</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                            @{
+                                if (Model.accounts_list != null)
+                                {
+                                    @foreach (var item in Model.accounts_list)
+                                    {
+                                        <option value="@Html.DisplayFor(modelItem => item.name)">@Html.DisplayFor(modelItem => item.number) - @Html.DisplayFor(modelItem => item.name)</option>
+
+                                    }
+                                }
+                            }
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -235,12 +246,12 @@
                 </div>
                 <div class="col-md-1">
                     <div class="">
-                        <input type="number" class="form-control" id="PostRef1-1">
+                            <input type="number" class="form-control" id="PostRef1-1" disabled>
                     </div>
                 </div>
                 <div class="col-md-1">
                     <div class="text-center">
-                        <input asp-for="dr1" class="form-control form-control-sm currencyField" value="$0.00" data-val="false"/>
+                            <input asp-for="transaction_1_dr" class="form-control text-end currencyField" value="$0.00" data-val="false" />
                     </div>
                 </div>
                 <div class="col-md-1">
@@ -266,15 +277,22 @@
                 </div>
                 <div class="col-md-3">
                     <select class="form-select" aria-label="Small select example">
-                        <option selected>Select a debit account</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                        <option selected>Select a credit account</option>
+                            @{
+                                if (Model.accounts_list != null)
+                                {
+                                    @foreach (var item in Model.accounts_list)
+                                    {
+                                        <option value="@Html.DisplayFor(modelItem => item.name)">@Html.DisplayFor(modelItem => item.number) - @Html.DisplayFor(modelItem => item.name)</option>
+
+                                    }
+                                }
+                            }
                     </select>
                 </div>
                 <div class="col-md-1">
                     <div class="">
-                        <input type="number" class="form-control" id="PostRef1-2">
+                        <input type="number" class="form-control" id="PostRef1-2" disabled>
                     </div>
                 </div>
                 <div class="col-md-1">
@@ -284,94 +302,153 @@
                 </div>
                 <div class="col-md-1">
                     <div class="">
-                        <input type="number" class="form-control  currencyField" id="Cr1">
+                            <input asp-for="transaction_1_cr" class="form-control text-end currencyField" value="$0.00" data-val="false" />
                     </div>
                 </div>
             </div>
             </div>
-            <div class="journal-row ">
-            @* transaction group 2 *@
-            @* heading row *@
-            @* entry 2.1 row *@
+            <div class="journal-row">
+                @* transaction group 2 *@
+                @* heading row *@
+                @* entry 2.1 row *@
+                    <div class="row g-1 journal-item-row">
+                    <div class="col-00">
+                        <span class="journl-number-col">2</span>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="md-2">
+                            <input type="date" class="form-control" id="InputDat2">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select md-3" aria-label="Small select example">
+                            <option selected>Select a debit account</option>
+                                @{
+                                    if (Model.accounts_list != null)
+                                    {
+                                        @foreach (var item in Model.accounts_list)
+                                        {
+                                            <option value="@Html.DisplayFor(modelItem => item.name)">@Html.DisplayFor(modelItem => item.number) - @Html.DisplayFor(modelItem => item.name)</option>
+
+                                        }
+                                    }
+                                }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-1">
+                            <input type="text" class="form-control empty" id="empt2-1" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="">
+                                <input type="number" class="form-control" id="PostRef2-1" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="">
+                            <input asp-for="transaction_2_dr" class="form-control text-end currencyField" value="$0.00" data-val="false" />
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="">
+                            <input type="text" class="form-control empty" id="empt2-2" disabled>
+                        </div>
+                    </div>
+                </div>
+                @* entry 2.2 row *@
                 <div class="row g-1 journal-item-row">
-                <div class="col-00">
-                    <span class="journl-number-col">2</span>
-                </div>
-                <div class="col-md-2">
-                    <div class="md-2">
-                        <input type="date" class="form-control" id="InputDat2">
+                    <div class="col-00">
+                        <span class="journl-number-col"></span>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select md-3" aria-label="Small select example">
-                        <option selected>Select a debit account</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-1">
-                        <input type="text" class="form-control empty" id="empt2-1" disabled>
+                    <div class="col-md-2">
+                        <div class="">
+                            <input type="number" class="form-control empty" id="empty2-3" disabled>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="">
-                        <input type="number" class="form-control" id="PostRef2-1">
+                    <div class="col-md-3">
+                        <div class="">
+                            <input type="number" class="form-control empty" id="empty2-4" disabled>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="">
-                        <input type="number" class="form-control currencyField" id="Dr2">
+                    <div class="col-md-3">
+                        <select class="form-select" aria-label="Small select example">
+                            <option selected>Select a credit account</option>
+                                @{
+                                    if (Model.accounts_list != null)
+                                    {
+                                        @foreach (var item in Model.accounts_list)
+                                        {
+                                            <option value="@Html.DisplayFor(modelItem => item.name)">@Html.DisplayFor(modelItem => item.number) - @Html.DisplayFor(modelItem => item.name)</option>
+
+                                        }
+                                    }
+                                }
+                        </select>
                     </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="">
-                        <input type="text" class="form-control empty" id="empt2-2" disabled>
+                    <div class="col-md-1">
+                        <div class="">
+                                <input type="number" class="form-control" id="PostRef2-2" disabled>
+                        </div>
                     </div>
-                </div>
+                    <div class="col-md-1">
+                        <div class="">
+                            <input type="text" class="form-control empty" id="empt2-5" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="">
+                            <input asp-for="transaction_2_cr" class="form-control text-end currencyField" value="$0.00" data-val="false" />
+                        </div>
+                    </div>
+                </<div>
+
+              </div>
+
             </div>
-            @* entry 2.2 row *@
-                <div class="row g-1 journal-item-row">
+        </div>
+            @* totals *@
+            <div class="row g-1 journal-item-row">
                 <div class="col-00">
                     <span class="journl-number-col"></span>
                 </div>
                 <div class="col-md-2">
                     <div class="">
-                        <input type="number" class="form-control empty" id="empty2-3" disabled>
+                        <input type="number" class="form-control empty" disabled>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="">
-                        <input type="number" class="form-control empty" id="empty2-4" disabled>
+                        <input type="number" class="form-control empty" disabled>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select" aria-label="Small select example">
-                        <option selected>Select a debit account</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                    </select>
-                </div>
-                <div class="col-md-1">
                     <div class="">
-                        <input type="number" class="form-control" id="PostRef2-2">
+                        <input type="number" class="form-control empty" disabled>
                     </div>
                 </div>
                 <div class="col-md-1">
-                    <div class="">
-                        <input type="text" class="form-control empty" id="empt2-5" disabled>
+                    <div class="journal-totals">
+                        <bold>
+                            <input type="number" class="form-control empty" placeholder="Totals" disabled>
+                        </bold>
                     </div>
                 </div>
                 <div class="col-md-1">
+                    <hr class="hr-journal-totals" />
+                    <hr class="hr-journal-totals" />
                     <div class="">
-                        <input type="number" class="form-control currencyField" id="Cr2">
+                        <input asp-for="transaction_dr_total" class="form-control text-end currencyField" value="$0.00" data-val="false" id="transaction_dr_total" />
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <hr class="hr-journal-totals" />
+                    <hr class="hr-journal-totals" />
+                    <div class="">
+                        <input asp-for="transaction_cr_total" class="form-control text-end currencyField" value="$0.00" data-val="false" id="transaction_cr_total" />
                     </div>
                 </div>
                 </<div>
-            </div>
-        </div>
         @* save btn *@
         <div class="mt-3 text-align-l">
             <div class="form-floating">

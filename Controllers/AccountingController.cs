@@ -44,7 +44,9 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager")]
         public async Task<IActionResult> AddAccount()
         {
+            List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             AccountsModel accountModel = new AccountsModel();
+            accountModel.accounts_list = currentAccounts;
             return View(accountModel);
         }
 
