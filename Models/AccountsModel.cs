@@ -138,5 +138,10 @@ namespace oa.Models
         [NotMapped]
         public List<AccountsModel>? accounts_list { get; set; }
 
+        [ValidateNever]
+        [NotMapped]
+        public string? error_state { get; set; }
+
+
     }
 }

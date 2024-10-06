@@ -339,13 +339,14 @@ header {
     flex-direction: column;
     position: fixed;
     top: 55px;
-    right: 100px;
+    right: 69px;
     min-width: 150px;
     max-width: 150px;
     border: 1px solid;
     border-radius: 5px 5px 5px 5px;
     border-color: var(--bs-blue);
     background-color: white;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
     z-index: 2;
 }
 
@@ -504,4 +505,44 @@ input.currency {
 }
 .text-end{
     text-align:end;
+}
+
+.icon-container{
+    display: flex;
+    flex-direction: column;
+}
+.icon-row{
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    padding-top: 20px;
+    margin:20px;
+
+}
+.outer-container {
+    display: flex;
+    flex-direction: column;
+    padding-bottom:20px;
+}
+.container-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+
+}
+.btn-container {
+    display: flex;
+    flex-direction: column;
+    width:20%;
+}
+.btn-row{
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+}
+.btn-img{
+
+}
+.btn-label{
+    font-size: 24px;
 }
