@@ -3,6 +3,65 @@
 @inject UserManager<AppUser> UserManager
 <h1 class="text-center margin-top-120">Accounting Home</h1>
 <p class="text-center">Welcome @UserManager.GetUserName(User).</p>
-<li class="nav-item">
-    <a class="nav-link text-dark"  asp-controller="Accounting" asp-action="ChartOfAccounts">Chart Of Accounts</a>
-</li>
+    
+<div class="outer-container">
+    <div class="container-row">
+        <div class="btn-container">
+            <div class="btn-row">
+                <a class="nav-link text-dark" asp-controller="Accounting" asp-action="ChartOfAccounts"><img class="btn-img" width="150" src="~/img/journal.jpg" /></a>
+            </div>
+            <div class="btn-row">
+                <span class="btn-label">Journal Entry</span>
+            </div>
+        </div>
+        <div class="btn-container">
+            <div class="btn-row">
+                <a class="nav-link text-dark" asp-controller="Accounting" asp-action="ChartOfAccounts"><img class="btn-img" width="150" src="~/img/chart_of_accounts.jpg" /></a>
+            </div>
+            <div class="btn-row">
+                <span class="btn-label">Chart of Accounts</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-row">
+        <div class="btn-container">
+            <div class="btn-row">
+                <a class="nav-link text-dark" asp-controller="Accounting" asp-action="ChartOfAccounts"><img class="btn-img" width="150" src="~/img/income_statement.jpg" /></a>
+            </div>
+            <div class="btn-row">
+                <span class="btn-label">Income Statement</span>
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <div class="btn-row">
+                <a class="nav-link text-dark" asp-controller="Accounting" asp-action="ChartOfAccounts"><img class="btn-img" width="150" src="~/img/balance_sheet.jpg" /></a>
+            </div>
+            <div class="btn-row">
+                <span class="btn-label">Balance Sheet</span>
+            </div>
+        </div>
+        <div class="btn-container">
+            <div class="btn-row">
+                <a class="nav-link text-dark" asp-controller="Accounting" asp-action="ChartOfAccounts"><img class="btn-img" width="150" src="~/img/trial_balance.jpg" /></a>
+            </div>
+            <div class="btn-row">
+                <span class="btn-label">Trial Balance</span>
+            </div>
+        </div>
+        <div class="btn-container">
+            <div class="btn-row">
+                <a class="nav-link text-dark" asp-controller="Accounting" asp-action="ChartOfAccounts"><img class="btn-img" width="150" src="~/img/equity.jpg" /></a>
+            </div>
+            <div class="btn-row">
+                <span class="btn-label">Chart of Accounts</span>
+            </div>
+        </div>
+      
+
+    </div>
+</div>
+
+
+
