@@ -8,6 +8,10 @@
     "sqlite1": {
       "ignored": "true",
       "type": "sqlite"
+    },
+    "secrets1": {
+      "type": "secrets.user",
+      "dynamicId": null
     }
   }
 }
