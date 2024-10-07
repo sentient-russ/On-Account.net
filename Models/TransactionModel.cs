@@ -41,8 +41,17 @@ namespace oa.Models
         [Required]
         [DataType(DataType.Text)]
         [StringLength(50, MinimumLength = 1)]
-        [DisplayName("Account created by:")]
+        [DisplayName("Created by:")]
         public string? created_by { get; set; }
+
+        [DisplayName("Opening transaction:")]
+        public bool? isOpening { get; set; } = false;
+
+        [Required]
+        [DataType(DataType.Text)]
+        [StringLength(50, MinimumLength = 1)]
+        [DisplayName("Status:")]
+        public string? status { get; set; } = "Pending";
 
     }
 }

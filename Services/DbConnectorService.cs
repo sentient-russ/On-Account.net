@@ -144,6 +144,7 @@ namespace oa.Services
             if (anotherLogList.Count > 0)
             {
                 //send the list to a method that inserts the logged endtries into the database.
+                AddLogs(anotherLogList);
             }
 
             bool Succeeded = false;
@@ -344,7 +345,6 @@ namespace oa.Services
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
-
                 while (reader1.Read())
                 {
                     PassHashModel userHash = new PassHashModel();
@@ -390,7 +390,6 @@ namespace oa.Services
         public List<RoleModel> GetUserRole(string userRoleIn)
         {
             List<RoleModel> foundRoles = new List<RoleModel>();
-
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
@@ -435,9 +434,7 @@ namespace oa.Services
             {
                 Console.WriteLine(ex.ToString());
             }
-
         }
-
         /*
          * Gets a role id based on the role type as a string
          */
@@ -535,7 +532,6 @@ namespace oa.Services
         }
 
         /*
-         *      
          * Gets a sindgle account based on its name
          */
         public AccountsModel GetAccount(string nameIn)
@@ -578,6 +574,7 @@ namespace oa.Services
         }
         /*
          * Creates a new account in the db and return the updated model with a new accountId number
+         * Note that this is only sutable for new accounts
          */
         public AccountsModel CreateNewAccount(AccountsModel accountModelIn)
         {
@@ -614,8 +611,9 @@ namespace oa.Services
         }
         /*
          * Updates account in the db and return the updated model with a new accountId number
+         * 
          */
-        public bool UpdateExistingAccount(AccountsModel acountModelIn)
+        public bool UpdateExistingAccount(AccountsModel accountModelIn)
         {
             bool Succeeded = false;
             try
@@ -624,21 +622,20 @@ namespace oa.Services
                 string command = "UPDATE on_account.account SET name = @name, number = @number, sort_priority = @sort_priority, normal_side = @normal_side, description = @description, type = @type, term = @term, statement_type = @statement_type, opening_transaction_num = @opening_transaction_num, current_balance = @current_balance, created_by = @created_by, account_status = @account_status, starting_balance = @starting_balance WHERE id = @id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
-                cmd1.Parameters.AddWithValue("@id", acountModelIn.id);
-                cmd1.Parameters.AddWithValue("@name", acountModelIn.name);
-                cmd1.Parameters.AddWithValue("@number", acountModelIn.number);
-                cmd1.Parameters.AddWithValue("@sort_priority", acountModelIn.sort_priority);
-                cmd1.Parameters.AddWithValue("@normal_side", acountModelIn.normal_side);
-                cmd1.Parameters.AddWithValue("@description", acountModelIn.description);
-                cmd1.Parameters.AddWithValue("@type", acountModelIn.type);
-                cmd1.Parameters.AddWithValue("@term", acountModelIn.term);
-                cmd1.Parameters.AddWithValue("@statement_type", acountModelIn.statement_type);
-                cmd1.Parameters.AddWithValue("@opening_transaction_num", acountModelIn.opening_transaction_num);
-                cmd1.Parameters.AddWithValue("@current_balance", acountModelIn.current_balance);
-                cmd1.Parameters.AddWithValue("@created_by", acountModelIn.created_by);
-                cmd1.Parameters.AddWithValue("@account_status", acountModelIn.account_status);
-                cmd1.Parameters.AddWithValue("@starting_balance", acountModelIn.starting_balance);
-
+                cmd1.Parameters.AddWithValue("@id", accountModelIn.id);
+                cmd1.Parameters.AddWithValue("@name", accountModelIn.name);
+                cmd1.Parameters.AddWithValue("@number", accountModelIn.number);
+                cmd1.Parameters.AddWithValue("@sort_priority", accountModelIn.sort_priority);
+                cmd1.Parameters.AddWithValue("@normal_side", accountModelIn.normal_side);
+                cmd1.Parameters.AddWithValue("@description", accountModelIn.description);
+                cmd1.Parameters.AddWithValue("@type", accountModelIn.type);
+                cmd1.Parameters.AddWithValue("@term", accountModelIn.term);
+                cmd1.Parameters.AddWithValue("@statement_type", accountModelIn.statement_type);
+                cmd1.Parameters.AddWithValue("@opening_transaction_num", accountModelIn.opening_transaction_num);
+                cmd1.Parameters.AddWithValue("@current_balance", accountModelIn.current_balance);
+                cmd1.Parameters.AddWithValue("@created_by", accountModelIn.created_by);
+                cmd1.Parameters.AddWithValue("@account_status", accountModelIn.account_status);
+                cmd1.Parameters.AddWithValue("@starting_balance", accountModelIn.starting_balance);
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
                 conn1.Close();
@@ -650,8 +647,121 @@ namespace oa.Services
             }
             return Succeeded;
         }
-    }
+        /*
+         * Adds a single transaction 
+         */
+        public void AddTransaction(TransactionModel transactionIn)
+        {
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "UPDATE on_account.transaction SET debit_account = @debit_account, debit_amount = @debit_amount, credit_account = @credit_account, credit_amount = @credit_amount, transaction_date = @transaction_date, created_by = @created_by";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@debit_account", transactionIn.debit_account);
+                cmd1.Parameters.AddWithValue("@debit_amount", transactionIn.debit_amount);
+                cmd1.Parameters.AddWithValue("@credit_account", transactionIn.credit_account);
+                cmd1.Parameters.AddWithValue("@credit_amount", transactionIn.credit_amount);
+                cmd1.Parameters.AddWithValue("@transaction_date", transactionIn.transaction_date);
+                cmd1.Parameters.AddWithValue("@created_by", transactionIn.created_by);
 
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        /*
+         * Gets a list of the logs account based on its name
+         */
+        public List<LogModel> GetLogs()
+        {
+            List<LogModel> logs = new List<LogModel>();
+            
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.log";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    LogModel log = new LogModel();
+                    log.Id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    log.ChangeDate = reader1.IsDBNull(1) ? null : reader1.GetDateTime(1);
+                    log.UserId = reader1.IsDBNull(2) ? null : reader1.GetString(2);
+                    log.ChangedFrom = reader1.IsDBNull(3) ? null : reader1.GetString(3);
+                    log.ChangedTo = reader1.IsDBNull(4) ? null : reader1.GetString(4);
+                    logs.Add(log);
+
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return logs;
+        }
+        /*
+         * Adds a single log to the db
+         */
+        public void AddLog(LogModel logIn)
+        {
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "UPDATE on_account.log SET ChangeDate = @ChangeDate, UserId = @UserId, ChangedFrom = @ChangedFrom, ChangedTo = @ChangedTo";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@ChangeDate", logIn.ChangeDate);
+                cmd1.Parameters.AddWithValue("@UserId", logIn.UserId);
+                cmd1.Parameters.AddWithValue("@ChangedFrom", logIn.ChangedFrom);
+                cmd1.Parameters.AddWithValue("@ChangedTo", logIn.ChangedTo);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        /*
+         * Adds a list logs to the db
+         */
+        public void AddLogs(List<LogModel> logIn)
+        {
+            try
+            {
+                for (int i = 0; i < logIn.Count; i++) {
+                    using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                    string command = "UPDATE on_account.log SET ChangeDate = @ChangeDate, UserId = @UserId, ChangedFrom = @ChangedFrom, ChangedTo = @ChangedTo";
+                    conn1.Open();
+                    MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                    cmd1.Parameters.AddWithValue("@ChangeDate", logIn[i].ChangeDate);
+                    cmd1.Parameters.AddWithValue("@UserId", logIn[i].UserId);
+                    cmd1.Parameters.AddWithValue("@ChangedFrom", logIn[i].ChangedFrom);
+                    cmd1.Parameters.AddWithValue("@ChangedTo", logIn[i].ChangedTo);
+                    MySqlDataReader reader1 = cmd1.ExecuteReader();
+                    reader1.Close();
+                    conn1.Close();
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+        }
+    }
 }
 
 

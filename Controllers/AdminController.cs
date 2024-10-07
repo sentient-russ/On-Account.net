@@ -157,5 +157,14 @@ namespace OnAccount.Controllers
             _dbConnectorService.disableLockout(Id);
             return RedirectToAction(nameof(EditAccountDetails), new { Id = Id });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewLogs(string? Id)
+        {
+            List<LogModel> logs = new List<LogModel>();
+
+
+            return View(logs);
+        }
     }
 }

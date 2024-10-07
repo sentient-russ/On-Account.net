@@ -140,6 +140,13 @@ namespace oa.Models
 
         [ValidateNever]
         [NotMapped]
+        [Range(0.01, 1000000000.00, ErrorMessage = "Please enter a valid dollar amount.")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        [DisplayName("Total:")]
+        public string? total_adjustment { get; set; }
+
+        [ValidateNever]
+        [NotMapped]
         public string? error_state { get; set; }
 
 
