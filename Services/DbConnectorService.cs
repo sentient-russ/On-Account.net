@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
 using System.Diagnostics;
 using System.Collections;
+using System.Globalization;
 
 namespace oa.Services
 {
@@ -31,10 +32,10 @@ namespace oa.Services
 
                 if (await reader.ReadAsync())
                 {
-                    foundDOB = reader.GetString(0);
+                    foundDOB = reader.GetValue(0).ToString();
                 }
 
-                foundDOB = foundDOB.Substring(0, 10);
+                foundDOB = foundDOB.Substring(0, 9);
             }
             catch (Exception ex)
             {

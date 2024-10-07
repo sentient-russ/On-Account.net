@@ -52,10 +52,19 @@ namespace oa.Areas.Identity.Pages.Account
         {
             if (ModelState.IsValid)
             {
-                Task<string> task = _dbConnectorService.GetUserDateOfBirthByEmailAsync(Input.Email);
+                Task<string> task = _dbConnectorService.GetUserDateOfBirthByEmailAsync(Input.Email);// returns MM-dd-yyyy
                 string dob = await task;
+                dob=dob.Replace("/","-");
+                string yearOfInput = Input.SecurityQuestion.Substring(0,4);
+                string inputDOB=Input.SecurityQuestion;
+                int inputDOBLength = Input.SecurityQuestion.Length;
+                string inputDob =(inputDOB.Substring(5)+"-"+yearOfInput);
+                if (dob.Length == 9 && !inputDob[0].Equals('1')){
+                    inputDob = inputDob.Substring(1);
+                }
+                bool dobBool= inputDob==dob;
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user == null || (!(await _userManager.IsEmailConfirmedAsync(user) && Input.SecurityQuestion == dob)))
+                if (user == null || (!(await _userManager.IsEmailConfirmedAsync(user) && inputDob == dob)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");
