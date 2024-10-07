@@ -534,16 +534,16 @@ namespace oa.Services
         /*
          * Gets a sindgle account based on its name
          */
-        public AccountsModel GetAccount(string nameIn)
+        public AccountsModel GetAccount(string idIn)
         {
             AccountsModel account = new AccountsModel();
             try
             {                
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "SELECT * FROM on_account.account WHERE name = @name";
+                string command = "SELECT * FROM on_account.account WHERE id = @Id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
-                cmd1.Parameters.AddWithValue("@name", nameIn);
+                cmd1.Parameters.AddWithValue("@id", idIn);
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 while (reader1.Read())
                 {                    
@@ -581,7 +581,9 @@ namespace oa.Services
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "UPDATE on_account.account SET name = @name, number = @number, sort_priority = @sort_priority, normal_side = @normal_side, description = @description, type = @type, term = @term, statement_type = @statement_type, opening_transaction_num = @opening_transaction_num, current_balance = @current_balance, created_by = @created_by, account_status = @account_status, starting_balance = @starting_balance";
+                string command = "INSERT INTO on_account.account (name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, account_creation_date)" +
+                    " VALUES (@name, @number, @sort_priority, @normal_side, @description, @type, @term, @statement_type, @opening_transaction_num, @current_balance, @created_by, @account_status, @starting_balance, @account_creation_date)";
+                
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@name", accountModelIn.name);
@@ -597,6 +599,7 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@created_by", accountModelIn.created_by);
                 cmd1.Parameters.AddWithValue("@account_status", accountModelIn.account_status);
                 cmd1.Parameters.AddWithValue("@starting_balance", accountModelIn.starting_balance);
+                cmd1.Parameters.AddWithValue("@account_creation_date", accountModelIn.account_creation_date);
 
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
@@ -613,13 +616,12 @@ namespace oa.Services
          * Updates account in the db and return the updated model with a new accountId number
          * 
          */
-        public bool UpdateExistingAccount(AccountsModel accountModelIn)
+        public void UpdateExistingAccount(AccountsModel accountModelIn)
         {
-            bool Succeeded = false;
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "UPDATE on_account.account SET name = @name, number = @number, sort_priority = @sort_priority, normal_side = @normal_side, description = @description, type = @type, term = @term, statement_type = @statement_type, opening_transaction_num = @opening_transaction_num, current_balance = @current_balance, created_by = @created_by, account_status = @account_status, starting_balance = @starting_balance WHERE id = @id";
+                string command = "UPDATE on_account.account SET name = @name, number = @number, sort_priority = @sort_priority, normal_side = @normal_side, description = @description, type = @type, term = @term, statement_type = @statement_type, opening_transaction_num = @opening_transaction_num, current_balance = @current_balance, created_by = @created_by, account_status = @account_status, starting_balance = @starting_balance, account_creation_date = @account_creation_date WHERE id = @id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@id", accountModelIn.id);
@@ -636,16 +638,15 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@created_by", accountModelIn.created_by);
                 cmd1.Parameters.AddWithValue("@account_status", accountModelIn.account_status);
                 cmd1.Parameters.AddWithValue("@starting_balance", accountModelIn.starting_balance);
+                cmd1.Parameters.AddWithValue("@account_creation_date", accountModelIn.account_creation_date);
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
                 conn1.Close();
-                Succeeded = true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
-            return Succeeded;
         }
         /*
          * Adds a single transaction 
@@ -716,7 +717,8 @@ namespace oa.Services
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "UPDATE on_account.log SET ChangeDate = @ChangeDate, UserId = @UserId, ChangedFrom = @ChangedFrom, ChangedTo = @ChangedTo";
+                string command = "INSERT on_account.log (ChangeDate, UserId, ChangedFrom, ChangedTo)" +
+                    " VALUES (@ChangeDate, @UserId, @ChangedFrom, @ChangedTo)";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@ChangeDate", logIn.ChangeDate);
@@ -741,7 +743,8 @@ namespace oa.Services
             {
                 for (int i = 0; i < logIn.Count; i++) {
                     using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                    string command = "UPDATE on_account.log SET ChangeDate = @ChangeDate, UserId = @UserId, ChangedFrom = @ChangedFrom, ChangedTo = @ChangedTo";
+                    string command = "INSERT on_account.log (ChangeDate, UserId, ChangedFrom, ChangedTo)" +
+                    " VALUES (@ChangeDate, @UserId, @ChangedFrom, @ChangedTo)";
                     conn1.Open();
                     MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                     cmd1.Parameters.AddWithValue("@ChangeDate", logIn[i].ChangeDate);

@@ -55,16 +55,24 @@ namespace OnAccount.Controllers
         {
             AccountsModel newAccountModel = newaccountDetailsIn;
             newAccountModel = _dbConnectorService.CreateNewAccount(newAccountModel);
-            //add code here to add the first accounts journal entry.
             return RedirectToAction(nameof(ChartOfAccounts));
         }
 
         [Authorize(Roles = "Administrator, Manager, Accountant")]
-        public async Task<IActionResult> EditAccount()
+        public async Task<IActionResult> EditAccount(string? Id)
         {
-            List<AccountsModel> accountsModels = _dbConnectorService.GetChartOfAccounts();
-            return View(accountsModels);
+            AccountsModel account = _dbConnectorService.GetAccount(Id);
+            return View(account);
         }
+
+        [Authorize(Roles = "Administrator, Manager, Accountant")]
+        public async Task<IActionResult> UpdateAccountDetails([Bind("id, name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, transaction_1_date, transaction_1_dr, transaction_1_cr, transaction_2_date, transaction_2_dr, transaction_2_cr, transaction_dr_total, transaction_cr_total, accounts_list")] AccountsModel accountDetailsIn)
+        {
+            AccountsModel accountIn = accountDetailsIn;
+            _dbConnectorService.UpdateExistingAccount(accountIn);
+            return RedirectToAction(nameof(ChartOfAccounts));
+        }
+
         [Authorize(Roles = "Administrator, Manager")]
         public async Task<IActionResult> DisableAccount()
         {
