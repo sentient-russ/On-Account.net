@@ -17,6 +17,7 @@ namespace oa.Services
     public class DbConnectorService
     {
         public DbConnectorService() { }
+
         /*
         * Gets a user's date of birth based on their email
         */
