@@ -146,15 +146,37 @@ namespace OnAccount.Controllers
         [HttpGet]
         public async Task<IActionResult> Lock(string? Id)
         {
+            AppUserModel userModel = new AppUserModel();
+            string? userScreeName = "";
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null)
+            {
+                var userId = user.Id;
+                userModel = _dbConnectorService.GetUserDetailsById(userId);
+                userScreeName = userModel.ScreenName;  //This is the login name for the user log.
+                // all other properties are now available is the userModel object two lines above.
+            }
+
             //disable user account
-            _dbConnectorService.immediateLockout(Id);
+            //_dbConnectorService.immediateLockout(Id, userScreenName);
             return RedirectToAction(nameof(EditAccountDetails), new { Id = Id });
         }
         [HttpGet]
         public async Task<IActionResult> Unlock(string? Id)
         {
+            AppUserModel userModel = new AppUserModel();
+            string? userScreeName = "";
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null)
+            {
+                var userId = user.Id;
+                userModel = _dbConnectorService.GetUserDetailsById(userId);
+                userScreeName = userModel.ScreenName;  //This is the login name for the user log.
+                // all other properties are now available is the userModel object two lines above.
+            }
+
             //enable user account
-            _dbConnectorService.disableLockout(Id);
+            //_dbConnectorService.disableLockout(Id, userScreenName);
             return RedirectToAction(nameof(EditAccountDetails), new { Id = Id });
         }
 

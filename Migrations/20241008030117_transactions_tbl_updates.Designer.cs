@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using oa.Areas.Identity.Data;
 
@@ -10,9 +11,10 @@ using oa.Areas.Identity.Data;
 namespace oa.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241008030117_transactions_tbl_updates")]
+    partial class transactions_tbl_updates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -335,10 +337,6 @@ namespace oa.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<string>("transaction_1_description")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
                     b.Property<string>("type")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -544,12 +542,11 @@ namespace oa.Migrations
                     b.Property<double?>("debit_amount")
                         .HasColumnType("double");
 
-                    b.Property<string>("description")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
                     b.Property<bool?>("is_opening")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("journal_id")
+                        .HasColumnType("int");
 
                     b.Property<string>("status")
                         .IsRequired()

@@ -8,35 +8,31 @@ namespace oa.Models
     {
         public int? id { get; set; }
 
-        [IntegerValidator(MinValue = 1, MaxValue = 10000, ExcludeRange = true)]
-        [DisplayName("Journal Id:")]
-        public int? journal_id { get; set; }
-
         [Required]
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 1)]
         [DisplayName("Debit Account:")]
-        public string? debit_account { get; set; }
+        public int? debit_account { get; set; }
 
         [IntegerValidator(MinValue = 1, MaxValue = 1000000000, ExcludeRange = true)]
         [DisplayName("Dr.")]
-        public int? debit_amount { get; set; }
+        public double? debit_amount { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 1)]
         [DisplayName("Credit Account")]
-        public string? credit_account { get; set; }
+        public int? credit_account { get; set; }
 
         [Required]
         [IntegerValidator(MinValue = 1, MaxValue = 1000000000, ExcludeRange = true)]
         [DisplayName("Cr.")]
-        public int? credit_amount { get; set; }
+        public double? credit_amount { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]
         [DisplayName("Transaction date:")]
-        public int? transaction_date { get; set; }
+        public DateTime? transaction_date { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
@@ -45,13 +41,18 @@ namespace oa.Models
         public string? created_by { get; set; }
 
         [DisplayName("Opening transaction:")]
-        public bool? isOpening { get; set; } = false;
+        public bool? is_opening { get; set; } = false;
 
         [Required]
         [DataType(DataType.Text)]
         [StringLength(50, MinimumLength = 1)]
         [DisplayName("Status:")]
         public string? status { get; set; } = "Pending";
+
+        [DataType(DataType.Text)]
+        [StringLength(100, MinimumLength = 0)]
+        [DisplayName("Description:")]
+        public string? description { get; set; } = "";
 
     }
 }

@@ -1,4 +1,7 @@
-﻿/*
+﻿const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+/*
  * ensure adhearand to form input standards.
  */
 // these are set up from the div id's to manipulate the username as the user types.
@@ -152,7 +155,6 @@ function updateStartingBalance() {
     var str2 = document.getElementById('transaction_cr_total').value.toString();
 
     if (str1.localeCompare(str2) == 0) {
-        console.log("values are the same.");
         save_journal_btn.disabled = false;
         if (starting_balance != null) {
             starting_balance.value = transaction_dr_total.value;
@@ -162,7 +164,6 @@ function updateStartingBalance() {
         
         document.getElementById("journal_validation").innerHTML = "";
     } else {
-        console.log("values are the different.");
         document.getElementById("journal_validation").innerHTML = "The transaction is out of balance.";
         save_journal_btn.disabled = 'disabled';
     }
@@ -172,11 +173,11 @@ if (transaction_1_cr != null) {
     transaction_1_cr.addEventListener('focusout', function (e) {
         //calculate the column total and update the sum
         let input = e.target;
-        var cr1 = input.value;
-        var cr2 = transaction_2_cr.value;
-        cr1 = cr1.replace(/[^0-9.]/g, '');
-        cr2 = cr2.replace(/[^0-9.]/g, '');
-        var total = parseFloat(cr1) + parseFloat(cr2);
+        var dr1 = input.value;
+        var dr2 = transaction_2_cr.value;
+        dr1 = dr1.replace(/[^0-9.]/g, '');
+        dr2 = dr2.replace(/[^0-9.]/g, '');
+        var total = parseFloat(dr1) + parseFloat(dr2);
         transaction_cr_total.value = total;
         //format the line total
         let value = transaction_cr_total.value;
@@ -204,6 +205,31 @@ if (transaction_1_cr != null) {
         formattedValue = formattedValue + newTail;
         transaction_cr_total.value = formattedValue;
         updateStartingBalance();
+        //and again for the current cell value
+        value = input.value;
+        value = value.replace(/[^0-9.]/g, '');
+        parts = value.split('.');
+        integerPart = parts[0];
+        decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        formattedValue = integerPart;
+        if (formattedValue.length >= 1) {
+            formattedValue = '$' + formattedValue;
+        } else {
+            formattedValue = '$0';
+        }
+        newTail = "";
+        if (decimalPart === "") {
+            newTail = ".00";
+        } else if (decimalPart.length == 1) {
+            newTail = "." + decimalPart + "0";
+        } else if (decimalPart.length == 2) {
+            newTail = "." + decimalPart;
+        } else if (decimalPart.length > 2) {
+            newTail = "." + decimalPart.substring(0, 2);
+        }
+        formattedValue = formattedValue + newTail;
+        transaction_1_cr.value = formattedValue;
 
     });
 }
@@ -212,14 +238,16 @@ if (transaction_2_cr != null) {
     transaction_2_cr.addEventListener('focusout', function (e) {
         //calculate the column total and update the sum
         let input = e.target;
-        var cr1 = input.value;
-        var cr2 = transaction_1_cr.value;
-        cr1 = cr1.replace(/[^0-9.]/g, '');
-        cr2 = cr2.replace(/[^0-9.]/g, '');
-        var total = parseFloat(cr1) + parseFloat(cr2);
+        var dr1 = input.value;
+        var dr2 = transaction_1_cr.value;
+        dr1 = dr1.replace(/[^0-9.]/g, '');
+        dr2 = dr2.replace(/[^0-9.]/g, '');
+
+        var total = parseFloat(dr1) + parseFloat(dr2);
         transaction_cr_total.value = total;
         //format the line total
         let value = transaction_cr_total.value;
+
         value = value.replace(/[^0-9.]/g, '');
         let parts = value.split('.');
         let integerPart = parts[0];
@@ -244,6 +272,32 @@ if (transaction_2_cr != null) {
         formattedValue = formattedValue + newTail;
         transaction_cr_total.value = formattedValue;
         updateStartingBalance();
+
+        //and again for the current cell value
+        value = input.value;
+        value = value.replace(/[^0-9.]/g, '');
+        parts = value.split('.');
+        integerPart = parts[0];
+        decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        formattedValue = integerPart;
+        if (formattedValue.length >= 1) {
+            formattedValue = '$' + formattedValue;
+        } else {
+            formattedValue = '$0';
+        }
+        newTail = "";
+        if (decimalPart === "") {
+            newTail = ".00";
+        } else if (decimalPart.length == 1) {
+            newTail = "." + decimalPart + "0";
+        } else if (decimalPart.length == 2) {
+            newTail = "." + decimalPart;
+        } else if (decimalPart.length > 2) {
+            newTail = "." + decimalPart.substring(0, 2);
+        }
+        formattedValue = formattedValue + newTail;
+        transaction_2_cr.value = formattedValue;
     });
 }
 if (transaction_1_dr != null) {
@@ -282,6 +336,31 @@ if (transaction_1_dr != null) {
         formattedValue = formattedValue + newTail;
         transaction_dr_total.value = formattedValue;
         updateStartingBalance();
+        //and again for the current cell value
+        value = input.value;
+        value = value.replace(/[^0-9.]/g, '');
+        parts = value.split('.');
+        integerPart = parts[0];
+        decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        formattedValue = integerPart;
+        if (formattedValue.length >= 1) {
+            formattedValue = '$' + formattedValue;
+        } else {
+            formattedValue = '$0';
+        }
+        newTail = "";
+        if (decimalPart === "") {
+            newTail = ".00";
+        } else if (decimalPart.length == 1) {
+            newTail = "." + decimalPart + "0";
+        } else if (decimalPart.length == 2) {
+            newTail = "." + decimalPart;
+        } else if (decimalPart.length > 2) {
+            newTail = "." + decimalPart.substring(0, 2);
+        }
+        formattedValue = formattedValue + newTail;
+        transaction_1_dr.value = formattedValue;  
 
     });
 }
@@ -293,10 +372,12 @@ if (transaction_2_dr != null) {
         var dr2 = transaction_1_dr.value;
         dr1 = dr1.replace(/[^0-9.]/g, '');
         dr2 = dr2.replace(/[^0-9.]/g, '');
+
         var total = parseFloat(dr1) + parseFloat(dr2);
         transaction_dr_total.value = total;
         //format the line total
         let value = transaction_dr_total.value;
+
         value = value.replace(/[^0-9.]/g, '');
         let parts = value.split('.');
         let integerPart = parts[0];
@@ -321,5 +402,31 @@ if (transaction_2_dr != null) {
         formattedValue = formattedValue + newTail;
         transaction_dr_total.value = formattedValue;
         updateStartingBalance();
+
+        //and again for the current cell value
+        value = input.value;
+        value = value.replace(/[^0-9.]/g, '');
+        parts = value.split('.');
+        integerPart = parts[0];
+        decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        formattedValue = integerPart;
+        if (formattedValue.length >= 1) {
+            formattedValue = '$' + formattedValue;
+        } else {
+            formattedValue = '$0';
+        }
+        newTail = "";
+        if (decimalPart === "") {
+            newTail = ".00";
+        } else if (decimalPart.length == 1) {
+            newTail = "." + decimalPart + "0";
+        } else if (decimalPart.length == 2) {
+            newTail = "." + decimalPart;
+        } else if (decimalPart.length > 2) {
+            newTail = "." + decimalPart.substring(0, 2);
+        }
+        formattedValue = formattedValue + newTail;
+        transaction_2_dr.value = formattedValue;        
     });
 }
