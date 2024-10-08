@@ -49,6 +49,13 @@ namespace OnAccount.Controllers
 
         public IActionResult Index()
         {
+            
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ManageRoles()
+        {
             var roles = _roleManager.Roles;
             return View(roles);
         }
@@ -58,6 +65,7 @@ namespace OnAccount.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateRole(IdentityRole model)
         {
@@ -187,7 +195,7 @@ namespace OnAccount.Controllers
         public async Task<IActionResult> ViewLogs(string? Id)
         {
             List<LogModel> logs = new List<LogModel>();
-
+            logs = _dbConnectorService.GetLogs();
 
             return View(logs);
         }

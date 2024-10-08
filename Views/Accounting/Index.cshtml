@@ -1,8 +1,23 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using oa.Areas.Identity.Data
+@using oa.Services
+@using oa.Models
 @inject UserManager<AppUser> UserManager
+
+@{
+    string? userid = UserManager.GetUserId(User);
+    string? role = "";
+    if (userid != null)
+    {
+        DbConnectorService dbServ = new DbConnectorService();
+        AppUserModel user = dbServ.GetUserDetailsById(userid);
+        role = user.UserRole;
+    }
+}
+
 <h1 class="text-center margin-top-120">Accounting Home</h1>
-<p class="text-center">Welcome @UserManager.GetUserName(User).</p>
+<p class="text-center">Welcome @UserManager.GetUserName(User)!</p>
+<p class="text-center">Your current role is: @role</p>
     
 <div class="outer-container">
     <div class="container-row">
