@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -55,9 +56,9 @@ namespace oa.Models
         [DisplayName("Type:")]
         public string? type { get; set; }
 
-        [Required]
+
         [DataType(DataType.Text)]
-        [StringLength(100, MinimumLength = 1)]
+        [StringLength(100, MinimumLength = 0)]
         [DisplayName("Term:")]
         public string? term { get; set; }
 
@@ -75,8 +76,8 @@ namespace oa.Models
         [DisplayName("Opening Transaction Number: (Auto assigned)")]
         public string? opening_transaction_num { get; set; }
 
-        //[Required]
-        [Range(0.01, 1000.00, ErrorMessage = "Please enter a valid dollar amount.")]
+        [Required]
+        [ModelBinder(BinderType = typeof(CurrencyModelBinder))]
         [DisplayFormat(DataFormatString = "{0:C}")]
         [DisplayName("Current Balance:")]
         public decimal? current_balance { get; set; }
@@ -93,8 +94,7 @@ namespace oa.Models
         [DisplayName("Status:")]
         public string? account_status { get; set; }
 
-        //[Required]
-        [Range(0.01, 1000.00, ErrorMessage = "Please enter a valid dollar amount.")]
+        [ModelBinder(BinderType = typeof(CurrencyModelBinder))]
         [DisplayFormat(DataFormatString = "{0:C}")]
         [DisplayName("Starting Balance:")]
         public decimal? starting_balance { get; set; }
@@ -103,6 +103,22 @@ namespace oa.Models
         [NotMapped]
         [DataType(DataType.Date)]
         public DateTime? transaction_1_date { get; set; } = System.DateTime.Today;
+
+        [Required]
+        [NotMapped]
+        public string? transaction_1_dr_account { get; set; }
+
+        [Required]
+        [NotMapped]
+        public string? transaction_1_cr_account { get; set; }
+
+        [Required]
+        [NotMapped]
+        public string? transaction_2_dr_account { get; set; }
+
+        [Required]
+        [NotMapped]
+        public string? transaction_2_cr_account { get; set; }
 
         [Required]
         [NotMapped]
@@ -132,6 +148,7 @@ namespace oa.Models
 
         [Required]
         [NotMapped]
+
         public string? transaction_cr_total { get; set; }
 
         [ValidateNever]
@@ -140,7 +157,7 @@ namespace oa.Models
 
         [ValidateNever]
         [NotMapped]
-        [Range(0.01, 1000000000.00, ErrorMessage = "Please enter a valid dollar amount.")]
+        [ModelBinder(BinderType = typeof(CurrencyModelBinder))]
         [DisplayFormat(DataFormatString = "{0:C}")]
         [DisplayName("Total:")]
         public string? total_adjustment { get; set; }
@@ -149,6 +166,11 @@ namespace oa.Models
         [NotMapped]
         public string? error_state { get; set; }
 
+        [NotMapped]
+        [DataType(DataType.Text)]
+        [StringLength(100, MinimumLength = 0)]
+        [DisplayName("Description:")]
+        public string? transaction_1_description { get; set; } = "";
 
     }
 }

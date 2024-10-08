@@ -13,22 +13,19 @@
     DateTime today = System.DateTime.Today;
 }
 <div class="form-container  margin-top-120">
-    <form asp-action="SaveNewAccountDetails" class="add-account-form-container">
-        <h3 class="text-center">Create Account</h3>
+    <form asp-action="UpdateAccountDetails" class="add-account-form-container">
+        <h3 class="text-center">Edit Account</h3>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="text-danger" id="journal-alert">
-            @if (Model.error_state != null)
-            {
-                @Model.error_state
-                ;
-            }
+
         </div>
+        <input asp-for="id" class="form-control form-control-sm" placeholder="number" hidden/>
         @* row 1 *@
         <div class="row g-2">
             <div class="col-md">
-                <div class="form-floating mb-2">
-                    <input asp-for="number" class="form-control form-control-sm" placeholder="number" />
+                <div class="form-floating mb-2 greyed-out">
+                    <input asp-for="number" class="form-control form-control-sm" placeholder="number" readonly/>
                     <label asp-for="number" class="control-label"></label>
                     <span asp-validation-for="number" class="text-danger"></span>
                 </div>
@@ -116,7 +113,6 @@
             <div class="col-md">
                 <div class="form-floating mb-2">
                     <select asp-for="sort_priority" class="form-select form-control-sm">
-                        <option value=""></option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -134,7 +130,6 @@
             <div class="col-md">
                 <div class="form-floating mb-2">
                     <select asp-for="statement_type" class="form-select form-control-sm">
-                        <option value=""></option>
                         <option value="pl">Profit & Loss</option>
                         <option value="bs">Balance Sheet</option>
                         <option value="oe">Owner's Equity</option>
@@ -149,13 +144,11 @@
                     @if (Model.current_balance == 0)
                     {
                         <select asp-for="account_status" class="form-select form-control-sm">
-                            <option value=""></option>
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                         </select>
                     } else {
                         <select asp-for="account_status" class="form-select form-control-sm">
-                            <option value=""></option>
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                         </select>

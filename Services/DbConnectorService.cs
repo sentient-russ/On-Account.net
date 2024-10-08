@@ -9,6 +9,7 @@ using System.Collections;
 using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Security;
+using System;
 
 
 namespace oa.Services
@@ -636,6 +637,7 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@normal_side", accountModelIn.normal_side);
                 cmd1.Parameters.AddWithValue("@description", accountModelIn.description);
                 cmd1.Parameters.AddWithValue("@type", accountModelIn.type);
+                if(accountModelIn.term == null) { accountModelIn.term = ""; };
                 cmd1.Parameters.AddWithValue("@term", accountModelIn.term);
                 cmd1.Parameters.AddWithValue("@statement_type", accountModelIn.statement_type);
                 cmd1.Parameters.AddWithValue("@opening_transaction_num", accountModelIn.opening_transaction_num);
@@ -662,15 +664,19 @@ namespace oa.Services
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "UPDATE on_account.transaction SET debit_account = @debit_account, debit_amount = @debit_amount, credit_account = @credit_account, credit_amount = @credit_amount, transaction_date = @transaction_date, created_by = @created_by";
+                string command = "INSERT INTO on_account.transaction (debit_account, debit_amount, credit_account, credit_amount, transaction_date, created_by, status, is_opening, description) " + 
+                    "VALUES (@debit_account, @debit_amount, @credit_account, @credit_amount, @transaction_date, @created_by, @status, @is_opening, @description)";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@debit_account", transactionIn.debit_account);
                 cmd1.Parameters.AddWithValue("@debit_amount", transactionIn.debit_amount);
                 cmd1.Parameters.AddWithValue("@credit_account", transactionIn.credit_account);
                 cmd1.Parameters.AddWithValue("@credit_amount", transactionIn.credit_amount);
-                cmd1.Parameters.AddWithValue("@transaction_date", transactionIn.transaction_date);
+                cmd1.Parameters.AddWithValue("@transaction_date", transactionIn.transaction_date?.ToString("yyyy-MM-dd HH:mm:ss.ffffff", CultureInfo.InvariantCulture));
                 cmd1.Parameters.AddWithValue("@created_by", transactionIn.created_by);
+                cmd1.Parameters.AddWithValue("@status", transactionIn.status);
+                cmd1.Parameters.AddWithValue("@is_opening", transactionIn.is_opening);
+                cmd1.Parameters.AddWithValue("@description", transactionIn.description);
 
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
