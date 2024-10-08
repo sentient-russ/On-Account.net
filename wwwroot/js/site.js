@@ -13,7 +13,7 @@ var date = new Date();
 var currentYear = date.getFullYear();
 var currentMonth = date.getMonth();
 var username = "";
-var currentMonthTwoDigits = currentMonth < 10 ? '0' + currentMonth : currentMonth.toString();
+var currentMonthTwoDigits = currentMonth+1 <10 ? '0' + currentMonth : (currentMonth+1).toString();
 
 //function that combines all inputs from user to create username following first intial + last name + month + last 2 digits of year
 function usernameCreator() {

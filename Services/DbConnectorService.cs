@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using System.Diagnostics;
 using System.Collections;
 using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
+using Org.BouncyCastle.Security;
+
 
 namespace oa.Services
 {
@@ -210,7 +213,7 @@ namespace oa.Services
         /*
          * Updates the database to enable scheduled user lockout events
          */
-        public void UpdateLockout(AppUser userIn)
+        public void UpdateLockout(AppUser userIn)//admin controller add _dbConnectorService.logModelCreator(****find userid*****,"Lockout disabled for: "+Id, ""); 
         {
             try
             {
@@ -234,7 +237,7 @@ namespace oa.Services
         /*
          * Updates the database to enable scheduled user lockout events
          */
-        public void immediateLockout(string IdIn)
+        public void immediateLockout(string IdIn)//admin controller add _dbConnectorService.logModelCreator(****find userid*****,"Lockout disabled for: "+Id, ""); 
         {
             try
             {
@@ -256,7 +259,7 @@ namespace oa.Services
         /*
          * Updates the database to enable scheduled user lockout events
          */
-        public void disableLockout(string IdIn)
+        public void disableLockout(string IdIn)//admin controller add _dbConnectorService.logModelCreator(****find userid*****,"Lockout disabled for: "+Id, ""); 
         {
             try
             {
@@ -610,6 +613,7 @@ namespace oa.Services
             {
                 Console.WriteLine(ex.ToString());
             }
+            logModelCreator(accountModelIn.created_by, "Added new Account: "+accountModelIn.name, "new ID: "+accountModelIn.number);
             AccountsModel modelWithId = GetAccount(accountModelIn.name);
             return modelWithId;
         }
@@ -648,6 +652,7 @@ namespace oa.Services
             {
                 Console.WriteLine(ex.ToString());
             }
+            logModelCreator(accountModelIn.created_by, "Account: "+ accountModelIn.name+" updated", "");
         }
         /*
          * Adds a single transaction 
@@ -675,7 +680,27 @@ namespace oa.Services
             {
                 Console.WriteLine(ex.ToString());
             }
+            logModelCreator(transactionIn.created_by,"Transaction added","");
         }
+
+
+        /*
+         * creates the log model to add to the database
+         * 
+         * when calling if not changing field but adding field before is used for text of what happened ex creating a user is "added user" to the fieldbefore and field after is an empty string
+         */
+        public void logModelCreator(string userID, string fieldBefore, string fieldAfter)
+        {
+            
+            LogModel newLog=new LogModel();
+            newLog.UserId = userID;
+            newLog.ChangeDate = DateTime.Now;
+            newLog.ChangedFrom = fieldBefore;
+            newLog.ChangedTo = fieldAfter;
+            AddLog(newLog);
+        }
+
+
         /*
          * Gets a list of the logs account based on its name
          */
