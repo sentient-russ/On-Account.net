@@ -430,3 +430,24 @@ if (transaction_2_dr != null) {
         transaction_2_dr.value = formattedValue;        
     });
 }
+
+document.addEventListener('input', function (event) {
+    const target = event.target;
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+        if (target.value.trim() !== '') {
+            target.classList.add('has-text');
+        } else {
+            target.classList.remove('has-text');
+        }
+    }
+});
+document.addEventListener('change', function (event) {
+    const target = event.target;
+    if (target.tagName === 'SELECT') {
+        if (target.value.trim() !== '') {
+            target.classList.add('has-text');
+        } else {
+            target.classList.remove('has-text');
+        }
+    }
+});

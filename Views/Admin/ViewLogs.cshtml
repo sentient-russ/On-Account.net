@@ -4,9 +4,23 @@
 @{
     ViewData["Title"] = "ViewLogs";
 }
-<h1 class="margin-top-120 text-center">Security Logs</h1>
-
-<table class="table">
+<div class="text-center margin-top-120">
+    <img src="~/img/security_logs.jpg" style="max-height: 150px;" />
+</div>
+<h1 class="text-center mb-4">Security Log</h1>
+@* code here to remove button if the user is not admin or manager *@
+<div class="search-row">
+    <div class="search-colum-1" style="margin-left: 60px;">
+        
+    </div>
+    <div class="search-colum-2">
+        <img src="~/img/search.svg" class="search-img" text-align:right;" />
+    </div>
+    <div class="search-colum-3">
+        <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
+    </div>
+</div>
+<table class="table table-striped">
     <thead>
         <tr>
             <th>
@@ -24,7 +38,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="tableBody">
 @foreach (var item in Model) {
         <tr>
             <td>
@@ -39,12 +53,33 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ChangedTo)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+
         </tr>
 }
     </tbody>
 </table>
+@* Search and Filter *@
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let input = this.value.toLowerCase();
+        let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            let rowData = rows[i].getElementsByTagName('td');
+            let match = false;
+
+            for (let j = 0; j < rowData.length; j++) {
+                if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (match) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    });
+</script>

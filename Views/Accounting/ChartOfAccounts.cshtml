@@ -4,14 +4,24 @@
 @{
     ViewData["Title"] = "ChartOfAccounts";
 }
-
-<h1 class="text-center mb-4 margin-top-120">Chart Of Accounts</h1>
-
+<div class="text-center margin-top-120">
+    <img src="~/img/security_logs.jpg" style="max-height: 150px;" />
+</div>
+<h1 class="text-center mb-4">Chart Of Accounts</h1>
 @* code here to remove button if the user is not admin or manager *@
-<p>
-    <a class="btn btn-primary" asp-action="AddAccount" role="button">Add New</a>
-</p>
-<table class="table">
+<div class="search-row">
+    <div class="search-colum-1">
+        <a class="btn btn-primary" style="max-height:32px;" asp-action="AddAccount" role="button">Add New</a>
+    </div>
+    <div class="search-colum-2">
+        <img src="~/img/search.svg" class="search-img" text-align:right;"/>
+    </div>
+    <div class="search-colum-3">
+        <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
+    </div>
+</div>
+
+<table class="table table-striped">
     <thead>
         <tr>
             <th style="max-width: 75px;">
@@ -56,7 +66,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="tableBody">
 @foreach (var item in Model) {
         <tr>
             <td>
@@ -106,3 +116,30 @@
 }
     </tbody>
 </table>
+
+
+@* Search and Filter *@
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let input = this.value.toLowerCase();
+        let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            let rowData = rows[i].getElementsByTagName('td');
+            let match = false;
+
+            for (let j = 0; j < rowData.length; j++) {
+                if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (match) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    });
+</script>

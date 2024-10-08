@@ -173,7 +173,7 @@ namespace oa.Areas.Identity.Pages.Account
                             }
                             else if (user.UserRole == "Administrator")
                             {
-                                returnUrl += "Admin/ManageAccounts";
+                                returnUrl += "Admin/Index";
                                 _dbConnectorService.logModelCreator(user.ScreenName, user.UserRole + " logged in", "");
                                 return LocalRedirect(returnUrl); //working
                             }
@@ -190,8 +190,6 @@ namespace oa.Areas.Identity.Pages.Account
                     return Page();
                 }
             }
-
-
 
             // If we got this far, something failed, redisplay form
             return Page();

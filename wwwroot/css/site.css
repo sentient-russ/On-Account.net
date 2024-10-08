@@ -1,6 +1,48 @@
 @import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Baskervville+SC&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Baskervville+SC&family=Outfit:wght@100..900&display=swap');
 
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active,
+input:-webkit-autofill:focus {
+    background-color: #FFFFFF !important;
+    color: #555 !important;
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    -webkit-text-fill-color: #555555 !important;
+}
+
+:root {
+    --bs-nav-link-padding-y: 0.5rem;
+    --bs-nav-link-padding-x: 1rem;
+    --res-background-gradient: white;    
+    /* --res-background-gradient: linear-gradient(126.22deg,#393939 -8%,#000000c9,#393939 14%);*/
+}
+
+html {
+    font-size: 14px;
+}
+
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+.accounting-btn{
+    padding-top: 8px;
+    font-weight: 600;
+}
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background-image: var(--res-background-gradient);
+    font-family: "Outfit", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
 .landing-logo-text {
     font-family: "Outfit", sans-serif;
     font-weight: 600;
@@ -10,7 +52,7 @@
 
 .landing-tagline-text {
     font-family: "Outfit", sans-serif;
-    font-size:22px;
+    font-size: 22px;
     font-optical-sizing: auto;
     font-weight: 500;
     font-style: normal;
@@ -35,21 +77,21 @@
     box-shadow: grey 4px 4px 4px;
 }
 
-    .register-button:hover {
-        background-color: #353535;
-        border: 1.5px black;
-        border-radius: 10px 10px 10px 10px;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 32px;
-        margin: 4px 2px;
-        transition-duration: 0.4s;
-        cursor: pointer;
-        box-shadow: black 2px 2px 2px;
-        opacity: 85%;
-    }
+.register-button:hover {
+    background-color: #353535;
+    border: 1.5px black;
+    border-radius: 10px 10px 10px 10px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 32px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    box-shadow: black 2px 2px 2px;
+    opacity: 85%;
+}
 
 .login-button {
     height: 72px;
@@ -71,56 +113,20 @@
     box-shadow: grey 4px 4px 4px;
 }
 
-    .login-button:hover {
-        background-color: #353535;
-        border: 1.5px black;
-        border-radius: 10px 10px 10px 10px;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 32px;
-        margin: 4px 2px;
-        transition-duration: 0.4s;
-        cursor: pointer;
-        box-shadow: black 2px 2px 2px;
-        opacity: 85%;
-    }
-
-:root {
-    --bs-nav-link-padding-y: 0.5rem;
-    --bs-nav-link-padding-x: 1rem;
-    --res-background-gradient: white;    
-    /* --res-background-gradient: linear-gradient(126.22deg,#393939 -8%,#000000c9,#393939 14%);*/
-}
-
-html {
-    font-size: 14px;
-}
-
-@media (min-width: 768px) {
-    html {
-    }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-.accounting-btn{
-    padding-top: 8px;
-    font-weight: 600;
-}
-html {
-    position: relative;
-    min-height: 100%;
-}
-
-body {
-    margin-bottom: 60px;
-    background-image: var(--res-background-gradient);
-    font-family: "Outfit", sans-serif;
-    font-weight: 500;
-    font-style: normal;
+.login-button:hover {
+    background-color: #353535;
+    border: 1.5px black;
+    border-radius: 10px 10px 10px 10px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 32px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    box-shadow: black 2px 2px 2px;
+    opacity: 85%;
 }
 
 .manage-container-column {
@@ -485,7 +491,6 @@ input.currency {
     --bs-body-bg: transparent;
     border-radius: 5px 5px 5px 5px;
 }
-
 .journal-row-bottom {
     margin-top: 5px;
     border: 1px solid #6c757d31;
@@ -534,7 +539,6 @@ input.currency {
     justify-content: space-evenly;
     margin-bottom: 50px;
     text-align: center;
-
 }
 .btn-container {
     display: flex;
@@ -557,4 +561,44 @@ input.currency {
 }
 .btn-label{
     font-size: 24px;
+}
+.warning-row{
+    display: flex;
+    flex-direction: row;
+    min-height:30px;
+    justify-content: right;
+    margin-right: 100px;
+}
+.search-row{
+    display:flex;
+    flex-direction: row;
+}
+.search-colum-1{
+    display:flex;
+    justify-content:left;
+}
+.search-colum-2 {
+    display: flex;
+    justify-content: right;
+    padding-left: 75%;
+}
+.search-colum-3 {
+    display: flex;
+    justify-content: right;
+}
+.search-img{
+    max-height: 28px;
+    text-align:right;
+    padding-top: 7.5px;
+    padding-right: 10px;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active,
+input:-webkit-autofill:focus {
+    background-color: #FFFFFF !important;
+    color: #555 !important;
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    -webkit-text-fill-color: #555555 !important;
 }
