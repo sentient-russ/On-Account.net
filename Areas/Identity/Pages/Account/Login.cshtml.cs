@@ -101,6 +101,7 @@ namespace oa.Areas.Identity.Pages.Account
                     Input.Email = email;
                 }
             }
+            
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user != null)
             {
@@ -110,6 +111,7 @@ namespace oa.Areas.Identity.Pages.Account
                     string lockoutMessage = "Locked out user attempted login: " + user.Id.ToString();
                     _logger.LogWarning(lockoutMessage);
                     ModelState.AddModelError(string.Empty, "Account locked out.");
+                    _dbConnectorService.logModelCreator(user.ScreenName,"Locked user logged in","");
                     return RedirectToPage("./Lockout");
                 }
                 // locks the user out if the password has expired.
@@ -120,12 +122,14 @@ namespace oa.Areas.Identity.Pages.Account
                     string expiredPasswordLockoutMessage = "User account locked out due to expired password: " + user.Id.ToString();
                     ModelState.AddModelError(string.Empty, "Account disabled.");
                     _logger.LogWarning(expiredPasswordLockoutMessage);
+                    _dbConnectorService.logModelCreator(user.ScreenName, "user with expired password logged", "");
                     return RedirectToPage("./Lockout");
                 }
                 // directs new unaproved accounts to a "Awaiting confirmation" message if their acount has not been approved.
                 if (user.UserRole == null || user.UserRole == "")
                 {
                     returnUrl += "Home/FirstLogin";
+                    _dbConnectorService.logModelCreator(user.ScreenName, "unapproved account logged in", "");
                     return LocalRedirect(returnUrl);
                 }
                 // checks to make sure the account is not suspended by date range.
@@ -134,6 +138,7 @@ namespace oa.Areas.Identity.Pages.Account
                     if (user.AcctReinstatementDate >= System.DateTime.Now)
                     {
                         ModelState.AddModelError(string.Empty, "Account under temporary suspension.");
+                        _dbConnectorService.logModelCreator(user.ScreenName, "temporary suspension logged in", "");
                         return RedirectToPage("./Lockout");
                     }
                 }
@@ -163,11 +168,13 @@ namespace oa.Areas.Identity.Pages.Account
                             if (user.UserRole == "Manager" || user.UserRole == "Accountant")
                             {
                                 returnUrl += "Accounting/";
+                                _dbConnectorService.logModelCreator(user.ScreenName, user.UserRole+" logged in", "");
                                 return LocalRedirect(returnUrl); //working
                             }
                             else if (user.UserRole == "Administrator")
                             {
                                 returnUrl += "Admin/ManageAccounts";
+                                _dbConnectorService.logModelCreator(user.ScreenName, user.UserRole + " logged in", "");
                                 return LocalRedirect(returnUrl); //working
                             }
                         }
