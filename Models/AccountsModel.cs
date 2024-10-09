@@ -179,6 +179,7 @@ namespace oa.Models
 
         [NotMapped]
         [ValidateNever]
+        [DisplayName("Journal Id:")]
         public int? nextJournalId { get; set; }
 
 

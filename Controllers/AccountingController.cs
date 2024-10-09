@@ -90,7 +90,7 @@ namespace OnAccount.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Manager, Accountant")]
-        public async Task<IActionResult> SaveNewJounalEntry([Bind("id, name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, transaction_1_date, transaction_1_dr, transaction_1_cr, transaction_2_date, transaction_2_dr, transaction_2_cr, transaction_dr_total, transaction_cr_total, accounts_list, transaction_1_cr_account, transaction_1_dr_account, transaction_1_description")] AccountsModel newJournalDetailsIn)
+        public async Task<IActionResult> SaveNewJounalEntry([Bind("id, name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, transaction_1_date, transaction_1_dr, transaction_1_cr, transaction_2_date, transaction_2_dr, transaction_2_cr, transaction_dr_total, transaction_cr_total, accounts_list, transaction_1_cr_account, transaction_1_dr_account, transaction_1_description, nextJournalId")] AccountsModel newJournalDetailsIn)
         {
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             AccountsModel newJournal = newJournalDetailsIn;
@@ -104,6 +104,7 @@ namespace OnAccount.Controllers
             transaction.description = newJournalDetailsIn.transaction_1_description;
             transaction.created_by = newJournalDetailsIn.created_by;
             transaction.transaction_date = System.DateTime.Now;
+            transaction.journal_id = newJournalDetailsIn.nextJournalId;
 
             _dbConnectorService.AddTransaction(transaction);
             /*transaction.isOpening = newJournal.is_opening;*/
