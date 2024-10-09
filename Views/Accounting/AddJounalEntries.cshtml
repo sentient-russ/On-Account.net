@@ -2,7 +2,7 @@
 @using oa.Areas.Identity.Data
 @using oa.Services
 @using oa.Models;
-@model oa.Models.AccountsModel
+@model oa.Models.AccountsModelJournal
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
 @inject UserService CurrentUser
@@ -132,7 +132,7 @@
                             </div>
                         </div>
                 }
-                else if (User.IsInRole("Accountant"))
+                else 
                     {
                     <div class="col-md">
                         <div class="form-floating  greyed-out">

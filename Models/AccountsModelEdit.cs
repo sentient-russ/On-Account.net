@@ -16,23 +16,20 @@ using System.Transactions;
 namespace oa.Models
 {
     [BindProperties(SupportsGet = true)]
-    public class AccountsModel : IValidatableObject
+    public class AccountsModelEdit : IValidatableObject
 
     {
         private const string CurrentBalancePropertyName = "current_balance";
-
         public int? id { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 1)]
-        [UniqueAccountNameValidator]
         [DisplayName("Account Name:")]
         public string? name { get; set; }
 
         [Required]
         [IntegerValidator(MinValue = 1, MaxValue = 1000, ExcludeRange = true)]
-        [UniqueAccountNumberValidator]
         [DisplayName("Account Number:")]
         public int? number { get; set; }
 

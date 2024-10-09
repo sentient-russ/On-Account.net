@@ -16,7 +16,7 @@ using System.Transactions;
 namespace oa.Models
 {
     [BindProperties(SupportsGet = true)]
-    public class AccountsModel : IValidatableObject
+    public class AccountsModelJournal : IValidatableObject
 
     {
         private const string CurrentBalancePropertyName = "current_balance";
@@ -90,9 +90,6 @@ namespace oa.Models
         [DisplayName("Account created by:  (Auto assigned)")]
         public string? created_by { get; set; }
 
-        [Required]
-        [DataType(DataType.Text)]
-        [AccountStatusValidator(CurrentBalancePropertyName, 0.00)]
         [DisplayName("Status:")]
         public string? account_status { get; set; }
 
