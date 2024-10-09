@@ -6,9 +6,9 @@
 <h1 class="text-center mb-5  margin-top-120">Edit Account Details</h1>
 <div class="container-email-btn">
     <div class="row-email-btn">
-        <a class="btn btn-outline-danger email-btn-left" asp-action="Lock" asp-route-id="@Model.Id" role="button">Lock Account</a>
-        <a class="btn btn-outline-success email-btn-left" asp-action="Unlock" asp-route-id="@Model.Id" role="button">Unlock Account</a>
-        <a class="btn btn-outline-secondary emial-btn-right" asp-action="Email" asp-route-id="@Model.Id" role="button">Send Email</a>
+        <a class="btn btn-outline-danger email-btn-left" asp-action="Lock" asp-route-id="@Model.Id" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Locks the Current user and prevents access">Lock Account</a>
+        <a class="btn btn-outline-success email-btn-left" asp-action="Unlock" asp-route-id="@Model.Id" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Unlocks the current users account">Unlock Account</a>
+        <a class="btn btn-outline-secondary emial-btn-right" asp-action="Email" asp-route-id="@Model.Id" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Takes you to a page to send an email to an account">Send Email</a>
     </div>
 </div>
 <div class="row">
@@ -97,7 +97,7 @@
                 </select>
                 <span asp-validation-for="UserRole" class="text-danger"></span>
             </div>
-            <div class="form-drop-down mb-3">
+            <div class="form-drop-down mb-3" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="save and update user details">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>

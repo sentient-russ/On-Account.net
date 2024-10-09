@@ -8,7 +8,7 @@
 <div class="manage-container-column">
     <div class="manage-container-row">
         <div class="manage-btn-cntr">
-            <a class="btn btn-primary" id="register" asp-area="Identity" asp-page="/Account/AdminRegister" role="button">Add New</a>
+            <a class="btn btn-primary" id="register" asp-area="Identity" asp-page="/Account/AdminRegister" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Add a new user to the database bypassing them needing to register">Add New</a>
          </div>
     </div>
 </div>
@@ -56,7 +56,7 @@
             </td>
             <td>
 
-                    <a class="btn btn-outline-secondary" asp-action="EditAccountDetails" asp-route-id="@item.Id" role="button">Details</a>
+                    <a class="btn btn-outline-secondary" asp-action="EditAccountDetails" asp-route-id="@item.Id" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Details of the user and allows you to change necessary values">Details</a>
 
           
             </td>
