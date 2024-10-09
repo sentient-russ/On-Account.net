@@ -26,36 +26,18 @@
             <th>
                 @Html.DisplayNameFor(model => model.name)
             </th>
-@*             <th>
-                @Html.DisplayNameFor(model => model.sort_priority)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.normal_side)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.description)
-            </th> *@
             <th >
                 @Html.DisplayNameFor(model => model.type)
             </th>
             <th style ="max-width: 25px;">
                 @Html.DisplayNameFor(model => model.term)
             </th>
-@*             <th>
-                @Html.DisplayNameFor(model => model.statement_type)
-            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.account_creation_date)
             </th>
-@*             <th>
-                @Html.DisplayNameFor(model => model.opening_transaction_num)
-            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.current_balance)
             </th>
-@*             <th>
-                @Html.DisplayNameFor(model => model.created_by)
-            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.account_status)
             </th>
@@ -76,37 +58,19 @@
                 @Html.DisplayFor(modelItem => item.name)
                 </a>
             </td>
-
-@*          <td>
-                @Html.DisplayFor(modelItem => item.sort_priority)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.normal_side)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.description)
-            </td> *@
             <td>
                 @Html.DisplayFor(modelItem => item.type)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.term)
             </td>
-@*             <td>
-                @Html.DisplayFor(modelItem => item.statement_type)
-            </td> *@
             <td>
                 @Html.DisplayFor(modelItem => item.account_creation_date)
             </td>
-@*             <td>
-                @Html.DisplayFor(modelItem => item.opening_transaction_num)
-            </td> *@
             <td>
-                @Html.DisplayFor(modelItem => item.current_balance)
+                @FormatNegativeDouble(item.current_balance)
+
             </td>
-@*             <td>
-                @Html.DisplayFor(modelItem => item.created_by)
-            </td> *@
             <td>
                 @Html.DisplayFor(modelItem => item.account_status)
             </td>
@@ -117,7 +81,22 @@
 }
     </tbody>
 </table>
-
+@* format currency *@
+@functions {
+    public static string FormatNegativeDouble(decimal? value)
+    {
+        if (value.HasValue)
+        {
+            Console.WriteLine($"Formatting value: {value}");
+            if (value < 0)
+            {
+                return $"({Math.Abs(value.Value).ToString("C")})";
+            }
+            return value.Value.ToString("C");
+        }
+        return string.Empty;
+    }
+}
 @* Search and Filter *@
 <script>
     document.getElementById('searchInput').addEventListener('keyup', function () {

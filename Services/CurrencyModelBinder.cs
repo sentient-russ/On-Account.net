@@ -29,9 +29,9 @@ namespace oa.Services
             {
                 return Task.CompletedTask;
             }
-
-            var currencyString = value.Replace("$", "");
-            currencyString = value.Replace(",", "");
+            string currencyString = value.ToString();
+            currencyString = currencyString.Replace("$", "");
+            currencyString = currencyString.Replace(",", "");
 
             if (decimal.TryParse(currencyString, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var result))
             {

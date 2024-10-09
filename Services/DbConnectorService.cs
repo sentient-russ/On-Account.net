@@ -622,7 +622,7 @@ namespace oa.Services
          * Updates account in the db and return the updated model with a new accountId number
          * 
          */
-        public void UpdateExistingAccount(AccountsModel accountModelIn)
+        public void UpdateExistingAccount(AccountsModelEdit accountModelIn)
         {
             try
             {
@@ -657,10 +657,36 @@ namespace oa.Services
             logModelCreator(accountModelIn.created_by, "Account: "+ accountModelIn.name+" updated", "");
         }
         /*
+         * Updates account balance
+         * 
+         */
+        public void UpdateAccountBalance(string acctNum, double newBal)
+        {
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "UPDATE on_account.account SET current_balance = @current_balance WHERE number = @number";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+
+                cmd1.Parameters.AddWithValue("@number", acctNum);
+                cmd1.Parameters.AddWithValue("@current_balance", newBal);
+
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        /*
          * Adds a single transaction 
          */
         public void AddTransaction(TransactionModel transactionIn)
         {
+            
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
@@ -687,7 +713,12 @@ namespace oa.Services
             {
                 Console.WriteLine(ex.ToString());
             }
+            
             logModelCreator(transactionIn.created_by,"Transaction added","");
+            double newDrBal = CalculateAccountBalance(transactionIn.debit_account.ToString());
+            double newCrBal = CalculateAccountBalance(transactionIn.credit_account.ToString());
+            UpdateAccountBalance(transactionIn.debit_account.ToString(), newDrBal);
+            UpdateAccountBalance(transactionIn.credit_account.ToString(), newCrBal);
         }
 
 
@@ -796,7 +827,7 @@ namespace oa.Services
             }
         }
         /*
-         * Gets all transaction for a specific account id
+         * Gets all transaction for a specific account number
          */
         public List<TransactionModel> GetAccountTransactions(string? id)
         {
@@ -872,6 +903,35 @@ namespace oa.Services
             return foundName;
         }
         /*
+        * Gets an accounts name from the account number as a string
+        */
+        public string GetAccoutNumber(string id)
+        {
+            string? foundNum = "";
+            try
+            {
+                var connection = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                connection.Open();
+                var cmd = new MySqlCommand();
+                cmd.Connection = connection;
+                cmd.CommandText = "Select number from on_account.account WHERE id = @id";
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.ExecuteNonQuery();
+                var reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    foundNum = reader.GetString(0);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return foundNum;
+        }
+        /*
          * Gets the next journal id
          */
         public int GetNextJournalId()
@@ -898,6 +958,27 @@ namespace oa.Services
             }
             return nextJournalId;
         }
+        public double CalculateAccountBalance(string? accountId)
+        {
+            double dr = 0;
+            double cr = 0;
+            double balance = 0;
+            List<TransactionModel> accountTransactions = GetAccountTransactions(accountId);
+
+            for (int i = 0; i < accountTransactions.Count; i++) { 
+                if (accountTransactions[i].credit_amount != null)
+                {
+                    cr = cr + (double)accountTransactions[i].credit_amount;                        
+                }
+                if (accountTransactions[i].debit_amount != null)
+                {
+                    dr = dr + (double)accountTransactions[i].debit_amount;
+                }
+            }
+            balance = cr - dr;
+            return balance;
+        }            
+        
     }
 }
 

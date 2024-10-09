@@ -447,6 +447,13 @@ input.currency {
     height: 135px;
     padding-top: 6.5px;
 }
+.edit-account-row {
+    margin-top: 5px;
+    border: 1px solid #6c757d31;
+    background-color: #6c757d0b;
+    border-radius: 5px;
+padding: 6.5px;
+}
 
 .journal-row-heading {
     display: grid;
@@ -602,3 +609,4 @@ input:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0 1000px white inset !important;
     -webkit-text-fill-color: #555555 !important;
 }
+
