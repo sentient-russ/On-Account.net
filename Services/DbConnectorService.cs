@@ -11,7 +11,6 @@ using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Security;
 using System;
 
-
 namespace oa.Services
 {
     public class DbConnectorService
@@ -665,8 +664,8 @@ namespace oa.Services
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "INSERT INTO on_account.transaction (debit_account, debit_amount, credit_account, credit_amount, transaction_date, created_by, status, is_opening, description) " + 
-                    "VALUES (@debit_account, @debit_amount, @credit_account, @credit_amount, @transaction_date, @created_by, @status, @is_opening, @description)";
+                string command = "INSERT INTO on_account.transaction (debit_account, debit_amount, credit_account, credit_amount, transaction_date, created_by, status, is_opening, description, journal_id) " + 
+                    "VALUES (@debit_account, @debit_amount, @credit_account, @credit_amount, @transaction_date, @created_by, @status, @is_opening, @description, @journal_id)";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@debit_account", transactionIn.debit_account);
@@ -678,6 +677,7 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@status", transactionIn.status);
                 cmd1.Parameters.AddWithValue("@is_opening", transactionIn.is_opening);
                 cmd1.Parameters.AddWithValue("@description", transactionIn.description);
+                cmd1.Parameters.AddWithValue("@description", transactionIn.journal_id);
 
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
@@ -789,13 +789,114 @@ namespace oa.Services
                     conn1.Close();
 
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        /*
+         * Gets all transaction for a specific account id
+         */
+        public List<TransactionModel> GetAccountTransactions(string? id)
+        {
+            List<TransactionModel> transactionsList = new List<TransactionModel>();
+            try
+            {
+                int Id = int.Parse(id);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.transaction WHERE debit_account =@id OR credit_account = @id";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@id", id);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    TransactionModel nextTransaction = new TransactionModel();
+                    nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    //only return transaction data related to the requested account
+                    if(reader1.GetInt32(1) == Id)
+                    {
+                        nextTransaction.debit_account = reader1.IsDBNull(1) ? null : reader1.GetInt32(1);
+                        nextTransaction.debit_amount = reader1.IsDBNull(2) ? null : reader1.GetDouble(2);
+                    }
+                    if (reader1.GetInt32(3) == Id)
+                    {
+                        nextTransaction.credit_account = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+                        nextTransaction.credit_amount = reader1.IsDBNull(4) ? null : reader1.GetInt32(4);
+                    }
+                    nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
+                    nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    nextTransaction.is_opening = reader1.IsDBNull(7) ? null : reader1.GetBoolean(7);
+                    nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    nextTransaction.description = reader1.IsDBNull(9) ? null : reader1.GetString(9);
+                    nextTransaction.journal_id = reader1.IsDBNull(10) ? null : reader1.GetInt32(10);
+                    transactionsList.Add(nextTransaction);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return transactionsList;
+        }
+        /*
+        * Gets an accounts name from the account number as a string
+        */
+        public string GetAccoutName(string number)
+        {
+            string? foundName = "";
+            try
+            {
+                var connection = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                connection.Open();
+                var cmd = new MySqlCommand();
+                cmd.Connection = connection;
+                cmd.CommandText = "Select name from on_account.account WHERE number = @number";
+                cmd.Parameters.AddWithValue("@number", number);
+                cmd.ExecuteNonQuery();
+                var reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    foundName = reader.GetString(0);
+                }
 
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
-
+            return foundName;
+        }
+        /*
+         * Gets the next journal id
+         */
+        public int GetNextJournalId()
+        {
+            int nextJournalId = 0;
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT MAX(journal_id) FROM on_account.transaction";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    int highestId = reader1.GetInt32(0);
+                    nextJournalId = highestId + 1;
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return nextJournalId;
         }
     }
 }

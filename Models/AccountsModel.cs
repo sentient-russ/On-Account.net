@@ -172,5 +172,15 @@ namespace oa.Models
         [DisplayName("Description:")]
         public string? transaction_1_description { get; set; } = "";
 
+
+        [NotMapped]
+        [ValidateNever]
+        public List<TransactionModel>? transactions_list { get; set; }
+
+        [NotMapped]
+        [ValidateNever]
+        public int? nextJournalId { get; set; }
+
+
     }
 }

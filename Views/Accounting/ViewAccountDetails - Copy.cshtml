@@ -1,0 +1,109 @@
+﻿@model oa.Models.AccountsModel
+@using oa.Models
+@using oa.Services
+@{
+    DateTime today = System.DateTime.Now;
+    string dateString = today.ToString("dd-MM-yyyy");
+    DbConnectorService dbConnectorService = new DbConnectorService();
+    List<AccountsModel> coa = dbConnectorService.GetChartOfAccounts();
+    string? accountName = "";
+    for (int i = 0; i < coa.Count; i++) // Corrected loop condition
+    {
+        if (coa[i].number == Model.number)
+        {
+            accountName = coa[i].name;
+        }
+    }
+
+}
+// http://localhost:9311/Accounting/ViewAccountDetails/?id=101
+<div class="text-center margin-top-120">
+    @* <img src="~/img/balance_sheet.jpg" style="max-height: 150px;" /> *@
+</div>
+<h1 class="text-center mb-4">Account Details</h1>
+<h3 class="text-center mb-4">Account Name: @accountName</h3>
+<h3 class="text-center mb-4">As of: @dateString</h3>
+
+@* code here to remove button if the user is not admin or manager *@
+<div class="search-row">
+    <div class="search-colum-1">
+        <a class="btn btn-primary" style="max-height:32px;" asp-action="AddAccount" role="button">Add New</a>
+    </div>
+    <div class="search-colum-2">
+        <img src="~/img/search.svg" class="search-img" text-align:right;" />
+    </div>
+    <div class="search-colum-3">
+        <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
+    </div>
+</div>
+@if (Model.transactions_list != null && Model.transactions_list.Any())
+{
+
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Debit Account</th>
+                <th>Debit Amount</th>
+                <th>Credit Account</th>
+                <th>Credit Amount</th>
+                <th>Transaction Date</th>
+                <th>Created By</th>
+                <th>Is Opening</th>
+                <th>Status</th>
+                <th>Description</th>
+                <th>Journal ID</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            @foreach (var transaction in Model.transactions_list)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => transaction.id)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.debit_account)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.debit_amount)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.credit_account)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.credit_amount)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.transaction_date)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.created_by)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.is_opening)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.status)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.description)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.journal_id)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No transactions found.</p>
+}
+
+@* Search and Filter *@
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let input = this.value.toLowerCase();
+        let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            let rowData = rows[i].getElementsByTagName('td');
+            let match = false;
+
+            for (let j = 0; j < rowData.length; j++) {
+                if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (match) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    });
+</script>

@@ -1,13 +1,10 @@
 ﻿@using oa.Models;
 @model IEnumerable<oa.Models.AccountsModel>
 
-@{
-    ViewData["Title"] = "ChartOfAccounts";
-}
 <div class="text-center margin-top-120">
-    <img src="~/img/security_logs.jpg" style="max-height: 150px;" />
+    <img src="~/img/chart_of_accounts.jpg" style="max-height: 150px;" />
 </div>
-<h1 class="text-center mb-4">Chart Of Accounts</h1>
+<h1 class="text-center mb-4">Chart of Accounts</h1>
 @* code here to remove button if the user is not admin or manager *@
 <div class="search-row">
     <div class="search-colum-1">
@@ -20,7 +17,6 @@
         <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
     </div>
 </div>
-
 <table class="table table-striped">
     <thead>
         <tr>
@@ -70,10 +66,15 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                
+                <a asp-action="ViewAccountDetails" asp-route-id="@item.number" role="button">
                 @Html.DisplayFor(modelItem => item.number)
+                </a>
             </td>
             <td>
+               <a asp-action="ViewAccountDetails" asp-route-id="@item.number" role="button">
                 @Html.DisplayFor(modelItem => item.name)
+                </a>
             </td>
 
 @*          <td>
@@ -117,7 +118,6 @@
     </tbody>
 </table>
 
-
 @* Search and Filter *@
 <script>
     document.getElementById('searchInput').addEventListener('keyup', function () {
@@ -134,7 +134,6 @@
                     break;
                 }
             }
-
             if (match) {
                 rows[i].style.display = '';
             } else {

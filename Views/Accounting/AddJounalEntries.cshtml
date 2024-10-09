@@ -27,11 +27,24 @@
                 @Model.error_state;
             }
         </div>
+        @* row 0 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-2 greyed-out">
+                    <input asp-for="nextJournalId" class="form-control form-control-sm" placeholder="created_by" value="@Model.nextJournalId" readonly />
+                    <label asp-for="nextJournalId" class="control-label"></label>
+                    <span asp-validation-for="nextJournalId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
         @* row 1 *@
         <div class="row g-2">
             <div class="col-md">
                 <div class="form-floating mb-2">
-
                 </div>
             </div>
             <div class="col-md">
