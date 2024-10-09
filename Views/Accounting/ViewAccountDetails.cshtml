@@ -1,0 +1,145 @@
+﻿@model IEnumerable<oa.Models.TransactionModel>
+<div class="text-center margin-top-120">
+    @* <img src="~/img/balance_sheet.jpg" style="max-height: 150px;" /> *@
+</div>
+<h1 class="text-center mb-4">Account Details</h1>
+<h3 class="text-center mb-4">Account Name: @ViewBag.AccountName</h3>
+<h3 class="text-center mb-4">As of: @ViewBag.Date</h3>
+<h3 class="text-center mb-4">Balance: @FormatNegativeDouble((double?)ViewBag.AccountBalance)</h3>
+
+@* code here to remove button if the user is not admin or manager *@
+<div class="search-row">
+    <div class="search-colum-1">
+        
+    </div>
+    <div class="search-colum-2">
+        <img src="~/img/search.svg" class="search-img" text-align:right;" />
+    </div>
+    <div class="search-colum-3">
+        <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
+    </div>
+</div>
+<table class="table  table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.journal_id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.debit_account)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.debit_amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.credit_account)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.credit_amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.transaction_date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.created_by)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.is_opening)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.description)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="tableBody">
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.journal_id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.debit_account)
+            </td>
+            <td>
+                @FormatNegativeDouble(item.debit_amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.credit_account)
+            </td>
+            <td>
+                @FormatNegativeDouble(item.credit_amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.transaction_date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.created_by)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.is_opening)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.description)
+            </td>
+            <td></td>
+        </tr>
+}
+        <tr>
+            <td colspan="2"><strong>Totals</strong></td>
+            <td><strong>@FormatNegativeDouble((double?)ViewBag.TotalDebitAmount)</strong></td>
+            <td colspan="1"></td>
+            <td><strong>@FormatNegativeDouble((double?)ViewBag.TotalCreditAmount)</strong></td>
+            <td colspan="6"></td>
+        </tr>
+
+    </tbody>
+</table>
+@* format currency *@
+@functions {
+    public static string FormatNegativeDouble(double? value)
+    {
+        if (value.HasValue)
+        {
+            Console.WriteLine($"Formatting value: {value}"); // Debugging statement
+            if (value < 0)
+            {
+                return $"({Math.Abs(value.Value).ToString("C")})";
+            }
+            return value.Value.ToString("C");
+        }
+        return string.Empty;
+    }
+}
+
+@* Search and Filter *@
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let input = this.value.toLowerCase();
+        let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            let rowData = rows[i].getElementsByTagName('td');
+            let match = false;
+
+            for (let j = 0; j < rowData.length; j++) {
+                if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (match) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    });
+</script>

@@ -11,6 +11,12 @@ namespace oa.Models
         [Required]
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 1)]
+        [DisplayName("Journal Id:")]
+        public int? journal_id { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
+        [StringLength(100, MinimumLength = 1)]
         [DisplayName("Debit Account:")]
         public int? debit_account { get; set; }
 
@@ -40,7 +46,7 @@ namespace oa.Models
         [DisplayName("Created by:")]
         public string? created_by { get; set; }
 
-        [DisplayName("Opening transaction:")]
+        [DisplayName("Is Opening:")]
         public bool? is_opening { get; set; } = false;
 
         [Required]
@@ -53,6 +59,5 @@ namespace oa.Models
         [StringLength(100, MinimumLength = 0)]
         [DisplayName("Description:")]
         public string? description { get; set; } = "";
-
     }
 }

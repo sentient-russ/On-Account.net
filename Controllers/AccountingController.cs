@@ -84,6 +84,7 @@ namespace OnAccount.Controllers
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             AccountsModel accountModel = new AccountsModel();
             accountModel.accounts_list = currentAccounts;
+            accountModel.nextJournalId = _dbConnectorService.GetNextJournalId();            
             return View(accountModel);
         }
 
@@ -109,5 +110,26 @@ namespace OnAccount.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        //All users can view accounts details pages
+        [Authorize(Roles = "Administrator, Manager, Accountant")]
+        public async Task<IActionResult> ViewAccountDetails(string? id)
+        {
+            List<TransactionModel> currentTransactions = _dbConnectorService.GetAccountTransactions(id);
+
+
+            ViewBag.AccountName = _dbConnectorService.GetAccoutName(id);
+            DateTime currentDate = DateTime.Now;
+            ViewBag.Date = currentDate.ToString("dd-MM-yyyy");
+
+            double totalDebitAmount = currentTransactions.Sum(t => t.debit_amount ?? 0);
+            double totalCreditAmount = currentTransactions.Sum(t => t.credit_amount ?? 0);
+            double accountBalance = totalDebitAmount - totalCreditAmount;
+
+            ViewBag.TotalDebitAmount = totalDebitAmount;
+            ViewBag.TotalCreditAmount = totalCreditAmount;
+            ViewBag.AccountBalance = accountBalance; 
+            return View(currentTransactions);
+        }
+
     }
 }
