@@ -677,7 +677,7 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@status", transactionIn.status);
                 cmd1.Parameters.AddWithValue("@is_opening", transactionIn.is_opening);
                 cmd1.Parameters.AddWithValue("@description", transactionIn.description);
-                cmd1.Parameters.AddWithValue("@description", transactionIn.journal_id);
+                cmd1.Parameters.AddWithValue("@journal_id", transactionIn.journal_id);
 
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
