@@ -451,3 +451,26 @@ document.addEventListener('change', function (event) {
         }
     }
 });
+
+const div_handle = document.getElementById('div-handle');
+const add_img = document.getElementById('add-img');
+const remove_img = document.getElementById('remove-img');
+const tools_menu = document.getElementsByClassName('tools-menu');
+add_img.style.display = "none";
+div_handle.addEventListener('click', function (event) {
+    if (add_img.style.display === "none") {
+        add_img.style.display = "block";
+        remove_img.style.display = "none";
+        for (var i = 0; i < tools_menu.length; i++) {
+            tools_menu[i].style.display = "none";
+        }
+    } else {
+        add_img.style.display = "none";
+        remove_img.style.display = "block";
+        for (var i = 0; i < tools_menu.length; i++) {
+            tools_menu[i].style.display = "flex";
+        }
+    }
+});
+
+/*  toggle tools begin */
