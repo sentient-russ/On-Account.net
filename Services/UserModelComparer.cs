@@ -30,7 +30,7 @@ namespace oa.Services
                 }
             }
             //iterate through the loglist to get rid of null entries.
-            for(int i = 0; i <= logList.Count; i++)
+            for(int i = 0; i < logList.Count; i++)
             {
                 if (logList[i].ChangedFrom.Contains("null") || logList[i].ChangedTo.Contains("null"))
                 {

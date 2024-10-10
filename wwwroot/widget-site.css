@@ -1,0 +1,56 @@
+.widgetbox {
+    width: 250px;
+    height: 400px;
+    position: absolute;
+    border: 0px solid #000;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    font-family: 'Poppins', sans-serif;
+}
+
+#title-bar {
+    width: 100%;
+    height: 25px;
+    background-color: #000000;
+    color: white;
+    cursor: move;
+    text-align: center;
+    line-height: 25px;
+    position: relative;
+    border-radius: 5px;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+}
+
+.attribution-bar {
+    display: flex;
+    position: absolute;
+    transform: translateY(315px);
+    background-color: #3f9c96;
+    border: 1px solid;
+    width: 99%;
+    font-family: 'Poppins', sans-serif;
+}
+
+.close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25px;
+    height: 25px;
+    background-color: rgb(204, 71, 71);
+    color: white;
+    text-align: center;
+    line-height: 25px;
+    cursor: pointer;
+    border: 0px;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.widget-container{
+    margin-top: 200px;
+    margin-left: 200px;
+    border: 1px solid;
+    border-color: black;
+}

@@ -46,26 +46,26 @@ namespace OnAccount.Controllers
             this._dbConnectorService = dbConnectorService;
             this._emailSender = EmailSender;
         }
-
+        [Authorize(Roles = "Administrator")]
         public IActionResult Index()
         {
             
             return View();
         }
-
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public IActionResult ManageRoles()
         {
             var roles = _roleManager.Roles;
             return View(roles);
         }
-
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public IActionResult CreateRole()
         {
             return View();
         }
-
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<IActionResult> CreateRole(IdentityRole model)
         {
@@ -75,12 +75,14 @@ namespace OnAccount.Controllers
             }
             return RedirectToAction("Index");
         }
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public async Task<IActionResult> ManageAccounts()
         {
             var appUsers = await _DbContext.Users.ToListAsync();
             return View(appUsers);
         }
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public async Task<IActionResult> EditAccountDetails(string? Id)
         {
@@ -105,6 +107,7 @@ namespace OnAccount.Controllers
             appUser.RoleList = items;
             return View(appUser);
         }
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<IActionResult> UpdateAccountDetails([Bind("Id, ScreenName, FirstName, LastName, PhoneNumber, Address, City, State, Zip, DateofBirth, UserRole, ActiveStatus, UserName, Email, NormalizedUserName, AcctSuspensionDate, AcctReinstatementDate, LastPasswordChangedDate, PasswordResetDays")] AppUserModel detailsIn)
         {
@@ -112,12 +115,15 @@ namespace OnAccount.Controllers
             appUser = detailsIn;
             _dbConnectorService.UpdateUserDetails(appUser);
             var user = await _userManager.FindByIdAsync(appUser.Id);
+
+
             if (user != null)
             {
                 var roleResult = await _userManager.AddToRoleAsync(user, appUser.UserRole);
             }
             return RedirectToAction(nameof(ManageAccounts));
         }
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public async Task<IActionResult> Email(string? Id)
         {
@@ -142,7 +148,7 @@ namespace OnAccount.Controllers
             appUser.RoleList = items;
             return View(appUser);
         }
-
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<IActionResult> SendEmail([Bind("Id, Email, Subject, Message")] AppUserModel detailsIn)
         {
@@ -151,6 +157,7 @@ namespace OnAccount.Controllers
             await _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message);
             return RedirectToAction(nameof(ManageAccounts));
         }
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public async Task<IActionResult> Lock(string? Id)
         {
@@ -170,6 +177,7 @@ namespace OnAccount.Controllers
             //_dbConnectorService.immediateLockout(Id, userScreenName);
             return RedirectToAction(nameof(EditAccountDetails), new { Id = Id });
         }
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public async Task<IActionResult> Unlock(string? Id)
         {
@@ -190,7 +198,7 @@ namespace OnAccount.Controllers
             //_dbConnectorService.disableLockout(Id, userScreenName);
             return RedirectToAction(nameof(EditAccountDetails), new { Id = Id });
         }
-
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public async Task<IActionResult> ViewLogs(string? Id)
         {

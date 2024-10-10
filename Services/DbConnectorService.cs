@@ -177,17 +177,11 @@ namespace oa.Services
 
                 //remove the old role before setting a new one.
                 AppUserModel currentUserModel = GetUserDetailsById(userIn.Id);
-                if (currentUserModel.UserRole == null || currentUserModel.UserRole == "")
+                if (currentUserModel.UserRole != userIn.UserRole)
                 {
-                    //do nothing
+                    DeleteUserRole(currentUserModel.Id);
                 }
-                else
-                {
-                    //DeleteUserRole(currentUserModel.Id);
-                    AssignUserRole(currentUserModel.Id, userIn.UserRole);
-                    //get roles list with id's
-                    //update the roles table with user id and role.
-                }
+                AssignUserRole(currentUserModel.Id, userIn.UserRole);
 
                 cmd1.Parameters.AddWithValue("@UserRole", userIn.UserRole);
                 cmd1.Parameters.AddWithValue("@UserName", userIn.Email);
@@ -479,7 +473,7 @@ namespace oa.Services
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "UPDATE on_account.UserRoles SET RoleId = @RoleId WHEREUserId = @UserId;";
+                string command = "UPDATE on_account.UserRoles SET RoleId = @RoleId WHERE UserId = @UserId;";
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 conn1.Open();
                 cmd1.Parameters.AddWithValue("@UserId", uidIn);
@@ -491,7 +485,6 @@ namespace oa.Services
             {
                 Console.WriteLine(ex.ToString());
             }
-
         }
         /*
          * Gets all accounts

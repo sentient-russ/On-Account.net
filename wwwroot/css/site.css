@@ -610,3 +610,34 @@ input:-webkit-autofill:focus {
     -webkit-text-fill-color: #555555 !important;
 }
 
+.tools-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    margin-top: 50px;
+    width: 130px;
+    max-height: 75px;
+}
+.tools-row {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    justify-content: space-between;
+    margin: 5px;
+}
+
+.calc-img {
+    height: 33px;
+    max-height: 33px;
+
+}
+.cala-img {
+    max-height: 30px !important;
+    max-height: 30px;
+
+}
+.help-img {
+    height: 33px;
+    max-height: 33px;
+
+}
