@@ -18,7 +18,9 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <div class="login-name-container-inner-row">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+            <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+        <div class="usr-login-btn">
+        
             <div class="NavButton">
                 @if (!string.IsNullOrEmpty(currentUser.File)){
                     
@@ -28,28 +30,44 @@
                      <span class ="screenname-text"> @UserName</span>
                 }
             </div>
-        </a>
-
-
+       
+            </div>
+            </a>
     </div>
 } 
 else
-{
-    <div class="login-name-container-inner">
-        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </div>
+{   
+    <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">
+      <div class="usr-login-btn-not">
+        <div class="login-name-container-inner">
+            Login
+        </div>                
+      </div>
+    </a>
 }
 </div>
 
 @if (SignInManager.IsSignedIn(User)){
 
     <div class="tools-container">
-        <div class="tools-row">
-            <img class="calc-img" onclick="toggleWidget(`onacalc`)" src="~/img/calculator.svg" />
-            <img class="cala-img" onclick="toggleWidget(`onacalander`)" src="~/img/calendar.svg" />
-            <img class="help-img" onclick="toggleWidget(`onahelp`)" src="~/img/help.svg" />
+        <div class="tools-row-inner-col">
+            <div class="tools-row" style="max-width:45px">
+                <div id="div-handle">
+                <img src="~/img/add_img.svg" class="add-img" id="add-img"/>
+                <img src="~/img/remove_img.svg" class="remove-img" id="remove-img"/>
+                </div>
+            </div>
         </div>
+        <div class="tools-row-inner-col tools-menu">
+            <div class="tools-row tools-menu">
+                <img class="calc-img tools-menu" onclick="toggleWidget(`onacalc`)" src="~/img/calculator.svg" />
+                <img class="cala-img tools-menu" onclick="toggleWidget(`onacalander`)" src="~/img/calendar.svg" />
+                <img class="help-img tools-menu" onclick="toggleWidget(`onahelp`)" src="~/img/help.svg" />
+            </div>
+        </div>
+
     </div>
+    
 }
 
 <link rel="stylesheet" href="~/calendar-widget/styles.css">
