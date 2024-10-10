@@ -9,8 +9,6 @@ namespace oa.Models
         public int? id { get; set; }
 
         [Required]
-        [DataType(DataType.Text)]
-        [StringLength(100, MinimumLength = 1)]
         [DisplayName("Journal Id:")]
         public int? journal_id { get; set; }
 
@@ -59,5 +57,10 @@ namespace oa.Models
         [StringLength(100, MinimumLength = 0)]
         [DisplayName("Description:")]
         public string? description { get; set; } = "";
+
+        [Required]
+        [StringLength(100, MinimumLength = 0)]
+        [DisplayName("Journal Id:")]
+        public int? transaction_number { get; set; }
     }
 }

@@ -11,8 +11,9 @@
     var UserName = currentUser.ScreenName;
 }
 
-<div class="login-name-container">
 
+
+<div class="login-name-container">
 
 @if (SignInManager.IsSignedIn(User))
 {
@@ -39,22 +40,28 @@ else
     </div>
 }
 </div>
-<div class="tools-container">
-    <div class="tools-row">
-        <img class="calc-img" src="~/img/calculator.svg" />
-        <img class="cala-img" src="~/img/calendar.svg" />
-        <img class="help-img" src="~/img/help.svg" />
+
+@if (SignInManager.IsSignedIn(User)){
+
+    <div class="tools-container">
+        <div class="tools-row">
+            <img class="calc-img" onclick="toggleWidget(`onacalc`)" src="~/img/calculator.svg" />
+            <img class="cala-img" onclick="toggleWidget(`onacalander`)" src="~/img/calendar.svg" />
+            <img class="help-img" onclick="toggleWidget(`onahelp`)" src="~/img/help.svg" />
+        </div>
     </div>
-</div>
+}
 
-@* <button onclick="toggleWidget(`onacalc`)">Calc.</button>
-<button onclick="toggleWidget(`onahelp`)">Help.</button>
-<button onclick="toggleWidget(`onacalander`)">Calendar.</button>
+<link rel="stylesheet" href="~/calendar-widget/styles.css">
+<link rel="stylesheet" href="~/calendar-widget/styles.css">
+<link rel="stylesheet" href="~/calculator-widget/css/style.css">
+<script src="~/widget-site.js" async defer></script>
 
+<div class="widget-container">
 <div class="widgetbox" id="onacalc" style="display:none; width: fit-content; height: fit-content; background: rgba(0,0,0,0); border: 0px;">
     <div id="title-bar" style="border-radius: 5px; overflow: hidden;">
         Calculator
-        <button id="close-btn" onclick="closeButtonClick('onacalc')">X</button>
+        <button id="close-btn" class="close-btn" onclick="closeButtonClick('onacalc')">X</button>
     </div>
     <div id="content" style="display: inline-block;">
         <!--  https://github.com/Ovi/js-calculator -->
@@ -84,12 +91,14 @@ else
         </div>
     </div>
 </div>
+</div>
 
 
+<div class="widget-container">
 <div class="widgetbox" id="onahelp" style="display:none; width: 300px;">
     <div id="title-bar">
         Help
-        <button id="close-btn" onclick="closeButtonClick('onahelp')">X</button>
+        <button id="close-btn" class="close-btn" onclick="closeButtonClick('onahelp')">X</button>
     </div>
     <div id="content" style="overflow: auto; height: 350px">
         <div id="help-text-box">
@@ -225,12 +234,12 @@ else
         </div>
     </div>
 </div>
-
-
+</div>
+@* <div class="widget-container">
 <div class="widgetbox" id="onacalander" style="display:none; width: fit-content; height: fit-content; background: rgba(0,0,0,0); border: 0px;">
     <div id="title-bar">
         Calendar
-        <button id="close-btn" onclick="closeButtonClick('onacalander')">X</button>
+        <button id="close-btn" class="close-btn" onclick="closeButtonClick('onacalander')">X</button>
     </div>
     <div id="content" style="display: inline-block;">
         <div class="calendar-body" style="border-radius: 10px;">
@@ -265,4 +274,5 @@ else
             <script src="~/calendar-widget/script.js"></script>
         </div>
     </div>
+</div>
 </div> *@
