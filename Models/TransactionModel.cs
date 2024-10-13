@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.Configuration;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace oa.Models
 {
@@ -62,5 +64,17 @@ namespace oa.Models
         [StringLength(100, MinimumLength = 0)]
         [DisplayName("Journal Id:")]
         public int? transaction_number { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
+        [StringLength(1000, MinimumLength = 0)]
+        [DisplayName("Journal Description:")]
+        public string? journal_description { get; set; } = "";
+
+        [Required]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.DateTime)]
+        [DisplayName("Journal Date:")]
+        public DateTime? journal_date { get; set; }
     }
 }

@@ -100,20 +100,24 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /*End Munu Buttons*/
+
 document.querySelectorAll('.currencyField').forEach(function (input) {
     input.addEventListener('blur', function (e) {
         let input = e.target;
-        let value = input.value;
+        let value = input.value.trim(); // Trim spaces from the input
         value = value.replace(/[^0-9.]/g, '');
         let parts = value.split('.');
         let integerPart = parts[0];
-        let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';       
+        let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
 
-        //remove leading zero's
-        var flt = parseInt(integerPart);
+        // Remove leading zeros and handle empty integerPart
+        var flt = parseInt(integerPart, 10);
+        if (isNaN(flt)) {
+            flt = 0;
+        }
 
-        //back to str
-        integerPart = flt.toString()
+        // Back to string
+        integerPart = flt.toString();
 
         integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
@@ -123,6 +127,7 @@ document.querySelectorAll('.currencyField').forEach(function (input) {
         } else {
             formattedValue = '$0';
         }
+
         let newTail = "";
         if (decimalPart === "") {
             newTail = ".00";
@@ -137,321 +142,7 @@ document.querySelectorAll('.currencyField').forEach(function (input) {
         input.value = formattedValue;
     });
 });
-////////////////////////////////////////////////////////////////////////////////
-/*Create Account Form*/
-var starting_balance = document.getElementById('starting_balance');
-var transaction_1_cr = document.getElementById('transaction_1_cr');
-var transaction_2_cr = document.getElementById('transaction_2_cr');
-var transaction_1_dr = document.getElementById('transaction_1_dr');
-var transaction_2_dr = document.getElementById('transaction_2_dr');
-var transaction_dr_total = document.getElementById('transaction_dr_total');
-var transaction_cr_total = document.getElementById('transaction_cr_total');
-var journal_validatation = document.getElementById('journal_validation');
-var save_journal_btn = document.getElementById('save_journal_btn');
-var total_adjustment = document.getElementById('total_adjustment');
-
-function updateStartingBalance() {
-    var str1 = document.getElementById('transaction_dr_total').value.toString();
-    var str2 = document.getElementById('transaction_cr_total').value.toString();
-
-    if (str1.localeCompare(str2) == 0) {
-        save_journal_btn.disabled = false;
-        if (starting_balance != null) {
-            starting_balance.value = transaction_dr_total.value;
-        } else if (total_adjustment != null) {
-            total_adjustment.value = transaction_dr_total.value;
-        }
-        
-        document.getElementById("journal_validation").innerHTML = "";
-    } else {
-        document.getElementById("journal_validation").innerHTML = "The transaction is out of balance.";
-        save_journal_btn.disabled = 'disabled';
-    }
-}
-
-if (transaction_1_cr != null) {
-    transaction_1_cr.addEventListener('focusout', function (e) {
-        //calculate the column total and update the sum
-        let input = e.target;
-        var dr1 = input.value;
-        var dr2 = transaction_2_cr.value;
-        dr1 = dr1.replace(/[^0-9.]/g, '');
-        dr2 = dr2.replace(/[^0-9.]/g, '');
-        var total = parseFloat(dr1) + parseFloat(dr2);
-        transaction_cr_total.value = total;
-        //format the line total
-        let value = transaction_cr_total.value;
-        value = value.replace(/[^0-9.]/g, '');
-        let parts = value.split('.');
-        let integerPart = parts[0];
-        let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        let formattedValue = integerPart;
-        if (formattedValue.length >= 1) {
-            formattedValue = '$' + formattedValue;
-        } else {
-            formattedValue = '$0';
-        }
-        let newTail = "";
-        if (decimalPart === "") {
-            newTail = ".00";
-        } else if (decimalPart.length == 1) {
-            newTail = "." + decimalPart + "0";
-        } else if (decimalPart.length == 2) {
-            newTail = "." + decimalPart;
-        } else if (decimalPart.length > 2) {
-            newTail = "." + decimalPart.substring(0, 2);
-        }
-        formattedValue = formattedValue + newTail;
-        transaction_cr_total.value = formattedValue;
-        updateStartingBalance();
-        //and again for the current cell value
-        value = input.value;
-        value = value.replace(/[^0-9.]/g, '');
-        parts = value.split('.');
-        integerPart = parts[0];
-        decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        formattedValue = integerPart;
-        if (formattedValue.length >= 1) {
-            formattedValue = '$' + formattedValue;
-        } else {
-            formattedValue = '$0';
-        }
-        newTail = "";
-        if (decimalPart === "") {
-            newTail = ".00";
-        } else if (decimalPart.length == 1) {
-            newTail = "." + decimalPart + "0";
-        } else if (decimalPart.length == 2) {
-            newTail = "." + decimalPart;
-        } else if (decimalPart.length > 2) {
-            newTail = "." + decimalPart.substring(0, 2);
-        }
-        formattedValue = formattedValue + newTail;
-        transaction_1_cr.value = formattedValue;
-
-    });
-}
-
-if (transaction_2_cr != null) {
-    transaction_2_cr.addEventListener('focusout', function (e) {
-        //calculate the column total and update the sum
-        let input = e.target;
-        var dr1 = input.value;
-        var dr2 = transaction_1_cr.value;
-        dr1 = dr1.replace(/[^0-9.]/g, '');
-        dr2 = dr2.replace(/[^0-9.]/g, '');
-
-        var total = parseFloat(dr1) + parseFloat(dr2);
-        transaction_cr_total.value = total;
-        //format the line total
-        let value = transaction_cr_total.value;
-
-        value = value.replace(/[^0-9.]/g, '');
-        let parts = value.split('.');
-        let integerPart = parts[0];
-        let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        let formattedValue = integerPart;
-        if (formattedValue.length >= 1) {
-            formattedValue = '$' + formattedValue;
-        } else {
-            formattedValue = '$0';
-        }
-        let newTail = "";
-        if (decimalPart === "") {
-            newTail = ".00";
-        } else if (decimalPart.length == 1) {
-            newTail = "." + decimalPart + "0";
-        } else if (decimalPart.length == 2) {
-            newTail = "." + decimalPart;
-        } else if (decimalPart.length > 2) {
-            newTail = "." + decimalPart.substring(0, 2);
-        }
-        formattedValue = formattedValue + newTail;
-        transaction_cr_total.value = formattedValue;
-        updateStartingBalance();
-
-        //and again for the current cell value
-        value = input.value;
-        value = value.replace(/[^0-9.]/g, '');
-        parts = value.split('.');
-        integerPart = parts[0];
-        decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        formattedValue = integerPart;
-        if (formattedValue.length >= 1) {
-            formattedValue = '$' + formattedValue;
-        } else {
-            formattedValue = '$0';
-        }
-        newTail = "";
-        if (decimalPart === "") {
-            newTail = ".00";
-        } else if (decimalPart.length == 1) {
-            newTail = "." + decimalPart + "0";
-        } else if (decimalPart.length == 2) {
-            newTail = "." + decimalPart;
-        } else if (decimalPart.length > 2) {
-            newTail = "." + decimalPart.substring(0, 2);
-        }
-        formattedValue = formattedValue + newTail;
-        transaction_2_cr.value = formattedValue;
-    });
-}
-if (transaction_1_dr != null) {
-    transaction_1_dr.addEventListener('focusout', function (e) {
-        //calculate the column total and update the sum
-        let input = e.target;
-        var dr1 = input.value;
-        var dr2 = transaction_2_dr.value;
-        dr1 = dr1.replace(/[^0-9.]/g, '');
-        dr2 = dr2.replace(/[^0-9.]/g, '');
-        var total = parseFloat(dr1) + parseFloat(dr2);
-        transaction_dr_total.value = total;
-        //format the line total
-        let value = transaction_dr_total.value;
-        value = value.replace(/[^0-9.]/g, '');
-        let parts = value.split('.');
-        let integerPart = parts[0];
-        let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        let formattedValue = integerPart;
-        if (formattedValue.length >= 1) {
-            formattedValue = '$' + formattedValue;
-        } else {
-            formattedValue = '$0';
-        }
-        let newTail = "";
-        if (decimalPart === "") {
-            newTail = ".00";
-        } else if (decimalPart.length == 1) {
-            newTail = "." + decimalPart + "0";
-        } else if (decimalPart.length == 2) {
-            newTail = "." + decimalPart;
-        } else if (decimalPart.length > 2) {
-            newTail = "." + decimalPart.substring(0, 2);
-        }
-        formattedValue = formattedValue + newTail;
-        transaction_dr_total.value = formattedValue;
-        updateStartingBalance();
-        //and again for the current cell value
-        value = input.value;
-        value = value.replace(/[^0-9.]/g, '');
-        parts = value.split('.');
-        integerPart = parts[0];
-        decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        formattedValue = integerPart;
-        if (formattedValue.length >= 1) {
-            formattedValue = '$' + formattedValue;
-        } else {
-            formattedValue = '$0';
-        }
-        newTail = "";
-        if (decimalPart === "") {
-            newTail = ".00";
-        } else if (decimalPart.length == 1) {
-            newTail = "." + decimalPart + "0";
-        } else if (decimalPart.length == 2) {
-            newTail = "." + decimalPart;
-        } else if (decimalPart.length > 2) {
-            newTail = "." + decimalPart.substring(0, 2);
-        }
-        formattedValue = formattedValue + newTail;
-        transaction_1_dr.value = formattedValue;  
-
-    });
-}
-if (transaction_2_dr != null) {
-    transaction_2_dr.addEventListener('focusout', function (e) {
-        //calculate the column total and update the sum
-        let input = e.target;
-        var dr1 = input.value;
-        var dr2 = transaction_1_dr.value;
-        dr1 = dr1.replace(/[^0-9.]/g, '');
-        dr2 = dr2.replace(/[^0-9.]/g, '');
-
-        var total = parseFloat(dr1) + parseFloat(dr2);
-        transaction_dr_total.value = total;
-        //format the line total
-        let value = transaction_dr_total.value;
-
-        value = value.replace(/[^0-9.]/g, '');
-        let parts = value.split('.');
-        let integerPart = parts[0];
-        let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        let formattedValue = integerPart;
-        if (formattedValue.length >= 1) {
-            formattedValue = '$' + formattedValue;
-        } else {
-            formattedValue = '$0';
-        }
-        let newTail = "";
-        if (decimalPart === "") {
-            newTail = ".00";
-        } else if (decimalPart.length == 1) {
-            newTail = "." + decimalPart + "0";
-        } else if (decimalPart.length == 2) {
-            newTail = "." + decimalPart;
-        } else if (decimalPart.length > 2) {
-            newTail = "." + decimalPart.substring(0, 2);
-        }
-        formattedValue = formattedValue + newTail;
-        transaction_dr_total.value = formattedValue;
-        updateStartingBalance();
-
-        //and again for the current cell value
-        value = input.value;
-        value = value.replace(/[^0-9.]/g, '');
-        parts = value.split('.');
-        integerPart = parts[0];
-        decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        formattedValue = integerPart;
-        if (formattedValue.length >= 1) {
-            formattedValue = '$' + formattedValue;
-        } else {
-            formattedValue = '$0';
-        }
-        newTail = "";
-        if (decimalPart === "") {
-            newTail = ".00";
-        } else if (decimalPart.length == 1) {
-            newTail = "." + decimalPart + "0";
-        } else if (decimalPart.length == 2) {
-            newTail = "." + decimalPart;
-        } else if (decimalPart.length > 2) {
-            newTail = "." + decimalPart.substring(0, 2);
-        }
-        formattedValue = formattedValue + newTail;
-        transaction_2_dr.value = formattedValue;        
-    });
-}
-
-document.addEventListener('input', function (event) {
-    const target = event.target;
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
-        if (target.value.trim() !== '') {
-            target.classList.add('has-text');
-        } else {
-            target.classList.remove('has-text');
-        }
-    }
-});
-document.addEventListener('change', function (event) {
-    const target = event.target;
-    if (target.tagName === 'SELECT') {
-        if (target.value.trim() !== '') {
-            target.classList.add('has-text');
-        } else {
-            target.classList.remove('has-text');
-        }
-    }
-});
-
+/*  toggle tools begin */
 const div_handle = document.getElementById('div-handle');
 const add_img = document.getElementById('add-img');
 const remove_img = document.getElementById('remove-img');
@@ -473,4 +164,4 @@ div_handle.addEventListener('click', function (event) {
     }
 });
 
-/*  toggle tools begin */
+/*  toggle tools end */
