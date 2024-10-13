@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using oa.Areas.Identity.Data;
 
@@ -10,9 +11,10 @@ using oa.Areas.Identity.Data;
 namespace oa.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241012212747_journal-desc-2")]
+    partial class journaldesc2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -544,10 +546,6 @@ namespace oa.Migrations
 
                     b.Property<bool?>("is_opening")
                         .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime?>("journal_date")
-                        .IsRequired()
-                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("journal_description")
                         .IsRequired()

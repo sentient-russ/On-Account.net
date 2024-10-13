@@ -194,5 +194,6 @@ app.MapControllerRoute(
     pattern: "{controller=AccountingController}/{action=ViewAccountDetails}/{id?}");
 
 
+
 app.MapRazorPages();
 app.Run();

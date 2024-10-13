@@ -59,7 +59,6 @@ namespace oa.Models
         [DisplayName("Type:")]
         public string? type { get; set; }
 
-
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 0)]
         [DisplayName("Term:")]
@@ -104,6 +103,7 @@ namespace oa.Models
         [Required]
         [NotMapped]
         [ValidateNever]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime? transaction_1_date { get; set; } = System.DateTime.Today;
 
@@ -141,6 +141,7 @@ namespace oa.Models
         [Required]
         [NotMapped]
         [ValidateNever]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime? transaction_2_date { get; set; } = System.DateTime.Today;
 
@@ -164,6 +165,7 @@ namespace oa.Models
         [ValidateNever]
         public string? transaction_cr_total { get; set; }
 
+
         [ValidateNever]
         [NotMapped]
         public List<AccountsModel>? accounts_list { get; set; }
@@ -173,7 +175,7 @@ namespace oa.Models
         [ModelBinder(BinderType = typeof(CurrencyModelBinder))]
         [DisplayFormat(DataFormatString = "{0:C}")]
         [DisplayName("Total:")]
-        public string? total_adjustment { get; set; }
+        public string? total_adjustment { get; set; } = "$0.00";
 
         [ValidateNever]
         [NotMapped]
@@ -188,12 +190,34 @@ namespace oa.Models
 
         [NotMapped]
         [ValidateNever]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.DateTime)]
+        [DisplayName("Journal Date:")]
+        public DateTime? journal_date { get; set; } = DateTime.Today;
+
+        [NotMapped]
+        [ValidateNever]
+        [DataType(DataType.Text)]
+        [StringLength(100, MinimumLength = 0)]
+        [DisplayName("Journal Description:")]
+        public string? journal_description { get; set; } = "";
+
+        [NotMapped]
+        [ValidateNever]
         public List<TransactionModel>? transactions_list { get; set; }
 
         [NotMapped]
         [ValidateNever]
         [DisplayName("Journal Id:")]
-        public int? nextJournalId { get; set; }
+        public int? journal_id { get; set; }
+
+        [NotMapped]
+        [ValidateNever]
+        [DataType(DataType.Text)]
+        [StringLength(50, MinimumLength = 1)]
+        [DisplayName("Status:")]
+        public string? status { get; set; } = "Pending";
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             return new List<ValidationResult>();

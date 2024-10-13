@@ -1,18 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using oa.Services;
 using oa.Models;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Security.Principal;
+using System.Text.Json;
+
 
 namespace OnAccount.Controllers
 {
+
+
     [BindProperties(SupportsGet = true)]
     public class AccountingController : Controller
     {
@@ -137,72 +133,89 @@ namespace OnAccount.Controllers
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             AccountsModel accountModel = new AccountsModel();
             accountModel.accounts_list = currentAccounts;
-            accountModel.nextJournalId = _dbConnectorService.GetNextJournalId();
+            accountModel.journal_id = _dbConnectorService.GetNextJournalId();
             
             AccountsModelJournal journalAccount = new AccountsModelJournal();
-            journalAccount.id = accountModel.id;
-            journalAccount.created_by = accountModel.created_by;
-            journalAccount.account_creation_date = accountModel.account_creation_date;
-            journalAccount.total_adjustment = accountModel.total_adjustment;
-            journalAccount.account_status = accountModel.account_status;
-            journalAccount.transaction_1_date = accountModel.transaction_1_date;
-            journalAccount.transaction_1_dr_account = accountModel.transaction_1_dr_account;
-            journalAccount.transaction_1_dr = accountModel.transaction_1_dr;
-            journalAccount.transaction_1_cr_account = accountModel.transaction_1_cr_account;
-            journalAccount.transaction_1_cr = accountModel.transaction_1_cr;
-            journalAccount.transaction_dr_total = accountModel.transaction_dr_total;
-            journalAccount.transaction_cr_total = accountModel.transaction_cr_total;
-            journalAccount.nextJournalId = accountModel.nextJournalId;
-            List<AccountsModel> Accounts = _dbConnectorService.GetChartOfAccounts();
-            journalAccount.accounts_list = Accounts;
+
+
+
+            journalAccount.journal_date = System.DateTime.Today;
+            journalAccount.journal_id = accountModel.journal_id;
+            journalAccount.accounts_list = currentAccounts;
             return View(journalAccount);
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager, Accountant")]
-        public async Task<IActionResult> SaveNewJounalEntry([Bind("id, name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, transaction_1_date, transaction_1_dr, transaction_1_cr, transaction_2_date, transaction_2_dr, transaction_2_cr, transaction_dr_total, transaction_cr_total, accounts_list, transaction_1_cr_account, transaction_1_dr_account, transaction_1_description, nextJournalId")] AccountsModelJournal newJournalDetailsIn)
+        [Route("api/journal")]
+        public async Task<IActionResult> SaveJournal([FromForm] string journalData, [FromForm] List<IFormFile> transactionUploads)
         {
-/*            if (!ModelState.IsValid)
+            // Deserialize the JSON data
+            var journal = JsonSerializer.Deserialize<JournalData>(journalData);
+
+            // Process the uploaded files
+            foreach (var file in transactionUploads)
             {
-                List<AccountsModel> Accounts = _dbConnectorService.GetChartOfAccounts();
-                AccountsModel accountModel = newJournalDetailsIn;
-                AccountsModelJournal journalAccount = new AccountsModelJournal();
-                journalAccount.id = accountModel.id;
-                journalAccount.created_by = accountModel.created_by;
-                journalAccount.account_creation_date = accountModel.account_creation_date;
-                journalAccount.total_adjustment = accountModel.total_adjustment;
-                journalAccount.account_status = accountModel.account_status;
-                journalAccount.transaction_1_date = accountModel.transaction_1_date;
-                journalAccount.transaction_1_dr_account = accountModel.transaction_1_dr_account;
-                journalAccount.transaction_1_dr = accountModel.transaction_1_dr;
-                journalAccount.transaction_1_cr_account = accountModel.transaction_1_cr_account;
-                journalAccount.transaction_1_cr = accountModel.transaction_1_cr;
-                journalAccount.transaction_dr_total = accountModel.transaction_dr_total;
-                journalAccount.transaction_cr_total = accountModel.transaction_cr_total;*//*
-                newJournalDetailsIn.accounts_list = Accounts;
-                return View("AddJounalEntries", newJournalDetailsIn);
-            }*/
+                if (file.Length > 0)
+                {
+                    // Save the file to a specific location or process it as needed
+                    var filePath = Path.Combine("uploads", file.FileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                }
+            }
 
+            // Here you can process the journal data and files as needed
+            // For example, save the journal data to a database
 
-            List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
-            AccountsModelJournal newJournal = newJournalDetailsIn;
-            newJournal.accounts_list = currentAccounts;
-            
-            TransactionModel transaction = new TransactionModel();
-            transaction.debit_account = int.Parse(newJournalDetailsIn.transaction_1_dr_account); 
-            transaction.credit_account = int.Parse(newJournalDetailsIn.transaction_1_cr_account);
-            transaction.debit_amount = double.Parse(newJournalDetailsIn.transaction_1_dr, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US")); 
-            transaction.credit_amount = double.Parse(newJournalDetailsIn.transaction_1_cr, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US"));
-            transaction.description = newJournalDetailsIn.transaction_1_description;
-            transaction.created_by = newJournalDetailsIn.created_by;
-            transaction.transaction_date = System.DateTime.Now;
-            transaction.journal_id = newJournalDetailsIn.nextJournalId;
-
-            _dbConnectorService.AddTransaction(transaction);
-            /*transaction.isOpening = newJournal.is_opening;*/
-
-            return RedirectToAction(nameof(Index));
+            return Ok(new { message = "Data received successfully" });
         }
+        /*        [HttpPost]
+                [Authorize(Roles = "Manager, Accountant")]
+                public async Task<IActionResult> SaveNewJounalEntry([Bind("id, name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, transaction_1_date, transaction_1_dr, transaction_1_cr, transaction_2_date, transaction_2_dr, transaction_2_cr, transaction_dr_total, transaction_cr_total, accounts_list, transaction_1_cr_account, transaction_1_dr_account, transaction_1_description, nextJournalId")] AccountsModelJournal newJournalDetailsIn)
+                {
+        *//*            if (!ModelState.IsValid)
+                    {
+                        List<AccountsModel> Accounts = _dbConnectorService.GetChartOfAccounts();
+                        AccountsModel accountModel = newJournalDetailsIn;
+                        AccountsModelJournal journalAccount = new AccountsModelJournal();
+                        journalAccount.id = accountModel.id;
+                        journalAccount.created_by = accountModel.created_by;
+                        journalAccount.account_creation_date = accountModel.account_creation_date;
+                        journalAccount.total_adjustment = accountModel.total_adjustment;
+                        journalAccount.account_status = accountModel.account_status;
+                        journalAccount.transaction_1_date = accountModel.transaction_1_date;
+                        journalAccount.transaction_1_dr_account = accountModel.transaction_1_dr_account;
+                        journalAccount.transaction_1_dr = accountModel.transaction_1_dr;
+                        journalAccount.transaction_1_cr_account = accountModel.transaction_1_cr_account;
+                        journalAccount.transaction_1_cr = accountModel.transaction_1_cr;
+                        journalAccount.transaction_dr_total = accountModel.transaction_dr_total;
+                        journalAccount.transaction_cr_total = accountModel.transaction_cr_total;*//*
+                        newJournalDetailsIn.accounts_list = Accounts;
+                        return View("AddJounalEntries", newJournalDetailsIn);
+                    }*//*
+
+
+                    List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
+                    AccountsModelJournal newJournal = newJournalDetailsIn;
+                    newJournal.accounts_list = currentAccounts;
+
+                    TransactionModel transaction = new TransactionModel();
+                    transaction.debit_account = int.Parse(newJournalDetailsIn.transaction_1_dr_account); 
+                    transaction.credit_account = int.Parse(newJournalDetailsIn.transaction_1_cr_account);
+                    transaction.debit_amount = double.Parse(newJournalDetailsIn.transaction_1_dr, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US")); 
+                    transaction.credit_amount = double.Parse(newJournalDetailsIn.transaction_1_cr, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US"));
+                    transaction.description = newJournalDetailsIn.transaction_1_description;
+                    transaction.created_by = newJournalDetailsIn.created_by;
+                    transaction.transaction_date = System.DateTime.Now;
+                    transaction.journal_id = newJournalDetailsIn.nextJournalId;
+
+                    _dbConnectorService.AddTransaction(transaction);
+                    *//*transaction.isOpening = newJournal.is_opening;*//*
+
+                    return RedirectToAction(nameof(Index));
+                }*/
         //All users can view accounts details pages
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> ViewAccountDetails(string? id)
