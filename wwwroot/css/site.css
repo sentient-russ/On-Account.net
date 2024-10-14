@@ -859,11 +859,12 @@ input:-webkit-autofill:focus {
     max-width: 175px;
 
 }
-.add-sub-transactions-continer{
-    display:flex;
-    flex-direction:row;
-    justify-content:right;
-
+.transaction-description{
+    margin-left: 4px;
+}
+.add-sub-transactions-continer {
+    max-width: 350px;
+    margin-right: 313px;
 }
 .add-sub-transactions-label{
     display:flex;
@@ -873,7 +874,7 @@ input:-webkit-autofill:focus {
     text-align:right;
 }
 .journal-transaction-upload {
-    margin-left: 10px;
+
 }
 
 .journal-transaction-date {
