@@ -73,8 +73,8 @@
                                 dr_account: document.querySelector(`#dr-account[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
                                 cr_account: document.querySelector(`#cr-account[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
                                 post_ref: document.querySelector(`#post-ref[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
-                                dr_amount: parseFloat(document.querySelector(`#dr-ammount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', '')),
-                                cr_amount: parseFloat(document.querySelector(`#cr-ammount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', ''))
+                                dr_amount: parseFloat(document.querySelector(`#dr-amount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', '')),
+                                cr_amount: parseFloat(document.querySelector(`#cr-amount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', ''))
                             };
 
                             console.log(`Line ${lineId} - dr_account:`, line.dr_account);
@@ -92,7 +92,6 @@
                 return journalEntry;
             }
         });
-
 
         // Create a new line item
         function createNewLineItem(transactionId, lineId) {
@@ -127,12 +126,12 @@
             </div>
             <div class="col-md-2">
                 <div class="text-center">
-                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${transactionId}" data-line="${lineId}" id="dr-ammount" />
+                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${transactionId}" data-line="${lineId}" id="dr-amount" />
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="">
-                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${transactionId}" data-line="${lineId}" id="cr-ammount" />
+                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${transactionId}" data-line="${lineId}" id="cr-amount" />
                 </div>
             </div>
             <div class="col-00">
@@ -154,7 +153,11 @@
             const newLineId = parseInt(lastLineId) + 1;
             const newLineItem = createNewLineItem(transactionId, newLineId);
             referenceRow.insertAdjacentElement('afterend', newLineItem);
-            formatCurrency();
+
+            addCrTotallisteners();
+            addDrTotallisteners();
+
+
         }
 
         // Add event listeners to the add line and remove line buttons
@@ -166,160 +169,8 @@
             } else if (event.target.closest('#remove-new-line')) {
                 const referenceRow = event.target.closest('.journal-item-row');
                 referenceRow.remove();
-                formatCurrency();
             }
         });
-
-        // Create a new transaction template
-        function createNewTransaction(transactionId) {
-            const newTransaction = document.createElement('div');
-            newTransaction.className = 'transaction-container';
-            newTransaction.setAttribute('data-transaction', transactionId);
-
-            const existingDrAccount = document.querySelector(`#dr-account[data-transaction="1"][data-line="1"]`);
-            const existingCrAccount = document.querySelector(`#cr-account[data-transaction="1"][data-line="1"]`);
-
-            const drAccountOptions = existingDrAccount ? existingDrAccount.innerHTML : '';
-            const crAccountOptions = existingCrAccount ? existingCrAccount.innerHTML : '';
-
-            newTransaction.innerHTML = `
-            <div class="journal-container text-center">
-                <!-- heading row -->
-                <div class="journal-row-heading">
-                    <div class="col-md-3 transaction-date-container">
-                        <div class="journal-transaction-date">
-                            <input class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" data-transaction="${transactionId}" data-line="0" id="transaction-date" />
-                        </div>
-                    </div>
-                    <div class="col-md-6 transaction-upload-container ">
-                        <div class="journal-transaction-upload">
-                            <input class="form-control" type="file" data-transaction="${transactionId}" id="transaction-upload">
-                        </div>
-                    </div>
-                    <div class="col-md-4 add-sub-transactions-container">
-                        <div class="col-6">
-                            <div class="add-sub-transactions-container">
-                                <span class="add-sub-transactions-label">Add/Subtract Transactions:</span>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="add-new-transaction btn btn-primary" data-transaction="${transactionId}" id="add-transaction">
-                                <span class="btn-symbol">+</span>
-                            </div>
-                            <div class="remove-new-transaction btn btn-danger">
-                                <span class="btn-symbol">-</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="journal-row">
-                    <!-- entry 1.1 row -->
-                    <div class="row g-1 journal-item-row" data-transaction="${transactionId}" data-line="1">
-                        <div class="col-md-3">
-                            <span>Debit Account:</span>
-                            <select class="form-select form-control-sm" data-transaction="${transactionId}" data-line="1" id="dr-account">
-                            <option value="unselected">Select a debit account</option>
-                            ${drAccountOptions}
-                        </select>
-                        </div>
-                        <div class="col-md-3">
-                            <span>Credit Account:</span>
-                            <select class="form-select form-control-sm" data-transaction="${transactionId}" data-line="1" id="cr-account">
-                            <option value="unselected">Select a credit account</option>
-                            ${crAccountOptions}
-                        </select>
-                        </div>
-                        <div class="col-md-1">
-                            <span>Post Ref:</span>
-                            <div class="greyed-out">
-                                <input type="number" class="form-control" data-transaction="${transactionId}" data-line="1" id="post-ref" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <span>Dr.</span>
-                            <div class="text-center">
-                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="${transactionId}" data-line="1" id="dr-ammount" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <span>Cr.</span>
-                            <div class="">
-                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="${transactionId}" data-line="1" id="cr-ammount" />
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end entry 1.1 row -->
-                    <!-- entry 1.2 row -->
-                    <div class="row g-1 journal-item-row" data-transaction="${transactionId}" data-line="2">
-                        <div class="col-md-3">
-                            <select class="form-select form-control-sm" data-transaction="${transactionId}" data-line="2" id="dr-account">
-                            <option value="unselected">Select a debit account</option>
-                            ${drAccountOptions}
-                        </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select class="form-select form-control-sm" data-transaction="${transactionId}" data-line="2" id="cr-account">
-                            <option value="unselected">Select a credit account</option>
-                            ${crAccountOptions}
-                        </select>
-                        </div>
-                        <div class="col-md-1">
-                            <div class="greyed-out">
-                                <input type="number" class="form-control" data-transaction="${transactionId}" data-line="2" id="post-ref" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="text-center">
-                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="${transactionId}" data-line="2" id="dr-ammount" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="">
-                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="${transactionId}" data-line="2" id="cr-ammount" />
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end entry 1.2 row -->
-                    <div class="row g-1 journal-item-row">
-                        <div class="row g-1 journal-item-row">
-                            <div class="col-md-6">
-                                <div class="transaction-description">
-                                    <input style="text-align:left;" class="form-control transaction-description" placeholder="Transaction Description" data-transaction="${transactionId}" id="transaction-description" />
-                                </div>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="journal-totals">
-                                    <span class="totals">Totals</span>
-                                </div>
-                            </div>
-                            <div class="col-md-2" style="margin-left: 5px;">
-                                <hr class="hr-journal-totals" />
-                                <hr class="hr-journal-totals" />
-                                <div class="">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-val="false" data-transaction="${transactionId}" id="dr_total" readonly />
-                                </div>
-                            </div>
-                            <div class="col-md-2" style="margin-left:2.5px">
-                                <hr class="hr-journal-totals" />
-                                <hr class="hr-journal-totals" />
-                                <div class="">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${transactionId}" id="cr_total" readonly />
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="warning-row">
-                                <div class="text-danger text-right" id="journal_validation"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-            return newTransaction;
-        }
-
         function addNewTransaction(event) {
             const currentTransaction = event.target.closest('.transaction-container');
             const lastTransactionId = parseInt(currentTransaction.getAttribute('data-transaction'));
@@ -359,7 +210,7 @@
                                 <div class="add-new-transaction btn btn-primary" data-transaction="${newTransactionId}" id="add-transaction">
                                     <span class="btn-symbol">+</span>
                                 </div>
-                                <div class="remove-new-transaction btn btn-danger">
+                                <div class="remove-new-transaction btn btn-danger" data-transaction="${newTransactionId}" id="remove-transaction">
                                     <span class="btn-symbol">-</span>
                                 </div>
                             </div>
@@ -391,13 +242,13 @@
                             <div class="col-md-2">
                                 <span>Dr.</span>
                                 <div class="text-center">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="1" id="dr-ammount" />
+                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="1" id="dr-amount" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <span>Cr.</span>
                                 <div class="">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="1" id="cr-ammount" />
+                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="1" id="cr-amount" />
                                 </div>
                             </div>
                         </div>
@@ -423,12 +274,12 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="text-center">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="2" id="dr-ammount" />
+                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="2" id="dr-amount" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="2" id="cr-ammount" />
+                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="2" id="cr-amount" />
                                 </div>
                             </div>
                             <div class="col-00">
@@ -458,14 +309,14 @@
                                     <hr class="hr-journal-totals" />
                                     <hr class="hr-journal-totals" />
                                     <div class="">
-                                        <input class="form-control text-end currencyField" value="$0.00" data-val="false" data-transaction="${newTransactionId}" id="dr_total" readonly />
+                                        <input class="form-control text-end currencyField" value="$0.00" data-val="false" data-transaction="${newTransactionId}" id="dr-total" readonly />
                                     </div>
                                 </div>
                                 <div class="col-md-2" style="margin-left:2.5px">
                                     <hr class="hr-journal-totals" />
                                     <hr class="hr-journal-totals" />
                                     <div class="">
-                                        <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" id="cr_total" readonly />
+                                        <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" id="cr-total" readonly />
                                     </div>
                                 </div>
                             </div>
@@ -484,68 +335,204 @@
 
             // Insert the new transaction after the journal-container element
             journalContainer.insertAdjacentElement('afterend', newTransaction);
-            formatCurrency();
+            addCrTotallisteners();
+            addDrTotallisteners();
         }
 
-        // Remove transaction
-        function removeTransaction(event) {
-            const currentTransaction = event.target.closest('.transaction-container');
-            const firstTransaction = document.querySelector('.transaction-container:first-of-type');
+// Remove transaction
+function removeTransaction(event) {
+    const currentTransaction = event.target.closest('.transaction-container');
+    const firstTransaction = document.querySelector('.transaction-container:first-of-type');
 
-            if (currentTransaction !== firstTransaction) {
-                currentTransaction.remove();
-                formatCurrency();
-            }
-        }
-
-        // Add event listeners to the add transaction and remove transaction buttons
-        document.addEventListener('click', function (event) {
-            if (event.target.closest('#add-transaction')) {
-                addNewTransaction(event);
-            } else if (event.target.closest('#remove-transaction')) {
-                removeTransaction(event);
-            }
-        });
-
-    function formatCurrency() {
-        document.querySelectorAll('.currencyField').forEach(function (input) {
-            input.addEventListener('blur', function (e) {
-                let input = e.target;
-                let value = input.value.trim(); // Trim spaces from the input
-                value = value.replace(/[^0-9.]/g, '');
-                let parts = value.split('.');
-                let integerPart = parts[0];
-                let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-
-                // Remove leading zeros and handle empty integerPart
-                var flt = parseInt(integerPart, 10);
-                if (isNaN(flt)) {
-                    flt = 0;
-                }
-
-                // Back to string
-                integerPart = flt.toString();
-                integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                let formattedValue = integerPart;
-                if (formattedValue.length >= 1) {
-                    formattedValue = '$' + formattedValue;
-                } else {
-                    formattedValue = '$0';
-                }
-                let newTail = "";
-                if (decimalPart === "") {
-                    newTail = ".00";
-                } else if (decimalPart.length == 1) {
-                    newTail = "." + decimalPart + "0";
-                } else if (decimalPart.length == 2) {
-                    newTail = "." + decimalPart;
-                } else if (decimalPart.length > 2) {
-                    newTail = "." + decimalPart.substring(0, 2);
-                }
-                formattedValue = formattedValue + newTail;
-                input.value = formattedValue;
-            });
-        });
+    if (currentTransaction !== firstTransaction) {
+        currentTransaction.remove();
+        addCrTotallisteners();
     }
+}
 
+// Add event listeners to the add transaction and remove transaction buttons
+document.addEventListener('click', function (event) {
+    if (event.target.closest('#add-transaction')) {
+        addNewTransaction(event);
+        addCrTotallisteners();
+    } else if (event.target.closest('#remove-transaction')) {
+        removeTransaction(event);
+        addCrTotallisteners();
+    }
+});
+// imediate update
+function formatCurrency() {
+    document.querySelectorAll('.currencyField').forEach(function (input) {
+
+        const currencyFields = document.querySelectorAll('.currencyField');
+        currencyFields.forEach(field => {
+            let input = field.target;
+            let value = field.value.trim(); // Trim spaces from the input
+            value = value.replace(/[^0-9.]/g, '');
+            let parts = value.split('.');
+            let integerPart = parts[0];
+            let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+
+            // Remove leading zeros and handle empty integerPart
+            var flt = parseInt(integerPart, 10);
+            if (isNaN(flt)) {
+                flt = 0;
+            }
+
+            // Back to string
+            integerPart = flt.toString();
+            integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            let formattedValue = integerPart;
+            if (formattedValue.length >= 1) {
+                formattedValue = '$' + formattedValue;
+            } else {
+                formattedValue = '$0';
+            }
+            let newTail = "";
+            if (decimalPart === "") {
+                newTail = ".00";
+            } else if (decimalPart.length == 1) {
+                newTail = "." + decimalPart + "0";
+            } else if (decimalPart.length == 2) {
+                newTail = "." + decimalPart;
+            } else if (decimalPart.length > 2) {
+                newTail = "." + decimalPart.substring(0, 2);
+            }
+            formattedValue = formattedValue + newTail;
+            field.value = formattedValue;
+        });
+    });
+}
+
+function addCurrencyFieldListeners() {
+    document.querySelectorAll('.currencyField').forEach(function (input) {
+        input.addEventListener('fousout', function (e) {
+            let input = e.target;
+            let value = input.value.trim(); // Trim spaces from the input
+            value = value.replace(/[^0-9.]/g, '');
+            let parts = value.split('.');
+            let integerPart = parts[0];
+            let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+
+            // Remove leading zeros and handle empty integerPart
+            var flt = parseInt(integerPart, 10);
+            if (isNaN(flt)) {
+                flt = 0;
+            }
+
+            // Back to string
+            integerPart = flt.toString();
+            integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            let formattedValue = integerPart;
+            if (formattedValue.length >= 1) {
+                formattedValue = '$' + formattedValue;
+            } else {
+                formattedValue = '$0';
+            }
+            let newTail = "";
+            if (decimalPart === "") {
+                newTail = ".00";
+            } else if (decimalPart.length == 1) {
+                newTail = "." + decimalPart + "0";
+            } else if (decimalPart.length == 2) {
+                newTail = "." + decimalPart;
+            } else if (decimalPart.length > 2) {
+                newTail = "." + decimalPart.substring(0, 2);
+            }
+            formattedValue = formattedValue + newTail;
+            input.value = formattedValue;
+        });
+    });
+}
+// Function to convert currency string to float
+function currencyToFloat(currencyString) {
+    // Remove the dollar sign and commas
+    return parseFloat(currencyString.replace(/[$,]/g, ''));
+}
+
+// Function to update cr totals
+function updateCrTotals() {
+    // Select all cr_amount elements
+    const crAmountElements = document.querySelectorAll('[id="cr-amount"]');
+
+    // Create an object to store the totals by transaction number
+    const totalsByTransaction = {};
+
+    // Loop through each cr_amount element
+    crAmountElements.forEach(element => {
+        const transactionNumber = element.getAttribute('data-transaction');
+        const amount = currencyToFloat(element.value);
+
+        // Initialize the total for this transaction number if not already done
+        if (!totalsByTransaction[transactionNumber]) {
+            totalsByTransaction[transactionNumber] = 0;
+        }
+
+        // Add the amount to the total for this transaction number
+        totalsByTransaction[transactionNumber] += amount;
+    });
+
+    // Loop through the totalsByTransaction object and update the corresponding cr-total elements
+    for (const transactionNumber in totalsByTransaction) {
+        var total = totalsByTransaction[transactionNumber];
+        const crTotalElement = document.querySelector(`[id="cr-total"][data-transaction="${transactionNumber}"]`);
+        console.log(total);
+        total = total.toString();
+        console.log(total);
+        crTotalElement.value = total;
+        formatCurrency();
+
+    }
     formatCurrency();
+}
+function addCrTotallisteners() {
+    // Attach the updateTotals function to the focusout event for all cr_amount inputs
+    document.querySelectorAll('[id="cr-amount"]').forEach(element => {
+        element.addEventListener('focusout', updateCrTotals);
+    });
+}
+
+// Function to update dr totals
+function updateDrTotals() {
+    // Select all dr_amount elements
+    const drAmountElements = document.querySelectorAll('[id="dr-amount"]');
+
+    // Create an object to store the totals by transaction number
+    const totalsByTransaction = {};
+
+    // Loop through each cr_amount element
+    drAmountElements.forEach(element => {
+        const transactionNumber = element.getAttribute('data-transaction');
+        const amount = currencyToFloat(element.value);
+
+        // Initialize the total for this transaction number if not already done
+        if (!totalsByTransaction[transactionNumber]) {
+            totalsByTransaction[transactionNumber] = 0;
+        }
+
+        // Add the amount to the total for this transaction number
+        totalsByTransaction[transactionNumber] += amount;
+    });
+
+    // Loop through the totalsByTransaction object and update the corresponding cr-total elements
+    for (const transactionNumber in totalsByTransaction) {
+        var total = totalsByTransaction[transactionNumber];
+        const drTotalElement = document.querySelector(`[id="dr-total"][data-transaction="${transactionNumber}"]`);
+        console.log(total);
+        total = total.toString();
+        console.log(total);
+        drTotalElement.value = total;
+        formatCurrency();
+
+    }
+    formatCurrency();
+}
+function addDrTotallisteners() {
+    // Attach the updateTotals function to the focusout event for all cr_amount inputs
+    document.querySelectorAll('[id="dr-amount"]').forEach(element => {
+        element.addEventListener('focusout', updateDrTotals);
+    });
+}
+
+addCrTotallisteners();
+addDrTotallisteners();
