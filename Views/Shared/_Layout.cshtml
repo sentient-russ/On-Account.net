@@ -11,7 +11,12 @@
     <title>@ViewData["Title"] - OnAccount</title>
     <link rel="stylesheet" href="~/js/popper.min.js" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> 
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/calendar-widget/styles.css" />
+    <link rel="stylesheet" href="~/calculator-widget/css/style.css" />
+    <link rel="stylesheet" href="~/widget-site.css" />
+    <script src="~/widget-site.js" async defer></script>
 </head>
 <body>
     <header>
@@ -93,7 +98,227 @@
           @* end mod left nav *@
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+
+        <div class="widget-container">
+            <div class="widgetbox" id="onacalc" style="display:none; width: fit-content; height: fit-content; background: rgba(0,0,0,0); border: 0px; position: absolute;">
+                <div id="title-bar">
+                    Calculator
+                    <button id="close-btn" class="close-btn" onclick="closeButtonClick('onacalc')">X</button>
+                </div>
+                <div id="calc-content" style="display: inline-block;">
+                    <!--  https://github.com/Ovi/js-calculator -->
+                    <div class="calculator-body" style="border-radius: 10px; width: auto;"> 
+                        <div id="calculator" style="width: 300px;">
+                            <div id="result">0</div>
+                            <button onclick="cls();">AC</button>
+                            <button onclick="num(this.innerHTML);">7</button>
+                            <button onclick="num(this.innerHTML);">8</button>
+                            <button onclick="num(this.innerHTML);">9</button>
+                            <button onclick="calc(this.innerHTML);">/</button>
+                            <button onclick="num(this.innerHTML);">4</button>
+                            <button onclick="num(this.innerHTML);">5</button>
+                            <button onclick="num(this.innerHTML);">6</button>
+                            <button onclick="calc(this.innerHTML);">*</button>
+                            <button onclick="num(this.innerHTML);">1</button>
+                            <button onclick="num(this.innerHTML);">2</button>
+                            <button onclick="num(this.innerHTML);">3</button>
+                            <button onclick="calc(this.innerHTML);">-</button>
+                            <button onclick="num(this.innerHTML);">0</button>
+                            <button onclick="num(this.innerHTML);">.</button>
+                            <button onclick="total();">=</button>
+                            <button onclick="calc(this.innerHTML);">+</button>
+                            <div id="smallResult"></div>
+                        </div>
+                        <script src="~/calculator-widget/js/script.js"></script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="widget-container">
+            <div class="widgetbox" id="onahelp" style="display:none; position: absolute;">
+                <div id="title-bar">
+                    Help
+                    <button id="close-btn" class="close-btn" onclick="closeButtonClick('onahelp')">X</button>
+                </div>
+                <div id="help-content" style="overflow: auto; height: 350px">
+                    <div id="help-text-box">
+                        <div id="text-container">
+                            <p>Help Document: </p>
+                            <br>
+                            <p>-Getting Started:</p>
+                            <br>
+                            <p>-What can you do with OnAccounts:</p>
+                            <br>
+                            <p>OnAccount is a Accounting software meaning you’ll be able to:</p>
+                            <br>
+                            <p>•	Journalize Transactions</p>
+                            <p>•	Managing Financial Accounts</p>
+                            <p>•	Chart of accounts creations, </p>
+                            <p>•	Posting of entries and generating</p>
+                            <p>•	Creation Financial reports (Income Statements, Balance sheets and Retain Earning Statement)</p>
+                            <p>•	Multi Role Assignments (Admistrators, Managers, and Accountants)</p>
+                            <br>
+                            <p>- How to set up an Account:</p>
+                            <p>1. If this is your first time Select Register at the home screen ( first option)</p>
+                            <p>2. Fill out the forum provide it and select register (Administrators will approve or deny, if approve you will be assigned a role)</p>
+                            <p>3. If approve select login and fill your credentials in the fields provided it.</p>
+                            <br>
+                            <p>-User Role Description:</p>
+                            <br>
+                            <p>    - Administrators:</p>
+                            <br>
+                            <p>       Administrators will be able to:</p>
+                            <br>
+                            <p>       User Managements</p>
+                            <br>
+                            <p>•	Create, edit, and delete users</p>
+                            <p>•	Assign or change user roles (administrator, manager, accountants)</p>
+                            <p>•	Reset passwords</p>
+                            <p>      Module Access</p>
+                            <p>•	Full Access to all modules</p>
+                            <br>
+                            <p>Data Access:</p>
+                            <p>•	View, edit, and delete all financial data (accounts, journal entries, reports)</p>
+                            <p>•	Approve or reject journal entries</p>
+                            <br>
+                            <p>Reporting:</p>
+                            <p>•	Approve entries from accountants and managers.</p>
+                            <p>•	Modify or delete any journal entries</p>
+                            <br>
+                            <p>Security</p>
+                            <br>
+                            <p>•	Manage system security (access control, data encryption, backup policies)</p>
+                            <br>
+                            <p>-How to create, edit, and manage users and roles</p>
+                            <br>
+                            <p>1. (Administrator only) Select the “Manage Users” button in the top left corner near “teams” button.</p>
+                            <p>2. Select “Add New” button at the top of the screen.</p>
+                            <p>3. Fill out the forum provided it and click the “register” button when done.</p>
+                            <p>4. Go back to “Manage Users”</p>
+                            <p>5. Find the corresponding account row then click on “Details” on the far right</p>
+                            <p>6. Scroll down on the “Edit Account Details” page and click the very last field to assign a role ( Administrator, Manger or Accountant)</p>
+                            <br>
+                            <p>     - Managers:</p>
+                            <p>        Managers will be able to: Oversees the financial operations within their department or team.</p>
+                            <p>        High level of access but not full system control like the administrator</p>
+                            <br>
+                            <p>       User Managements</p>
+                            <p>•	View user information within their department.</p>
+                            <p>•	Cannor create or delete users but can assign tasks or roles within their authority.</p>
+                            <p>      Module Access</p>
+                            <p>•	Full Access to Chart of Accounts and Journalizing and ledger modules.</p>
+                            <p>•	View financial reports and adjusting entries </p>
+                            <br>
+                            <p>Data Access:</p>
+                            <p>•	Create and edit journal entries within their scope of work</p>
+                            <p>•	Approve or reject journal entries from accountants.</p>
+                            <p>•	View accounts and ledgers</p>
+                            <br>
+                            <p>Reporting:</p>
+                            <p>•	Generate reports related to their department or specific accounts.</p>
+                            <p>•	View dashboard data for their department performance.</p>
+                            <br>
+                            <p>Approvals:</p>
+                            <p>•	Approve journal entries submitted by accountants.</p>
+                            <p>•	Review and approve adjusting entries, with final approval from the administrator.</p>
+                            <p>Security</p>
+                            <p>•	Cannot modify system security setting.</p>
+                            <br>
+                            <p>      - Accountant:</p>
+                            <p>           Responsible for day-to-day financial data entry and processing. Has access to most financial modules but requires manager or administrator approval for certain tasks. </p>
+                            <p>       User Managements</p>
+                            <br>
+                            <p>•	View only their own account settings and cannot edit other users.</p>
+                            <p>      Module Access</p>
+                            <p>•	Full Access to Chart of Accounts and Journalizing and ledger modules for data entry and maintenance.</p>
+                            <p>•	Limited access to Adjusting Entries ( can propose entries, but will require approval)</p>
+                            <br>
+                            <p>Data Access:</p>
+                            <p>•	Create and edit journal entries</p>
+                            <p>•	Propose adjusting entries.</p>
+                            <p>•	Add, edit, or deactivate accounts under Chart of Accounts</p>
+                            <p>•	View all ledger entries, but cannot delete them without approval</p>
+                            <br>
+                            <p>Reporting:</p>
+                            <p>•	Generate and view basic reports( account activity, journal entries), cannot access advanced financial dashboards</p>
+                            <br>
+                            <p>Approvals:</p>
+                            <p>•	Submit journal entries for approval to the manager or administrator.</p>
+                            <p>•	Cannot approve their own entries</p>
+                            <br>
+                            <p>Security</p>
+                            <br>
+                            <p>•	No access to system security.</p>
+                            <br>
+                            <p>-Module Guides</p>
+                            <br>
+                            <p>   - Chart of Accounts:</p>
+                            <br>
+                            <p>     How to add, edit, deactivate accounts.</p>
+                            <br>
+                            <p>1.	Select the “Action Menu” in the top right corner near “logout”</p>
+                            <p>2.	Scroll down the top down button and select Chart of accounts</p>
+                            <p>3.	Select Add new above the account number category</p>
+                            <p>4.	Fill out the corresponding information in the forum</p>
+                            <br>
+                            <p>- Journalizing and ledger:</p>
+                            <br>
+                            <p>-Adjusting Entries:</p>
+                            <br>
+                            <p>-Financial Dashboard:</p>
+                            <br>
+                            <p>-Technical support contact</p>
+                            <p>•	Email: XXXX@gmail.com</p>
+                            <p>•	Phone: XXX-XXX-XXXX</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="widgetbox" id="onacalendar" style="display:none; position: absolute;">
+            <div id="title-bar">
+                Calendar
+                <button id="close-btn" class="close-btn" onclick="closeButtonClick('onacalendar')">X</button>
+            </div>
+            <div id="calendar-content" style="display: inline-block;">
+                <div class="calendar-body" style="border-radius: 10px;">
+                    <div class="calendar-container">
+                        <header class="calendar-header">
+                            <p class="calendar-current-date"></p>
+                            <div class="calendar-navigation">
+                                <span id="calendar-prev"
+                                      class="material-symbols-rounded">
+                                    chevron_left
+                                </span>
+                                <span id="calendar-next"
+                                      class="material-symbols-rounded">
+                                    chevron_right
+                                </span>
+                            </div>
+                        </header>
+
+                        <div class="calendar-body">
+                            <ul class="calendar-weekdays">
+                                <li>Sun</li>
+                                <li>Mon</li>
+                                <li>Tue</li>
+                                <li>Wed</li>
+                                <li>Thu</li>
+                                <li>Fri</li>
+                                <li>Sat</li>
+                            </ul>
+                            <ul class="calendar-dates"></ul>
+                        </div>
+                    </div>
+                    <script src="~/calendar-widget/script.js"></script>
+                </div>
+            </div>
+        </div>
+
+        <main role="main" class="pb-3" style="z-index: 0;">
             @RenderBody()
         </main>
     </div>
