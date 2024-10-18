@@ -1,0 +1,107 @@
+﻿@model IEnumerable<oa.Models.TransactionModel>
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.journal_id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.debit_account)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.debit_amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.credit_account)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.credit_amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.transaction_date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.created_by)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.is_opening)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.transaction_number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.journal_description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.journal_date)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.journal_id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.debit_account)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.debit_amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.credit_account)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.credit_amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.transaction_date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.created_by)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.is_opening)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.transaction_number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.journal_description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.journal_date)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
