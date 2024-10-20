@@ -135,14 +135,14 @@
                     <div class="col-md-4 add-sub-transactions-container">
                         <div class="col-6">
                             <div class="add-sub-transactions-container">
-                                <span class="add-sub-transactions-label">Add/Subtract Transactions:</span>
+                                <span class="add-sub-transactions-label">@* Add/Subtract Transactions: *@</span>
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="add-new-transaction btn btn-primary" data-transaction="1" id="add-transaction">
+                            <div class="add-new-transaction btn btn-primary" data-transaction="1" id="add-transaction" hidden>
                                 <span class="btn-symbol">+</span>
                             </div>
-                            <div class="remove-new-transaction btn btn-danger" disabled>
+                            <div class="remove-new-transaction btn btn-danger" hidden>
                                 <span class="btn-symbol">-</span>
                             </div>
                         </div>
@@ -171,7 +171,8 @@
                         </div>
                         <div class="col-md-3">
                             <span>Credit Account:</span>
-                            <select class="form-select form-control-sm greyed-out" data-transaction="1" data-line="1" id="cr-account" hidden>
+                            <input type="text" class="form-control muted" readonly/>
+                            <select class="form-select form-control-sm " data-transaction="1" data-line="1" id="cr-account" hidden>
                                 <option value="unselected">Select a credit account</option>
                                 @{
                                     if (Model.accounts_list != null)
@@ -186,8 +187,8 @@
                         </div>
                         <div class="col-md-1">
                             <span>Post Ref:</span>
-                            <div class="greyed-out">
-                                <input type="number" class="form-control" data-transaction="1" data-line="1" id="post-ref" readonly>
+                            <div class="">
+                                <input type="number" class="form-control muted" data-transaction="1" data-line="1" id="post-ref" readonly>
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -199,6 +200,7 @@
                         <div class="col-md-2">
                             <span>Cr.</span>
                             <div class="">
+                                <input type="text" class="form-control muted" readonly />
                                 <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="1" id="cr-amount" hidden/>
                             </div>
                         </div>
@@ -208,7 +210,7 @@
                     <!-- begin entry 1.2 row this is the section to reproduce in js -->
                     <div class="row g-1 journal-item-row" data-transaction="1" data-line="2">
                         <div class="col-md-3">
-                            <input type="text" class="form-control greyed-out" disabled />
+                            <input type="text" class="form-control muted" readonly />
                             <select class="form-select form-control-sm grey-select-background" data-transaction="1" data-line="2" id="dr-account" hidden>                                
                                 <option value="unselected">Select a debit account</option>
                                 @{
@@ -238,14 +240,14 @@
                             </select>
                         </div>
                         <div class="col-md-1">
-                            <div class="grey-post-ref-background">
-                                <input type="number" class="form-control" data-transaction="1" data-line="2" id="post-ref" readonly>
+                            <div class="">
+                                <input type="number" class="form-control muted" data-transaction="1" data-line="2" id="post-ref" readonly>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="text-center greyed-out">
+                            <div class="text-center">
+                                <input type="text" class="form-control muted" readonly />
                                 <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="2" id="dr-amount" hidden/>
-                                <input type="text" class="form-control greyed-out" disabled />
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -276,7 +278,7 @@
                         </div>
                         <div class="col-md-1">
                             <div class="journal-totals">
-                                <span class="totals">Totals</span>
+                                <span class="totals"></span>
 
                             </div>
                         </div>
