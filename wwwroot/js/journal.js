@@ -8,37 +8,67 @@
         var journal_description = document.getElementById('journal-description');
         var journal_status = document.getElementById('journal-status');
 
-        document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
+
             // Add event listener to the save_journal_btn
             document.getElementById('save_journal_btn').addEventListener('click', function (event) {
-                event.preventDefault(); // Prevent the form from submitting
-                const journalData = collectJournalData();
-                console.log(journalData);
+                event.preventDefault(); 
+                var passed_check = false;
+                passed_check = runValidation();
+                if (passed_check) {
+                    const journalData = collectJournalData();
 
-                const jsonData = JSON.stringify(journalData);
-                console.log(jsonData);
+                    console.log(journalData);
+                    const jsonData = JSON.stringify(journalData);
+                    console.log(jsonData);
 
-                // Create a FormData object to send both JSON data and files
-                const formData = new FormData();
-                formData.append('journalData', jsonData); // Use jsonData instead of journalEntry
-
-                const transactionContainers = document.querySelectorAll('.transaction-container');
-
-                transactionContainers.forEach((container, index) => {
-                    const transactionUploadElement = container.querySelector('#transaction-upload');
-                    if (transactionUploadElement && transactionUploadElement.files.length > 0) {
-                        formData.append(`transactionUpload_${index}`, transactionUploadElement.files[0]);
-                    }
-                });
-
-                fetch('/api/journal', {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => response.json())
-                    .then(data => console.log(data))
-                    .catch(error => console.error('Error:', error));
+                    // Create a FormData object to send both JSON data and files
+                    const formData = new FormData();
+                    formData.append('journalData', jsonData); // Use jsonData instead of journalEntry
+                    const transactionContainers = document.querySelectorAll('.transaction-container');
+                    transactionContainers.forEach((container, index) => {
+                        const transactionUploadElement = container.querySelector('#transaction-upload');
+                        if (transactionUploadElement && transactionUploadElement.files.length > 0) {
+                            formData.append(`transactionUpload_${index}`, transactionUploadElement.files[0]);
+                        }
+                    });
+                    fetch('/api/journal', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => console.log(data))
+                        .catch(error => console.error('Error:', error));
+                }
             });
+
+            var journal_validation_elem = document.getElementById("journal_validation");
+            function runValidation() {
+                const passed_check = false;
+                var validation_str = "";
+                const dr_total_element = document.getElementById('dr-total');
+                const cr_total_element = document.getElementById('cr-total');
+                const transaction_date_element = document.getElementById('transaction-date');
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+                var transaction_date = new Date(transaction_date_element.value);
+
+                if (dr_total_element.value != cr_total_element.value) {
+                    validation_str += "The total debits must equal the total credits.\n";
+                } else if (dr_total_element.value == "$0.00" || cr_total_element.value == "$0.00") {
+                    validation_str += "The transaction total must be greater than $0.00.\n";
+                } else if (transaction_date > today) {
+                    validation_str += "The transaction date cannot be in the future.\n";
+                }
+
+                journal_validation_elem.innerHTML = validation_str;
+
+                if (validation_str == "") {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
 
             function collectJournalData() {
                 const journalEntry = {
@@ -536,3 +566,4 @@ function addDrTotallisteners() {
 
 addCrTotallisteners();
 addDrTotallisteners();
+

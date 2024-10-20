@@ -1,0 +1,183 @@
+﻿@model oa.Models.AccountsModelEdit
+
+@{
+    ViewData["Title"] = "CreateRole56";
+}
+
+<h1>CreateRole56</h1>
+
+<h4>AccountsModelEdit</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateRole56">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="id" class="control-label"></label>
+                <input asp-for="id" class="form-control" />
+                <span asp-validation-for="id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="name" class="control-label"></label>
+                <input asp-for="name" class="form-control" />
+                <span asp-validation-for="name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="number" class="control-label"></label>
+                <input asp-for="number" class="form-control" />
+                <span asp-validation-for="number" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="sort_priority" class="control-label"></label>
+                <input asp-for="sort_priority" class="form-control" />
+                <span asp-validation-for="sort_priority" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="normal_side" class="control-label"></label>
+                <input asp-for="normal_side" class="form-control" />
+                <span asp-validation-for="normal_side" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="description" class="control-label"></label>
+                <input asp-for="description" class="form-control" />
+                <span asp-validation-for="description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="type" class="control-label"></label>
+                <input asp-for="type" class="form-control" />
+                <span asp-validation-for="type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="term" class="control-label"></label>
+                <input asp-for="term" class="form-control" />
+                <span asp-validation-for="term" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="statement_type" class="control-label"></label>
+                <input asp-for="statement_type" class="form-control" />
+                <span asp-validation-for="statement_type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="account_creation_date" class="control-label"></label>
+                <input asp-for="account_creation_date" class="form-control" />
+                <span asp-validation-for="account_creation_date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="opening_transaction_num" class="control-label"></label>
+                <input asp-for="opening_transaction_num" class="form-control" />
+                <span asp-validation-for="opening_transaction_num" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="current_balance" class="control-label"></label>
+                <input asp-for="current_balance" class="form-control" />
+                <span asp-validation-for="current_balance" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="created_by" class="control-label"></label>
+                <input asp-for="created_by" class="form-control" />
+                <span asp-validation-for="created_by" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="account_status" class="control-label"></label>
+                <input asp-for="account_status" class="form-control" />
+                <span asp-validation-for="account_status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="starting_balance" class="control-label"></label>
+                <input asp-for="starting_balance" class="form-control" />
+                <span asp-validation-for="starting_balance" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_1_date" class="control-label"></label>
+                <input asp-for="transaction_1_date" class="form-control" />
+                <span asp-validation-for="transaction_1_date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_1_dr_account" class="control-label"></label>
+                <input asp-for="transaction_1_dr_account" class="form-control" />
+                <span asp-validation-for="transaction_1_dr_account" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_1_cr_account" class="control-label"></label>
+                <input asp-for="transaction_1_cr_account" class="form-control" />
+                <span asp-validation-for="transaction_1_cr_account" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_2_dr_account" class="control-label"></label>
+                <input asp-for="transaction_2_dr_account" class="form-control" />
+                <span asp-validation-for="transaction_2_dr_account" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_2_cr_account" class="control-label"></label>
+                <input asp-for="transaction_2_cr_account" class="form-control" />
+                <span asp-validation-for="transaction_2_cr_account" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_1_dr" class="control-label"></label>
+                <input asp-for="transaction_1_dr" class="form-control" />
+                <span asp-validation-for="transaction_1_dr" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_1_cr" class="control-label"></label>
+                <input asp-for="transaction_1_cr" class="form-control" />
+                <span asp-validation-for="transaction_1_cr" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_2_date" class="control-label"></label>
+                <input asp-for="transaction_2_date" class="form-control" />
+                <span asp-validation-for="transaction_2_date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_2_dr" class="control-label"></label>
+                <input asp-for="transaction_2_dr" class="form-control" />
+                <span asp-validation-for="transaction_2_dr" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_2_cr" class="control-label"></label>
+                <input asp-for="transaction_2_cr" class="form-control" />
+                <span asp-validation-for="transaction_2_cr" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_dr_total" class="control-label"></label>
+                <input asp-for="transaction_dr_total" class="form-control" />
+                <span asp-validation-for="transaction_dr_total" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_cr_total" class="control-label"></label>
+                <input asp-for="transaction_cr_total" class="form-control" />
+                <span asp-validation-for="transaction_cr_total" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="total_adjustment" class="control-label"></label>
+                <input asp-for="total_adjustment" class="form-control" />
+                <span asp-validation-for="total_adjustment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="error_state" class="control-label"></label>
+                <input asp-for="error_state" class="form-control" />
+                <span asp-validation-for="error_state" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="transaction_1_description" class="control-label"></label>
+                <input asp-for="transaction_1_description" class="form-control" />
+                <span asp-validation-for="transaction_1_description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="nextJournalId" class="control-label"></label>
+                <input asp-for="nextJournalId" class="form-control" />
+                <span asp-validation-for="nextJournalId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
