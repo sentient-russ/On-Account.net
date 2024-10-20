@@ -895,3 +895,8 @@ input:-webkit-autofill:focus {
     flex-direction: row;
     justify-content: right;
 }
+
+.grey-post-ref-background {
+    color: var(--bs-secondary-color);
+    opacity: 1;
+}

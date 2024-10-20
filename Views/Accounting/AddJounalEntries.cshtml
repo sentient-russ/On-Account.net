@@ -171,7 +171,7 @@
                         </div>
                         <div class="col-md-3">
                             <span>Credit Account:</span>
-                            <select class="form-select form-control-sm" data-transaction="1" data-line="1" id="cr-account">
+                            <select class="form-select form-control-sm greyed-out" data-transaction="1" data-line="1" id="cr-account" hidden>
                                 <option value="unselected">Select a credit account</option>
                                 @{
                                     if (Model.accounts_list != null)
@@ -199,17 +199,17 @@
                         <div class="col-md-2">
                             <span>Cr.</span>
                             <div class="">
-                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="1" id="cr-amount" />
+                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="1" id="cr-amount" hidden/>
                             </div>
                         </div>
                     </div>
                     <!-- end entry 1.1 row -->
 
-
                     <!-- begin entry 1.2 row this is the section to reproduce in js -->
                     <div class="row g-1 journal-item-row" data-transaction="1" data-line="2">
                         <div class="col-md-3">
-                            <select class="form-select form-control-sm" data-transaction="1" data-line="2" id="dr-account">
+                            <input type="text" class="form-control greyed-out" disabled />
+                            <select class="form-select form-control-sm grey-select-background" data-transaction="1" data-line="2" id="dr-account" hidden>                                
                                 <option value="unselected">Select a debit account</option>
                                 @{
                                     if (Model.accounts_list != null)
@@ -221,6 +221,7 @@
                                     }
                                 }
                             </select>
+                            
                         </div>
                         <div class="col-md-3">
                             <select class="form-select form-control-sm" data-transaction="1" data-line="2" id="cr-account">
@@ -237,13 +238,14 @@
                             </select>
                         </div>
                         <div class="col-md-1">
-                            <div class="greyed-out">
+                            <div class="grey-post-ref-background">
                                 <input type="number" class="form-control" data-transaction="1" data-line="2" id="post-ref" readonly>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="text-center">
-                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="2" id="dr-amount" />
+                            <div class="text-center greyed-out">
+                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="2" id="dr-amount" hidden/>
+                                <input type="text" class="form-control greyed-out" disabled />
                             </div>
                         </div>
                         <div class="col-md-2">
