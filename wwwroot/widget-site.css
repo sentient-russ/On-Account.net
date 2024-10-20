@@ -2,10 +2,14 @@
     width: 250px;
     height: 400px;
     position: absolute;
-    border: 0px solid #000;
+    z-index: 5;
     background-color: #f1f1f1;
     border-radius: 5px;
-    font-family: 'Poppins', sans-serif;
+}
+
+.widget-container {
+    position: absolute;
+    height: 0px;
 }
 
 #title-bar {

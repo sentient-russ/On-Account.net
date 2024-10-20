@@ -1,7 +1,3 @@
-dragElement(document.getElementById("onacalc"));
-dragElement(document.getElementById("onahelp"));
-dragElement(document.getElementById("onacalander"));
-
 function toggleWidget(elemName){
   var x = document.getElementById(elemName);
   if (x.style.display == "none"){
@@ -55,6 +51,10 @@ document.onkeydown = function(evt) {
   if (evt.keyCode == 27) {
     document.getElementById("onacalc").style.display = "none";
     document.getElementById("onahelp").style.display = "none";
-    document.getElementById("onacalander").style.display = "none";
+    document.getElementById("onacalendar").style.display = "none";
   }
 };
+
+dragElement(document.getElementById("onacalc"));
+dragElement(document.getElementById("onahelp"));
+dragElement(document.getElementById("onacalendar"));
