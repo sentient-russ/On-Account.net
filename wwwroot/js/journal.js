@@ -52,6 +52,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 var today = new Date();
                 today.setHours(0, 0, 0, 0);
                 var transaction_date = new Date(transaction_date_element.value);
+                const firstDrAccount = document.querySelector(`#dr-account[data-transaction="1"][data-line="1"]`);
+                const firstCrAccount = document.querySelector(`#cr-account[data-transaction="1"][data-line="2"]`);
 
                 if (dr_total_element.value != cr_total_element.value) {
                     validation_str += "The total debits must equal the total credits.\n";
@@ -59,6 +61,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     validation_str += "The transaction total must be greater than $0.00.\n";
                 } else if (transaction_date > today) {
                     validation_str += "The transaction date cannot be in the future.\n";
+                } else if (firstDrAccount.value === "unselected") {
+                    validation_str += "The first journal line must have a debit account selected.\n";
+                } else if (firstCrAccount.value === "unselected") {
+                    validation_str += "The second journal line must have a credit account selected.\n";
                 }
 
                 journal_validation_elem.innerHTML = validation_str;
@@ -150,8 +156,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 </select>
             </div>
             <div class="col-md-1">
-                <div class="greyed-out">
-                    <input type="number" class="form-control" data-transaction="${transactionId}" data-line="${lineId}" id="post-ref" readonly>
+                <div class="">
+                    <input type="number" class="form-control muted" data-transaction="${transactionId}" data-line="${lineId}" id="post-ref" readonly>
                 </div>
             </div>
             <div class="col-md-2">
@@ -265,8 +271,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             </div>
                             <div class="col-md-1">
                                 <span>Post Ref:</span>
-                                <div class="greyed-out">
-                                    <input type="number" class="form-control" data-transaction="${newTransactionId}" data-line="1" id="post-ref" readonly>
+                                <div class="">
+                                    <input type="number" class="form-control muted" data-transaction="${newTransactionId}" data-line="1" id="post-ref" readonly>
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -298,8 +304,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             </select>
                             </div>
                             <div class="col-md-1">
-                                <div class="greyed-out">
-                                    <input type="number" class="form-control" data-transaction="${newTransactionId}" data-line="2" id="post-ref" readonly>
+                                <div class="">
+                                    <input type="number" class="form-control muted" data-transaction="${newTransactionId}" data-line="2" id="post-ref" readonly>
                                 </div>
                             </div>
                             <div class="col-md-2">

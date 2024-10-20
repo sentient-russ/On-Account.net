@@ -181,10 +181,6 @@ namespace OnAccount.Controllers
         }
 
 
-
-
-
-
         //All users can view accounts details pages
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> ViewAccountDetails(string? id)
@@ -203,6 +199,13 @@ namespace OnAccount.Controllers
             ViewBag.TotalCreditAmount = totalCreditAmount;
             ViewBag.AccountBalance = accountBalance; 
             return View(currentTransactions);
+        }
+        //All users can view accounts details pages
+        [Authorize(Roles = "Administrator, Manager, Accountant")]
+        public async Task<IActionResult> Details()
+        {
+
+            return View();
         }
     }
 }
