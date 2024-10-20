@@ -146,11 +146,11 @@
                                 <span class="btn-symbol">-</span>
                             </div>
                         </div>
-                     </div>
-                 </div>
+                    </div>
+                </div>
 
 
-             @*  line items start *@
+                @*  line items start *@
                 <div class="journal-row">
                     <!-- entry 1.1 row -->
                     <div class="row g-1 journal-item-row" data-transaction="1" data-line="1">
@@ -171,7 +171,7 @@
                         </div>
                         <div class="col-md-3">
                             <span>Credit Account:</span>
-                            <input type="text" class="form-control muted" readonly/>
+                            <input type="text" class="form-control muted" readonly />
                             <select class="form-select form-control-sm " data-transaction="1" data-line="1" id="cr-account" hidden>
                                 <option value="unselected">Select a credit account</option>
                                 @{
@@ -201,17 +201,16 @@
                             <span>Cr.</span>
                             <div class="">
                                 <input type="text" class="form-control muted" readonly />
-                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="1" id="cr-amount" hidden/>
+                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="1" id="cr-amount" hidden />
                             </div>
                         </div>
                     </div>
                     <!-- end entry 1.1 row -->
-
                     <!-- begin entry 1.2 row this is the section to reproduce in js -->
                     <div class="row g-1 journal-item-row" data-transaction="1" data-line="2">
                         <div class="col-md-3">
                             <input type="text" class="form-control muted" readonly />
-                            <select class="form-select form-control-sm grey-select-background" data-transaction="1" data-line="2" id="dr-account" hidden>                                
+                            <select class="form-select form-control-sm grey-select-background" data-transaction="1" data-line="2" id="dr-account" hidden>
                                 <option value="unselected">Select a debit account</option>
                                 @{
                                     if (Model.accounts_list != null)
@@ -223,7 +222,7 @@
                                     }
                                 }
                             </select>
-                            
+
                         </div>
                         <div class="col-md-3">
                             <select class="form-select form-control-sm" data-transaction="1" data-line="2" id="cr-account">
@@ -247,7 +246,7 @@
                         <div class="col-md-2">
                             <div class="text-center">
                                 <input type="text" class="form-control muted" readonly />
-                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="2" id="dr-amount" hidden/>
+                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="2" id="dr-amount" hidden />
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -268,67 +267,67 @@
                     @*  line items end *@
                     <div class="add-transaction-placeholder"></div>
 
-                <div class="row g-1 journal-item-row">
-                    @* totals *@
                     <div class="row g-1 journal-item-row">
-                        <div class="col-md-6">
-                            <div class="transaction-description">
-                                <input style="text-align:left;" class="form-control transaction-description" placeholder="Transaction Description" data-transaction="1" id="transaction-description" />
+                        @* totals *@
+                        <div class="row g-1 journal-item-row">
+                            <div class="col-md-6">
+                                <div class="transaction-description">
+                                    <input style="text-align:left;" class="form-control transaction-description" placeholder="Transaction Description" data-transaction="1" id="transaction-description" />
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-1">
-                            <div class="journal-totals">
-                                <span class="totals"></span>
+                            <div class="col-md-1">
+                                <div class="journal-totals">
+                                    <span class="totals"></span>
 
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2" style="margin-left: 5px;">
-                            <hr class="hr-journal-totals" />
-                            <hr class="hr-journal-totals" />
-                            <div class="">
+                            <div class="col-md-2" style="margin-left: 5px;">
+                                <hr class="hr-journal-totals" />
+                                <hr class="hr-journal-totals" />
+                                <div class="">
                                     <input class="form-control text-end currencyField" value="$0.00" data-val="false" data-transaction="1" id="dr-total" readonly />
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="margin-left:2.5px">
+                                <hr class="hr-journal-totals" />
+                                <hr class="hr-journal-totals" />
+                                <div class="">
+                                    <input class="form-control text-end currencyField" value="$0.00" data-val="false" data-transaction="1" id="cr-total" readonly />
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-2" style="margin-left:2.5px">
-                            <hr class="hr-journal-totals" />
-                            <hr class="hr-journal-totals" />
-                            <div class="">
-                                <input class="form-control text-end currencyField" value="$0.00" data-val="false" data-transaction="1" id="cr-total" readonly />
+                        <div>
+                            <div class="warning-row">
+                                <div class="text-danger text-right" id="journal_validation"></div>
                             </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="warning-row">
-                            <div class="text-danger text-right" id="journal_validation"></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        @* journal description input *@
-        <div class="journal-row">
-            <div class="journal-final-input-row">
-                <div class="col-md-11">
-                    <div class="journal-description">
-                        <input class="form-control" placeholder="Journal Note" data-val="false" id="journal-description" />
+
+            @* journal description input *@
+            <div class="journal-row">
+                <div class="journal-final-input-row">
+                    <div class="col-md-11">
+                        <div class="journal-description">
+                            <input class="form-control" placeholder="Journal Note" data-val="false" id="journal-description" />
+                        </div>
+                    </div>
+                    <div class="col-md-1">
                     </div>
                 </div>
-                <div class="col-md-1">
-                </div>
             </div>
-        </div>
-        <div class="journal-save-row"
+            <div class="journal-save-row"
             <div class="mt-3 text-align-l">
                 <div class="form-floating">
-                    @if (Model.current_balance != 0 || Model.current_balance == null)
-                    {
-                            <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn">
-                    }
-                    else
-                    {
-                            <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn" disabled>
-                    }
+                        @if (Model.current_balance != 0 || Model.current_balance == null)
+                        {
+                                <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn">
+                        }
+                        else
+                        {
+                                <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn" disabled>
+                        }
                 </div>
                 <div>
                     <a asp-action="ChartOfAccounts">Back to List</a>

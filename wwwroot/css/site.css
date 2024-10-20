@@ -546,7 +546,7 @@ input.currency {
     height: 2px;
     color: #333;
     background-color: #333;
-    opacity:1;
+    opacity: 1;
 }
 
 .journal-totals {
@@ -742,21 +742,21 @@ input:-webkit-autofill:focus {
 }
 
 .calc-img {
-    padding-right: 10px;
-    padding-top: 2.5px;
-    padding-bottom: 0px;
+    max-height: 35px;
+    min-height: 35px;
+    padding: 5px;
 }
 
 .cala-img {
-    padding-right: 10px;
-    padding-top: 5px;
-    padding-bottom: 2px;
+    max-height: 30px;
+    min-height: 30px;
+    padding: 5px;
 }
 
 .help-img {
-    padding-right: 10px;
-    padding-top: 2.5px;
-    padding-bottom: 0px;
+    max-height: 35px;
+    min-height: 35px;
+    padding: 5px;
 }
 
 .tools-row-inner-col {
@@ -883,13 +883,18 @@ input:-webkit-autofill:focus {
 }
 
 .journal-transaction-date {
-    margin-left:10px;
+    padding-right: 10px;
 }
 .add-new-transaction-btn-container{
     max-height:45px;
     margin-right:20px;
 }
 
+
+.muted {
+    border: 1px solid #6c757d87;
+    background-color: #6c757d0b;
+}
 
 .add-new-transaction-btn-label{
     display:flex;
@@ -900,16 +905,4 @@ input:-webkit-autofill:focus {
     display: flex;
     flex-direction: row;
     justify-content: right;
-}
-
-.grey-post-ref-background {
-    color: var(--bs-secondary-color);
-    opacity: 1;
-}
-.journal-transaction-date{
-    padding-right: 10px;
-}
-.muted {
-    border: 1px solid #6c757d87;
-    background-color: #6c757d0b;
 }

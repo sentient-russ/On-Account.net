@@ -1,148 +1,148 @@
 ﻿
-        let transaction_array = [];
-        let journal_array = [];
-        var journal_id = document.getElementById('journal-id');
-        var created_by = document.getElementById('created-by');
-        var journal_date = document.getElementById('journal-date');
-        var journal_total = document.getElementById('journal-total-amount');
-        var journal_description = document.getElementById('journal-description');
-        var journal_status = document.getElementById('journal-status');
+let transaction_array = [];
+let journal_array = [];
+var journal_id = document.getElementById('journal-id');
+var created_by = document.getElementById('created-by');
+var journal_date = document.getElementById('journal-date');
+var journal_total = document.getElementById('journal-total-amount');
+var journal_description = document.getElementById('journal-description');
+var journal_status = document.getElementById('journal-status');
 
 document.addEventListener('DOMContentLoaded', function () {
 
-            // Add event listener to the save_journal_btn
-            document.getElementById('save_journal_btn').addEventListener('click', function (event) {
-                event.preventDefault(); 
-                var passed_check = false;
-                passed_check = runValidation();
-                if (passed_check) {
-                    const journalData = collectJournalData();
+    // Add event listener to the save_journal_btn
+    document.getElementById('save_journal_btn').addEventListener('click', function (event) {
+        event.preventDefault();
+        var passed_check = false;
+        passed_check = runValidation();
+        if (passed_check) {
+            const journalData = collectJournalData();
 
-                    console.log(journalData);
-                    const jsonData = JSON.stringify(journalData);
-                    console.log(jsonData);
+            console.log(journalData);
+            const jsonData = JSON.stringify(journalData);
+            console.log(jsonData);
 
-                    // Create a FormData object to send both JSON data and files
-                    const formData = new FormData();
-                    formData.append('journalData', jsonData); // Use jsonData instead of journalEntry
-                    const transactionContainers = document.querySelectorAll('.transaction-container');
-                    transactionContainers.forEach((container, index) => {
-                        const transactionUploadElement = container.querySelector('#transaction-upload');
-                        if (transactionUploadElement && transactionUploadElement.files.length > 0) {
-                            formData.append(`transactionUpload_${index}`, transactionUploadElement.files[0]);
-                        }
-                    });
-                    fetch('/api/journal', {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(response => response.json())
-                        .then(data => console.log(data))
-                        .catch(error => console.error('Error:', error));
+            // Create a FormData object to send both JSON data and files
+            const formData = new FormData();
+            formData.append('journalData', jsonData); // Use jsonData instead of journalEntry
+            const transactionContainers = document.querySelectorAll('.transaction-container');
+            transactionContainers.forEach((container, index) => {
+                const transactionUploadElement = container.querySelector('#transaction-upload');
+                if (transactionUploadElement && transactionUploadElement.files.length > 0) {
+                    formData.append(`transactionUpload_${index}`, transactionUploadElement.files[0]);
+                }
+            });
+            fetch('/api/journal', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
+        }
+    });
+
+    var journal_validation_elem = document.getElementById("journal_validation");
+    function runValidation() {
+        const passed_check = false;
+        var validation_str = "";
+        const dr_total_element = document.getElementById('dr-total');
+        const cr_total_element = document.getElementById('cr-total');
+        const transaction_date_element = document.getElementById('transaction-date');
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        var transaction_date = new Date(transaction_date_element.value);
+        const firstDrAccount = document.querySelector(`#dr-account[data-transaction="1"][data-line="1"]`);
+        const firstCrAccount = document.querySelector(`#cr-account[data-transaction="1"][data-line="2"]`);
+
+        if (dr_total_element.value != cr_total_element.value) {
+            validation_str += "The total debits must equal the total credits.\n";
+        } else if (dr_total_element.value == "$0.00" || cr_total_element.value == "$0.00") {
+            validation_str += "The transaction total must be greater than $0.00.\n";
+        } else if (transaction_date > today) {
+            validation_str += "The transaction date cannot be in the future.\n";
+        } else if (firstDrAccount.value === "unselected") {
+            validation_str += "The first journal line must have a debit account selected.\n";
+        } else if (firstCrAccount.value === "unselected") {
+            validation_str += "The second journal line must have a credit account selected.\n";
+        }
+
+        journal_validation_elem.innerHTML = validation_str;
+
+        if (validation_str == "") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function collectJournalData() {
+        const journalEntry = {
+            journal_id: document.getElementById('journal-id').value,
+            user_name: document.getElementById('created-by').value,
+            journal_date: document.getElementById('journal-date').value,
+            journal_total: parseFloat(document.getElementById('journal-total-amount').value),
+            journal_status: document.getElementById('journal-status').value,
+            journal_notes: document.getElementById('journal-description').value,
+            transactions: []
+        };
+
+        const transactionContainers = document.querySelectorAll('.transaction-container');
+
+        transactionContainers.forEach(container => {
+            const transactionId = container.getAttribute('data-transaction');
+            const transaction = {
+                data_transaction: transactionId,
+                transaction_description: document.querySelector(`#transaction-description[data-transaction="${transactionId}"]`).value,
+                transaction_date: document.querySelector(`#transaction-date[data-transaction="${transactionId}"]`).value,
+                transaction_upload: document.querySelector(`#transaction-upload[data-transaction="${transactionId}"]`).value,
+                line_items: []
+            };
+
+            const lineItems = container.querySelectorAll(`.journal-item-row[data-transaction="${transactionId}"]`);
+
+            lineItems.forEach(lineItem => {
+                const lineId = lineItem.getAttribute('data-line');
+                if (lineId) {
+                    const line = {
+                        line: lineId,
+                        dr_account: document.querySelector(`#dr-account[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
+                        cr_account: document.querySelector(`#cr-account[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
+                        post_ref: document.querySelector(`#post-ref[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
+                        dr_amount: parseFloat(document.querySelector(`#dr-amount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', '')),
+                        cr_amount: parseFloat(document.querySelector(`#cr-amount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', ''))
+                    };
+
+                    console.log(`Line ${lineId} - dr_account:`, line.dr_account);
+                    console.log(`Line ${lineId} - cr_account:`, line.cr_account);
+
+                    transaction.line_items.push(line);
+                } else {
+                    console.warn(`Line item with transaction ID ${transactionId} is missing data-line attribute.`);
                 }
             });
 
-            var journal_validation_elem = document.getElementById("journal_validation");
-            function runValidation() {
-                const passed_check = false;
-                var validation_str = "";
-                const dr_total_element = document.getElementById('dr-total');
-                const cr_total_element = document.getElementById('cr-total');
-                const transaction_date_element = document.getElementById('transaction-date');
-                var today = new Date();
-                today.setHours(0, 0, 0, 0);
-                var transaction_date = new Date(transaction_date_element.value);
-                const firstDrAccount = document.querySelector(`#dr-account[data-transaction="1"][data-line="1"]`);
-                const firstCrAccount = document.querySelector(`#cr-account[data-transaction="1"][data-line="2"]`);
-
-                if (dr_total_element.value != cr_total_element.value) {
-                    validation_str += "The total debits must equal the total credits.\n";
-                } else if (dr_total_element.value == "$0.00" || cr_total_element.value == "$0.00") {
-                    validation_str += "The transaction total must be greater than $0.00.\n";
-                } else if (transaction_date > today) {
-                    validation_str += "The transaction date cannot be in the future.\n";
-                } else if (firstDrAccount.value === "unselected") {
-                    validation_str += "The first journal line must have a debit account selected.\n";
-                } else if (firstCrAccount.value === "unselected") {
-                    validation_str += "The second journal line must have a credit account selected.\n";
-                }
-
-                journal_validation_elem.innerHTML = validation_str;
-
-                if (validation_str == "") {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            function collectJournalData() {
-                const journalEntry = {
-                    journal_id: document.getElementById('journal-id').value,
-                    user_name: document.getElementById('created-by').value,
-                    journal_date: document.getElementById('journal-date').value,
-                    journal_total: parseFloat(document.getElementById('journal-total-amount').value),
-                    journal_status: document.getElementById('journal-status').value,
-                    journal_notes: document.getElementById('journal-description').value,
-                    transactions: []
-                };
-
-                const transactionContainers = document.querySelectorAll('.transaction-container');
-
-                transactionContainers.forEach(container => {
-                    const transactionId = container.getAttribute('data-transaction');
-                    const transaction = {
-                        data_transaction: transactionId,
-                        transaction_description: document.querySelector(`#transaction-description[data-transaction="${transactionId}"]`).value,
-                        transaction_date: document.querySelector(`#transaction-date[data-transaction="${transactionId}"]`).value,
-                        transaction_upload: document.querySelector(`#transaction-upload[data-transaction="${transactionId}"]`).value,
-                        line_items: []
-                    };
-
-                    const lineItems = container.querySelectorAll(`.journal-item-row[data-transaction="${transactionId}"]`);
-
-                    lineItems.forEach(lineItem => {
-                        const lineId = lineItem.getAttribute('data-line');
-                        if (lineId) {
-                            const line = {
-                                line: lineId,
-                                dr_account: document.querySelector(`#dr-account[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
-                                cr_account: document.querySelector(`#cr-account[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
-                                post_ref: document.querySelector(`#post-ref[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
-                                dr_amount: parseFloat(document.querySelector(`#dr-amount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', '')),
-                                cr_amount: parseFloat(document.querySelector(`#cr-amount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', ''))
-                            };
-
-                            console.log(`Line ${lineId} - dr_account:`, line.dr_account);
-                            console.log(`Line ${lineId} - cr_account:`, line.cr_account);
-
-                            transaction.line_items.push(line);
-                        } else {
-                            console.warn(`Line item with transaction ID ${transactionId} is missing data-line attribute.`);
-                        }
-                    });
-
-                    journalEntry.transactions.push(transaction);
-                });
-
-                return journalEntry;
-            }
+            journalEntry.transactions.push(transaction);
         });
 
-        // Create a new line item
-        function createNewLineItem(transactionId, lineId) {
-            const newLineItem = document.createElement('div');
-            newLineItem.className = 'row g-1 journal-item-row';
-            newLineItem.setAttribute('data-transaction', transactionId);
-            newLineItem.setAttribute('data-line', lineId);
+        return journalEntry;
+    }
+});
 
-            const existingDrAccount = document.querySelector(`#dr-account[data-transaction="${transactionId}"][data-line="1"]`);
-            const existingCrAccount = document.querySelector(`#cr-account[data-transaction="${transactionId}"][data-line="1"]`);
+// Create a new line item
+function createNewLineItem(transactionId, lineId) {
+    const newLineItem = document.createElement('div');
+    newLineItem.className = 'row g-1 journal-item-row';
+    newLineItem.setAttribute('data-transaction', transactionId);
+    newLineItem.setAttribute('data-line', lineId);
 
-            const drAccountOptions = existingDrAccount ? existingDrAccount.innerHTML : '';
-            const crAccountOptions = existingCrAccount ? existingCrAccount.innerHTML : '';
+    const existingDrAccount = document.querySelector(`#dr-account[data-transaction="${transactionId}"][data-line="1"]`);
+    const existingCrAccount = document.querySelector(`#cr-account[data-transaction="${transactionId}"][data-line="1"]`);
 
-            newLineItem.innerHTML = `
+    const drAccountOptions = existingDrAccount ? existingDrAccount.innerHTML : '';
+    const crAccountOptions = existingCrAccount ? existingCrAccount.innerHTML : '';
+
+    newLineItem.innerHTML = `
             <div class="col-md-3">
                 <select class="form-select form-control-sm" data-transaction="${transactionId}" data-line="${lineId}" id="dr-account">
                     <option value="unselected">Select a debit account</option>
@@ -180,49 +180,49 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         `;
 
-            return newLineItem;
-        }
+    return newLineItem;
+}
 
-        // Add new line item
-        function addNewLine(transactionId, referenceRow) {
-            const lastLineId = referenceRow.getAttribute('data-line');
-            const newLineId = parseInt(lastLineId) + 1;
-            const newLineItem = createNewLineItem(transactionId, newLineId);
-            referenceRow.insertAdjacentElement('afterend', newLineItem);
+// Add new line item
+function addNewLine(transactionId, referenceRow) {
+    const lastLineId = referenceRow.getAttribute('data-line');
+    const newLineId = parseInt(lastLineId) + 1;
+    const newLineItem = createNewLineItem(transactionId, newLineId);
+    referenceRow.insertAdjacentElement('afterend', newLineItem);
 
-            addCrTotallisteners();
-            addDrTotallisteners();
+    addCrTotallisteners();
+    addDrTotallisteners();
 
 
-        }
+}
 
-        // Add event listeners to the add line and remove line buttons
-        document.addEventListener('click', function (event) {
-            if (event.target.closest('#add-new-line')) {
-                const referenceRow = event.target.closest('.journal-item-row');
-                const transactionId = referenceRow.getAttribute('data-transaction');
-                addNewLine(transactionId, referenceRow);
-            } else if (event.target.closest('#remove-new-line')) {
-                const referenceRow = event.target.closest('.journal-item-row');
-                referenceRow.remove();
-            }
-        });
-        function addNewTransaction(event) {
-            const currentTransaction = event.target.closest('.transaction-container');
-            const lastTransactionId = parseInt(currentTransaction.getAttribute('data-transaction'));
-            const newTransactionId = lastTransactionId + 1;
+// Add event listeners to the add line and remove line buttons
+document.addEventListener('click', function (event) {
+    if (event.target.closest('#add-new-line')) {
+        const referenceRow = event.target.closest('.journal-item-row');
+        const transactionId = referenceRow.getAttribute('data-transaction');
+        addNewLine(transactionId, referenceRow);
+    } else if (event.target.closest('#remove-new-line')) {
+        const referenceRow = event.target.closest('.journal-item-row');
+        referenceRow.remove();
+    }
+});
+function addNewTransaction(event) {
+    const currentTransaction = event.target.closest('.transaction-container');
+    const lastTransactionId = parseInt(currentTransaction.getAttribute('data-transaction'));
+    const newTransactionId = lastTransactionId + 1;
 
-            const newTransaction = document.createElement('div');
-            newTransaction.className = 'transaction-container';
-            newTransaction.setAttribute('data-transaction', newTransactionId);
+    const newTransaction = document.createElement('div');
+    newTransaction.className = 'transaction-container';
+    newTransaction.setAttribute('data-transaction', newTransactionId);
 
-            const existingDrAccount = document.querySelector(`#dr-account[data-transaction="1"][data-line="1"]`);
-            const existingCrAccount = document.querySelector(`#cr-account[data-transaction="1"][data-line="1"]`);
+    const existingDrAccount = document.querySelector(`#dr-account[data-transaction="1"][data-line="1"]`);
+    const existingCrAccount = document.querySelector(`#cr-account[data-transaction="1"][data-line="1"]`);
 
-            const drAccountOptions = existingDrAccount ? existingDrAccount.innerHTML : '';
-            const crAccountOptions = existingCrAccount ? existingCrAccount.innerHTML : '';
+    const drAccountOptions = existingDrAccount ? existingDrAccount.innerHTML : '';
+    const crAccountOptions = existingCrAccount ? existingCrAccount.innerHTML : '';
 
-            newTransaction.innerHTML = `
+    newTransaction.innerHTML = `
                 <div class="journal-container text-center">
                     <!-- heading row -->
                     <div class="journal-row-heading">
@@ -366,14 +366,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             `;
 
-            // Find the journal-container element
-            const journalContainer = currentTransaction.querySelector('.journal-container');
+    // Find the journal-container element
+    const journalContainer = currentTransaction.querySelector('.journal-container');
 
-            // Insert the new transaction after the journal-container element
-            journalContainer.insertAdjacentElement('afterend', newTransaction);
-            addCrTotallisteners();
-            addDrTotallisteners();
-        }
+    // Insert the new transaction after the journal-container element
+    journalContainer.insertAdjacentElement('afterend', newTransaction);
+    addCrTotallisteners();
+    addDrTotallisteners();
+}
 
 // Remove transaction
 function removeTransaction(event) {
