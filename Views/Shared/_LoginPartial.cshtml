@@ -11,8 +11,6 @@
     var UserName = currentUser.ScreenName;
 }
 
-
-
 <div class="login-name-container">
 
 @if (SignInManager.IsSignedIn(User))
@@ -47,25 +45,3 @@ else
 }
 </div>
 
-@if (SignInManager.IsSignedIn(User))
-{
-    <div class="tools-container">
-        @*<div class="tools-row-inner-col">
-            <div class="tools-row" style="max-width:45px">
-                <div id="div-handle">
-                <img src="~/img/add_img.svg" class="add-img" id="add-img"/>
-                <img src="~/img/remove_img.svg" class="remove-img" id="remove-img"/>
-                </div>
-            </div>
-        </div>*@
-        <div class="tools-row-inner-col tools-menu">
-            <div class="tools-row tools-menu">
-                <img class="calc-img tools-menu" onclick="toggleWidget(`onacalc`)" src="~/img/calculator.svg" />
-                <img class="cala-img tools-menu" onclick="toggleWidget(`onacalendar`)" src="~/img/calendar.svg" />
-                <img class="help-img tools-menu" onclick="toggleWidget(`onahelp`)" src="~/img/help.svg" />
-            </div>
-        </div>
-
-    </div>
-    
-}

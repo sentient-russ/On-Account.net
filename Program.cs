@@ -55,7 +55,9 @@ if (builder.Configuration["ASPNETCORE_ENVIRONMENT"] == "Production")
     {
         throw new Exception("ProgramCS: The connection string was null!");
     }
-} else {
+}
+else
+{
     //pulls connection string from development local version of secrets.json
     connectionString = builder.Configuration.GetConnectionString("OA_Remote");
     emailPass = builder.Configuration["GC_Email_Pass"];
