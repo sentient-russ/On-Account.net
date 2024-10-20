@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="~/calculator-widget/css/style.css" />
     <link rel="stylesheet" href="~/widget-site.css" />
     <script src="~/widget-site.js" async defer></script>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </head>
 <body>
     <header>
@@ -278,42 +280,57 @@
             </div>
         </div>
 
-        <div class="widgetbox" id="onacalendar" style="display:none; position: absolute;">
-            <div id="title-bar">
-                Calendar
-                <button id="close-btn" class="close-btn" onclick="closeButtonClick('onacalendar')">X</button>
-            </div>
-            <div id="calendar-content" style="display: inline-block;">
-                <div class="calendar-body" style="border-radius: 10px;">
-                    <div class="calendar-container">
-                        <header class="calendar-header">
-                            <p class="calendar-current-date"></p>
-                            <div class="calendar-navigation">
-                                <span id="calendar-prev"
-                                      class="material-symbols-rounded">
-                                    chevron_left
-                                </span>
-                                <span id="calendar-next"
-                                      class="material-symbols-rounded">
-                                    chevron_right
-                                </span>
+        <div class="widget-container">
+            <div class="widgetbox" id="onacalendar" style="display:none; width: fit-content; height: fit-content; background: rgba(0,0,0,0); border: 0px; position: absolute;">
+                <div id="title-bar">
+                    Calendar
+                    <button id="close-btn" onclick="closeButtonClick('onacalendar')" style="
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 25px;
+                    height: 25px;
+                    background-color: rgb(204, 71, 71);
+                    color: white;
+                    text-align: center;
+                    line-height: 25px;
+                    cursor: pointer;
+                    border: 0px;">
+                        X
+                    </button>
+                </div>
+                <div id="content" style="display: inline-block;">
+                    <div class="calendar-body" style="border-radius: 10px;">
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <p class="calendar-current-date"></p>
+                                <div class="calendar-navigation">
+                                    <span id="calendar-prev"
+                                          class="material-symbols-rounded material-icons">
+                                        chevron_left
+                                    </span>
+                                    <span id="calendar-next"
+                                          class="material-symbols-rounded material-icons">
+                                        chevron_right
+                                    </span>
+                                </div>
                             </div>
-                        </header>
 
-                        <div class="calendar-body">
-                            <ul class="calendar-weekdays">
-                                <li>Sun</li>
-                                <li>Mon</li>
-                                <li>Tue</li>
-                                <li>Wed</li>
-                                <li>Thu</li>
-                                <li>Fri</li>
-                                <li>Sat</li>
-                            </ul>
-                            <ul class="calendar-dates"></ul>
+                            <div class="calendar-body">
+                                <ul class="calendar-weekdays">
+                                    <li>Sun</li>
+                                    <li>Mon</li>
+                                    <li>Tue</li>
+                                    <li>Wed</li>
+                                    <li>Thu</li>
+                                    <li>Fri</li>
+                                    <li>Sat</li>
+                                </ul>
+                                <ul class="calendar-dates"></ul>
+                            </div>
                         </div>
+                        <script src="~/calendar-widget/script.js" async defer></script>
                     </div>
-                    <script src="~/calendar-widget/script.js"></script>
                 </div>
             </div>
         </div>
