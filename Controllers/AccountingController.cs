@@ -35,7 +35,7 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> ChartOfAccounts()
         {
-            List<AccountsModel> accountsModels = _dbConnectorService.GetChartOfAccounts();
+            List<AccountsModel> accountsModels = currentAccounts;
             return View(accountsModels);
         }
         //Only administrators can add accounts
