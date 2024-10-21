@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Baskervville+SC&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Baskervville+SC&family=Outfit:wght@100..900&display=swap');
 
-
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:active,
@@ -744,19 +743,20 @@ input:-webkit-autofill:focus {
 .calc-img {
     max-height: 35px;
     min-height: 35px;
-    padding: 5px;
+    padding: 4px;
 }
 
 .cala-img {
-    max-height: 30px;
-    min-height: 30px;
-    padding: 5px;
+    max-height: 35px;
+    min-height: 35px;
+    padding: 6.5px;
 }
 
 .help-img {
     max-height: 35px;
     min-height: 35px;
-    padding: 5px;
+    padding: 4px;
+    padding-top:5px;
 }
 
 .tools-row-inner-col {
@@ -833,7 +833,7 @@ input:-webkit-autofill:focus {
     padding-bottom: 0px;
     margin-left: 15px;
 }
-}
+
 .remove-new-transaction{
     margin-left:10px;
 }
@@ -890,7 +890,6 @@ input:-webkit-autofill:focus {
     margin-right:20px;
 }
 
-
 .muted {
     border: 1px solid #6c757d87;
     background-color: #6c757d0b;
@@ -906,3 +905,23 @@ input:-webkit-autofill:focus {
     flex-direction: row;
     justify-content: right;
 }
+
+.tool-btn {
+    display: inline-flex;
+    justify-content: space-evenly;
+    text-align: center;
+    border: 1px solid;
+    border-color:transparent;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0);
+    min-height: 40px;
+    min-width: 40px;
+}
+    .tool-btn:hover {
+        border: 1px solid;
+        border-radius: 4px 4px 4px 4px;
+        box-shadow: 0 2px 2px 0 rgba(0,0,0,.4);
+        border-color: black;
+    }
+
+

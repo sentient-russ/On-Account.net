@@ -64,10 +64,3 @@
     font-family: 'Poppins', sans-serif;
 }
 
-.widget-container{
-    margin-top: 200px;
-    margin-left: 200px;
-    max-width:300px;    
-    border: 2px solid;
-    border-color: black;
-}

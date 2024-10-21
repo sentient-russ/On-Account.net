@@ -18,22 +18,22 @@ namespace oa.Models
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 1)]
         [DisplayName("Debit Account:")]
-        public int? debit_account { get; set; }
+        public int? debit_account { get; set; } = 0;
 
         [IntegerValidator(MinValue = 1, MaxValue = 1000000000, ExcludeRange = true)]
         [DisplayName("Dr.")]
-        public double? debit_amount { get; set; }
+        public double? debit_amount { get; set; } = 0;
 
         [Required]
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 1)]
         [DisplayName("Credit Account")]
-        public int? credit_account { get; set; }
+        public int? credit_account { get; set; } = 0;
 
         [Required]
         [IntegerValidator(MinValue = 1, MaxValue = 1000000000, ExcludeRange = true)]
         [DisplayName("Cr.")]
-        public double? credit_amount { get; set; }
+        public double? credit_amount { get; set; } = 0;
 
         [Required]
         [DataType(DataType.DateTime)]
@@ -76,5 +76,10 @@ namespace oa.Models
         [DataType(DataType.DateTime)]
         [DisplayName("Journal Date:")]
         public DateTime? journal_date { get; set; }
+
+        [DataType(DataType.Text)]
+        [StringLength(100, MinimumLength = 0)]
+        [DisplayName("Supporting Document:")]
+        public string? supporting_document { get; set; } = "";
     }
 }

@@ -530,7 +530,7 @@ namespace oa.Services
         }
 
         /*
-         * Gets a sindgle account based on its name
+         * Gets a sindgle account based on its id
          */
         public AccountsModel GetAccount(string idIn)
         {
@@ -569,6 +569,33 @@ namespace oa.Services
                 Console.WriteLine(ex.ToString());
             }
             return account;
+        }
+        /*
+         * Gets a sindgle normal side based on its account number
+         */
+        public string? GetAccountNormalSideByNumber(string accountNumIn)
+        {
+            string? normal_side = "";
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.account WHERE number = @number";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@number", accountNumIn);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    normal_side = reader1.IsDBNull(4) ? null : reader1.GetString(4);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return normal_side;
         }
         /*
          * Creates a new account in the db and return the updated model with a new accountId number
@@ -630,8 +657,8 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@normal_side", accountModelIn.normal_side);
                 cmd1.Parameters.AddWithValue("@description", accountModelIn.description);
                 cmd1.Parameters.AddWithValue("@type", accountModelIn.type);
-                if(accountModelIn.term == null) { accountModelIn.term = ""; };
-                cmd1.Parameters.AddWithValue("@term", accountModelIn.term);
+                if (accountModelIn.term == null) { accountModelIn.term = ""; } else { cmd1.Parameters.AddWithValue("@term", accountModelIn.term); }
+                
                 cmd1.Parameters.AddWithValue("@statement_type", accountModelIn.statement_type);
                 cmd1.Parameters.AddWithValue("@opening_transaction_num", accountModelIn.opening_transaction_num);
                 cmd1.Parameters.AddWithValue("@current_balance", accountModelIn.current_balance);
@@ -674,17 +701,48 @@ namespace oa.Services
                 Console.WriteLine(ex.ToString());
             }
         }
+        public double CalculateAccountBalance(string? accountNumberIn)
+        {
+            //get normal side
+            string? normal_side = GetAccountNormalSideByNumber(accountNumberIn);
+
+            double dr = 0;
+            double cr = 0;
+            double balance = 0;
+            List<TransactionModel> accountTransactions = GetAccountTransactions(accountNumberIn);
+
+            for (int i = 0; i < accountTransactions.Count; i++)
+            {
+                if (accountTransactions[i].credit_amount != null)
+                {
+                    cr += (double)accountTransactions[i].credit_amount;
+                }
+                if (accountTransactions[i].debit_amount != null)
+                {
+                    dr += (double)accountTransactions[i].debit_amount;
+                }
+            }
+            // calc balance based on normal side.
+            if(normal_side == "Debit")
+            {
+                balance = dr - cr;
+            } else if (normal_side == "Credit")
+            {
+                balance = cr - dr;
+            }
+
+            return balance;
+        }
         /*
          * Adds a single transaction 
          */
         public void AddTransaction(TransactionModel transactionIn)
-        {
-            
+        {//make sure db has empty strings rather than null
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "INSERT INTO on_account.transaction (debit_account, debit_amount, credit_account, credit_amount, transaction_date, created_by, status, is_opening, description, journal_id) " + 
-                    "VALUES (@debit_account, @debit_amount, @credit_account, @credit_amount, @transaction_date, @created_by, @status, @is_opening, @description, @journal_id)";
+                string command = "INSERT INTO on_account.transaction (debit_account, debit_amount, credit_account, credit_amount, transaction_date, created_by, status, is_opening, description, journal_id, transaction_number, journal_description, journal_date) " + 
+                    "VALUES (@debit_account, @debit_amount, @credit_account, @credit_amount, @transaction_date, @created_by, @status, @is_opening, @description, @journal_id, @transaction_number, @journal_description, @journal_date)";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@debit_account", transactionIn.debit_account);
@@ -697,6 +755,11 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@is_opening", transactionIn.is_opening);
                 cmd1.Parameters.AddWithValue("@description", transactionIn.description);
                 cmd1.Parameters.AddWithValue("@journal_id", transactionIn.journal_id);
+                cmd1.Parameters.AddWithValue("@transaction_number", transactionIn.transaction_number);
+
+                cmd1.Parameters.AddWithValue("@journal_description", transactionIn.journal_description);
+                cmd1.Parameters.AddWithValue("@journal_date", transactionIn.journal_date);
+
 
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
@@ -708,10 +771,17 @@ namespace oa.Services
             }
             
             logModelCreator(transactionIn.created_by,"Transaction added","");
-            double newDrBal = CalculateAccountBalance(transactionIn.debit_account.ToString());
-            double newCrBal = CalculateAccountBalance(transactionIn.credit_account.ToString());
-            UpdateAccountBalance(transactionIn.debit_account.ToString(), newDrBal);
-            UpdateAccountBalance(transactionIn.credit_account.ToString(), newCrBal);
+            string? accountNumber = "";
+            if (transactionIn.credit_account != 0)
+            {
+                accountNumber = transactionIn.credit_account.ToString();
+            }
+            else if (transactionIn.debit_amount != 0)
+            {
+                accountNumber = transactionIn.debit_account.ToString();
+            }
+            double newBal = CalculateAccountBalance(accountNumber);
+            UpdateAccountBalance(accountNumber, newBal);
         }
 
 
@@ -820,16 +890,108 @@ namespace oa.Services
             }
         }
         /*
+         * Gets all transactions
+         */
+        public List<TransactionModel> GetAllTransactions()
+        {
+            List<TransactionModel> transactionsList = new List<TransactionModel>();
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.transaction";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    TransactionModel nextTransaction = new TransactionModel();
+                    nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    nextTransaction.debit_account = reader1.IsDBNull(1) ? null : reader1.GetInt32(1);
+                    nextTransaction.debit_amount = reader1.IsDBNull(2) ? null : reader1.GetDouble(2);
+                    nextTransaction.credit_account = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+                    nextTransaction.credit_amount = reader1.IsDBNull(4) ? null : reader1.GetInt32(4);
+                    nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
+                    nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    nextTransaction.is_opening = reader1.IsDBNull(7) ? null : reader1.GetBoolean(7);
+                    nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    nextTransaction.description = reader1.IsDBNull(9) ? null : reader1.GetString(9);
+                    nextTransaction.journal_id = reader1.IsDBNull(10) ? null : reader1.GetInt32(10);
+                    nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
+                    nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+                    transactionsList.Add(nextTransaction);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return transactionsList;
+        }
+        /*
          * Gets all transaction for a specific account number
          */
-        public List<TransactionModel> GetAccountTransactions(string? id)
+        public List<TransactionModel> GetAccountTransactions(string? accountNumberIn)
+        {
+            List<TransactionModel> transactionsList = new List<TransactionModel>();
+            try
+            {
+                int acctNum = int.Parse(accountNumberIn);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.transaction WHERE debit_account=@number OR credit_account=@number";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@number", acctNum);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    TransactionModel nextTransaction = new TransactionModel();
+                    nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    //only return transaction data related to the requested account
+                    if(reader1.GetInt32(1) == acctNum)
+                    {
+                        nextTransaction.debit_account = reader1.IsDBNull(1) ? null : reader1.GetInt32(1);
+                        nextTransaction.debit_amount = reader1.IsDBNull(2) ? null : reader1.GetDouble(2);
+                    }
+                    if (reader1.GetInt32(3) == acctNum)
+                    {
+                        nextTransaction.credit_account = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+                        nextTransaction.credit_amount = reader1.IsDBNull(4) ? null : reader1.GetInt32(4);
+                    }
+                    nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
+                    nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    nextTransaction.is_opening = reader1.IsDBNull(7) ? null : reader1.GetBoolean(7);
+                    nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    nextTransaction.description = reader1.IsDBNull(9) ? null : reader1.GetString(9);
+                    nextTransaction.journal_id = reader1.IsDBNull(10) ? null : reader1.GetInt32(10);
+                    nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
+                    nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+
+                    transactionsList.Add(nextTransaction);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return transactionsList;
+        }
+        /*
+         * Gets all transaction for a specific account number
+         */
+        public List<TransactionModel> GetAccountTransactionsByAccountNumber(string? id)
         {
             List<TransactionModel> transactionsList = new List<TransactionModel>();
             try
             {
                 int Id = int.Parse(id);
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "SELECT * FROM on_account.transaction WHERE debit_account =@id OR credit_account = @id";
+                string command = "SELECT * FROM on_account.transaction WHERE debit_account=@id OR credit_account=@id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@id", id);
@@ -839,7 +1001,7 @@ namespace oa.Services
                     TransactionModel nextTransaction = new TransactionModel();
                     nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
                     //only return transaction data related to the requested account
-                    if(reader1.GetInt32(1) == Id)
+                    if (reader1.GetInt32(1) == Id)
                     {
                         nextTransaction.debit_account = reader1.IsDBNull(1) ? null : reader1.GetInt32(1);
                         nextTransaction.debit_amount = reader1.IsDBNull(2) ? null : reader1.GetDouble(2);
@@ -855,6 +1017,9 @@ namespace oa.Services
                     nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
                     nextTransaction.description = reader1.IsDBNull(9) ? null : reader1.GetString(9);
                     nextTransaction.journal_id = reader1.IsDBNull(10) ? null : reader1.GetInt32(10);
+                    nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
+                    nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();
@@ -896,9 +1061,9 @@ namespace oa.Services
             return foundName;
         }
         /*
-        * Gets an accounts name from the account number as a string
+        * Gets an accounts number from the id as an int and returns the number as a string
         */
-        public string GetAccoutNumber(string id)
+        public string GetAccoutNumber(int id)
         {
             string? foundNum = "";
             try
@@ -914,7 +1079,7 @@ namespace oa.Services
 
                 if (reader.Read())
                 {
-                    foundNum = reader.GetString(0);
+                    foundNum = reader.GetInt32(2).ToString();
                 }
 
             }
@@ -951,26 +1116,7 @@ namespace oa.Services
             }
             return nextJournalId;
         }
-        public double CalculateAccountBalance(string? accountId)
-        {
-            double dr = 0;
-            double cr = 0;
-            double balance = 0;
-            List<TransactionModel> accountTransactions = GetAccountTransactions(accountId);
-
-            for (int i = 0; i < accountTransactions.Count; i++) { 
-                if (accountTransactions[i].credit_amount != null)
-                {
-                    cr += (double)accountTransactions[i].credit_amount;                        
-                }
-                if (accountTransactions[i].debit_amount != null)
-                {
-                    dr += (double)accountTransactions[i].debit_amount;
-                }
-            }
-            balance = cr - dr;
-            return balance;
-        }            
+           
         
     }
 }
