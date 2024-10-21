@@ -117,9 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log(`Line ${lineId} - cr_account:`, line.cr_account);
 
                     transaction.line_items.push(line);
-                } else {
-                    console.warn(`Line item with transaction ID ${transactionId} is missing data-line attribute.`);
-                }
+                } 
             });
 
             journalEntry.transactions.push(transaction);

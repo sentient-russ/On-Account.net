@@ -29,20 +29,25 @@
                     @{
                         @if (User.IsInRole("Manager") || User.IsInRole("Accountant") || User.IsInRole("Administrator"))
                         {
-
                             <div class="btn btn-outline-primary margin-right-5 background-default-b accounting-btn" id="accounting-btn">
                                 <span class="" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="The Action menu holds different ways of moving around the website">Action Menu</span>
                             </div>
                             <div class="accounting-menu-container" style="display:none" id="accounting-menu">
-
                                 <div class="menu-manager-options">Tools</div>
-                                <div class="accounting-menu-row">
+                                <div class="accounting-menu-row" style="max-height:40px; margin-top:5px; margin-bottom:-5px;">
                                     <div class="accounting-menu-row text-center">
-                                        <img class="cala-img tools-menu" onclick="toggleWidget(`onacalendar`)" src="~/img/calendar.svg" />
-                                        <img class="calc-img tools-menu" onclick="toggleWidget(`onacalc`)" src="~/img/calculator.svg" />
-                                        <img class="help-img tools-menu" onclick="toggleWidget(`onahelp`)" src="~/img/help.svg" />
+                                        <div class="tool-btn">
+                                            <img class="cala-img tools-menu" onclick="toggleWidget(`onacalendar`)" src="~/img/calendar.svg" />
+                                        </div>
+                                        <div class="tool-btn">
+                                            <img class="calc-img tools-menu" onclick="toggleWidget(`onacalc`)" src="~/img/calculator.svg" />
+                                        </div>
+                                        <div class="tool-btn">
+                                            <img class="help-img tools-menu" onclick="toggleWidget(`onahelp`)" src="~/img/help.svg" />
+                                        </div>
                                     </div>
                                 </div>
+                                <hr class="menu-hr" />
                                <div class="menu-manager-options">Accounting</div>
                                 <div class="accounting-menu-row">
                                     <div class="accounting-menu-row">
@@ -56,6 +61,9 @@
                                     </div>
                                     <hr class="menu-hr" />
                                     <div class="menu-manager-options">Reporting</div>
+                                    <div class="accounting-menu-row">
+                                        <a class="" asp-area="" asp-controller="Accounting" asp-action="GeneralJournal">General Journal</a>
+                                    </div>
                                     <div class="accounting-menu-row">
                                         <a class="" asp-area="" asp-controller="Accounting" asp-action="ChartOfAccounts">Trial Balance</a>
                                     </div>

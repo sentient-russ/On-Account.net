@@ -26,13 +26,7 @@
                 @Html.DisplayNameFor(model => model.journal_id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.debit_account)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.debit_amount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.credit_account)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.credit_amount)
@@ -41,17 +35,15 @@
                 @Html.DisplayNameFor(model => model.transaction_date)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.created_by)
+                @Html.DisplayNameFor(model => model.description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.is_opening)
+                @Html.DisplayNameFor(model => model.created_by)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.status)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.description)
-            </th>
+
             <th></th>
         </tr>
     </thead>
@@ -62,41 +54,36 @@
                 @Html.DisplayFor(modelItem => item.journal_id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.debit_account)
-            </td>
-            <td>
                 @FormatNegativeDouble(item.debit_amount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.credit_account)
             </td>
             <td>
                 @FormatNegativeDouble(item.credit_amount)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.transaction_date)
+               @(item.transaction_date.HasValue ? item.transaction_date.Value.ToString("MM/dd/yyyy") : string.Empty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.description)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.created_by)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.is_opening)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.status)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.description)
-            </td>
+
             <td></td>
         </tr>
 }
         <tr>
-            <td colspan="2"><strong>Totals</strong></td>
-            <td><strong>@FormatNegativeDouble((double?)ViewBag.TotalDebitAmount)</strong></td>
-            <td colspan="1"></td>
-            <td><strong>@FormatNegativeDouble((double?)ViewBag.TotalCreditAmount)</strong></td>
-            <td colspan="6"></td>
+            <th><strong>Totals</strong></th>
+            <th><strong>@FormatNegativeDouble((double?)ViewBag.TotalDebitAmount)</strong></th>
+            <th><strong>@FormatNegativeDouble((double?)ViewBag.TotalCreditAmount)</strong></th>
+            <th><strong></strong></th>
+            <th><strong></strong></th>
+            <th><strong></strong></th>
+            <th><strong></strong></th>
+            <th><strong></strong></th>
         </tr>
 
     </tbody>

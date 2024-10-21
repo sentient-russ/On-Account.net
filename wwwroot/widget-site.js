@@ -1,31 +1,30 @@
+let zIndexCounter = 1;
 function toggleWidget(elemName) {
-    var x = document.getElementById(elemName);
-    if (x.style.display == "none") {
+    const x = document.getElementById(elemName);
+    if (x.style.display === "none") {
         x.style.display = "block";
     } else {
         x.style.display = "none";
     }
+    bringToFront(x);
 }
-
 function dragElement(elmnt) {
-    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    if (document.getElementById(elmnt.id + "title-bar")) {
-        document.getElementById(elmnt.id + "title-bar").onmousedown = dragMouseDown;
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    const titleBar = document.getElementById(elmnt.id + "title-bar");
+    if (titleBar) {
+        titleBar.addEventListener("mousedown", dragMouseDown);
     } else {
-        elmnt.onmousedown = dragMouseDown;
+        elmnt.addEventListener("mousedown", dragMouseDown);
     }
-
     function dragMouseDown(e) {
-        e = e || window.event;
         e.preventDefault();
         pos3 = e.clientX;
         pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
+        document.addEventListener("mouseup", closeDragElement);
+        document.addEventListener("mousemove", elementDrag);
+        bringToFront(elmnt);
     }
-
     function elementDrag(e) {
-        e = e || window.event;
         e.preventDefault();
         pos1 = pos3 - e.clientX;
         pos2 = pos4 - e.clientY;
@@ -34,26 +33,26 @@ function dragElement(elmnt) {
         elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
         elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
     }
-
     function closeDragElement() {
-        document.onmouseup = null;
-        document.onmousemove = null;
+        document.removeEventListener("mouseup", closeDragElement);
+        document.removeEventListener("mousemove", elementDrag);
     }
 }
-
 function closeButtonClick(elemName) {
-    var x = document.getElementById(elemName);
+    const x = document.getElementById(elemName);
     x.style.display = "none";
 }
-
-document.onkeydown = function (evt) {
-    evt = evt || window.event;
-    if (evt.keyCode == 27) {
+document.addEventListener("keydown", function (evt) {
+    if (evt.key === "Escape") {
         document.getElementById("onacalc").style.display = "none";
         document.getElementById("onahelp").style.display = "none";
         document.getElementById("onacalendar").style.display = "none";
     }
-};
+});
+function bringToFront(elmnt) {
+    zIndexCounter++;
+    elmnt.style.zIndex = zIndexCounter;
+}
 document.addEventListener("DOMContentLoaded", function () {
     dragElement(document.getElementById("onacalc"));
     dragElement(document.getElementById("onahelp"));

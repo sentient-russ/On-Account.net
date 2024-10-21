@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 using System.Text;
 using Newtonsoft.Json;
+using System.Globalization;
+using System;
 
 namespace OnAccount.Controllers
 {
@@ -42,7 +44,6 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> AddAccount()
         {
-
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             AccountsModel accountModel = new AccountsModel();
             accountModel.accounts_list = currentAccounts;
@@ -54,7 +55,6 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> SaveNewAccountDetails([Bind("id, name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, transaction_1_date, transaction_1_dr, transaction_1_cr, transaction_2_date, transaction_2_dr, transaction_2_cr, transaction_dr_total, transaction_cr_total, accounts_list")] AccountsModel newaccountDetailsIn)
         {
-
             if (!ModelState.IsValid)
             {
                 List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
@@ -134,11 +134,7 @@ namespace OnAccount.Controllers
             AccountsModel accountModel = new AccountsModel();
             accountModel.accounts_list = currentAccounts;
             accountModel.journal_id = _dbConnectorService.GetNextJournalId();
-
             AccountsModelJournal journalAccount = new AccountsModelJournal();
-
-
-
             journalAccount.journal_date = System.DateTime.Today;
             journalAccount.journal_id = accountModel.journal_id;
             journalAccount.accounts_list = currentAccounts;
@@ -148,38 +144,61 @@ namespace OnAccount.Controllers
         [Route("api/journal")]
         public async Task<IActionResult> PostJournalEntry()
         {
+            var uploadFileName = "";
             var formData = await Request.ReadFormAsync();
             var journalData = formData["journalData"].FirstOrDefault();
-
             if (journalData == null)
             {
-                return BadRequest("Journal data is missing.");
+                return BadRequest("Journal data missing.");
             }
-
             var journalEntry = JsonConvert.DeserializeObject<JournalEntry>(journalData);
 
-            // Process uploaded files
+            var uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+            if (!Directory.Exists(uploadDirectory))
+            {
+                Directory.CreateDirectory(uploadDirectory);
+            }
             foreach (var file in formData.Files)
             {
                 var fileName = file.FileName;
-                var fileContent = await file.ReadAsStringAsync();
-
-                // Find the corresponding transaction and set the file content
+                var fileExtension = Path.GetExtension(fileName);
+                var newFileName = $"{DateTime.Now:yyyyMMddHHmmssfff}{fileExtension}";
+                var filePath = Path.Combine(uploadDirectory, newFileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
                 var transaction = journalEntry.Transactions.FirstOrDefault(t => t.TransactionUpload == fileName);
                 if (transaction != null)
                 {
-                    transaction.TransactionUpload = fileContent;
+                    transaction.TransactionUpload = filePath;
+                    uploadFileName = newFileName;
                 }
             }
-
-
-  
-
-            // Save or process the dataTransactions as needed
-
-            return Ok(journalEntry);
+            // loop handles infinite transactions and line items.
+            for (int j = 0; j < journalEntry.Transactions.Count; j++)
+            {
+                for (int i = 0; i < journalEntry.Transactions[j].LineItems.Count; i++)
+                {
+                    TransactionModel transactionIn = new TransactionModel();
+                    transactionIn.created_by = journalEntry.UserName;
+                    transactionIn.journal_date = DateTime.Parse(journalEntry.JournalDate);
+                    transactionIn.journal_description = journalEntry.JournalNotes;
+                    transactionIn.status = journalEntry.JournalStatus;
+                    transactionIn.journal_id = journalEntry.JournalId;
+                    transactionIn.transaction_number = j;
+                    transactionIn.transaction_date = journalEntry.Transactions[j].TransactionDate;
+                    if (journalEntry.Transactions[j].LineItems[i].CrAccount == "unselected") { transactionIn.credit_account = 0; } else { transactionIn.credit_account = int.Parse(journalEntry.Transactions[j].LineItems[i].CrAccount); };
+                    transactionIn.credit_amount = (double?)journalEntry.Transactions[j].LineItems[i].CrAmount;
+                    if (journalEntry.Transactions[j].LineItems[i].DrAccount == "unselected") { transactionIn.debit_account = 0; } else { transactionIn.debit_account = int.Parse(journalEntry.Transactions[j].LineItems[i].DrAccount); };
+                    transactionIn.debit_amount = (double?)journalEntry.Transactions[j].LineItems[i].DrAmount;
+                    transactionIn.description = journalEntry.Transactions[j].TransactionDescription;
+                    transactionIn.supporting_document = uploadFileName;
+                    _dbConnectorService.AddTransaction(transactionIn);
+                }
+            }
+            return RedirectToAction(nameof(ChartOfAccounts));
         }
-
 
         //All users can view accounts details pages
         [Authorize(Roles = "Administrator, Manager, Accountant")]
@@ -187,13 +206,14 @@ namespace OnAccount.Controllers
         {
             List<TransactionModel> currentTransactions = _dbConnectorService.GetAccountTransactions(id);
 
-            ViewBag.AccountName = _dbConnectorService.GetAccoutName(id);
+            ViewBag.AccountName = id +" - "+ _dbConnectorService.GetAccoutName(id);
+
             DateTime currentDate = DateTime.Now;
             ViewBag.Date = currentDate.ToString("dd-MM-yyyy");
 
             double totalDebitAmount = currentTransactions.Sum(t => t.debit_amount ?? 0);
             double totalCreditAmount = currentTransactions.Sum(t => t.credit_amount ?? 0);
-            double accountBalance = totalDebitAmount - totalCreditAmount;
+            double accountBalance = _dbConnectorService.CalculateAccountBalance(id);
 
             ViewBag.TotalDebitAmount = totalDebitAmount;
             ViewBag.TotalCreditAmount = totalCreditAmount;
@@ -204,8 +224,17 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> Details()
         {
-
             return View();
         }
+
+        //All users can view accounts details pages
+        [Authorize(Roles = "Administrator, Manager, Accountant")]
+        public async Task<IActionResult> GeneralJournal()
+        {
+            List<TransactionModel> currentTransactions = _dbConnectorService.GetAllTransactions();
+
+            return View(currentTransactions);
+        }
+
     }
 }
