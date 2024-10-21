@@ -961,11 +961,11 @@ namespace oa.Services
             for (int i = 0; i < accountTransactions.Count; i++) { 
                 if (accountTransactions[i].credit_amount != null)
                 {
-                    cr = cr + (double)accountTransactions[i].credit_amount;                        
+                    cr += (double)accountTransactions[i].credit_amount;                        
                 }
                 if (accountTransactions[i].debit_amount != null)
                 {
-                    dr = dr + (double)accountTransactions[i].debit_amount;
+                    dr += (double)accountTransactions[i].debit_amount;
                 }
             }
             balance = cr - dr;

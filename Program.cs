@@ -68,21 +68,21 @@ Environment.SetEnvironmentVariable("GC_Email_Pass", emailPass);//this is used in
 var serverVersion = new MySqlServerVersion(new Version(8, 8, 39));
 
 //leave for production verses migrations use.
-builder.Services.AddDbContext<ApplicationDbContext>(
+/*builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion, options => options.EnableRetryOnFailure())
         .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
-);
-/*builder.Services.AddDbContext<ApplicationDbContext>(
+);*/
+builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion, options => options.SchemaBehavior(Pomelo.EntityFrameworkCore.MySql.Infrastructure.MySqlSchemaBehavior.Ignore))
         .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 );
-*/
+
 builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddDefaultTokenProviders()
     .AddRoles<IdentityRole>()
@@ -130,17 +130,18 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseForwardedHeaders();
+    //app.UseDeveloperExceptionPage(); // This can be enabled to enable http error reporting. Disable for production!
     //app.UseHttpsRedirection(); // Appache webserver handles.  <-- Do not use! This is retained as a reminder.
     //app.UseHsts(); <-- Do not use! This is retained as a reminder.
 }
 else
 {
-    //app.UseDeveloperExceptionPage(); // This can be enabled to enable http error reporting. Disable for production!
+    app.UseDeveloperExceptionPage(); // This can be enabled to enable http error reporting. Disable for production!
     //app.UseHttpsRedirection(); // <-- Do not use! This is retained as a reminder. Appache2 is responsible for https.
     //app.UseHsts(); <-- Do not use! This is retained as a reminder.
 }
 
-app.UseResponseCompression();
+//app.UseResponseCompression();
 app.UseCookiePolicy();
 
 app.UseStaticFiles();
