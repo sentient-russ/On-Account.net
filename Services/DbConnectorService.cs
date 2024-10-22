@@ -694,6 +694,8 @@ namespace oa.Services
                 Console.WriteLine(ex.ToString());
             }
         }
+
+
         public double CalculateAccountBalance(string? accountNumberIn)
         {
             //get normal side
@@ -912,6 +914,7 @@ namespace oa.Services
                     nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+                    nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();
@@ -962,6 +965,7 @@ namespace oa.Services
                     nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+                    nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
 
                     transactionsList.Add(nextTransaction);
                 }
@@ -998,11 +1002,13 @@ namespace oa.Services
                     {
                         nextTransaction.debit_account = reader1.IsDBNull(1) ? null : reader1.GetInt32(1);
                         nextTransaction.debit_amount = reader1.IsDBNull(2) ? null : reader1.GetDouble(2);
+                        nextTransaction.dr_description = nextTransaction.debit_account.ToString() + " - " + GetAccoutName(nextTransaction.debit_account.ToString());
                     }
                     if (reader1.GetInt32(3) == Id)
                     {
                         nextTransaction.credit_account = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
                         nextTransaction.credit_amount = reader1.IsDBNull(4) ? null : reader1.GetInt32(4);
+                        nextTransaction.cr_description = nextTransaction.credit_account.ToString() + " - " + GetAccoutName(nextTransaction.credit_account.ToString());
                     }
                     nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
                     nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
@@ -1013,6 +1019,8 @@ namespace oa.Services
                     nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+                    nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();
@@ -1043,18 +1051,10 @@ namespace oa.Services
                 {
                     TransactionModel nextTransaction = new TransactionModel();
                     nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
-                    //only return transaction data related to the requested account
-                    if (reader1.GetInt32(1) == Id)
-                    {
-                        nextTransaction.debit_account = reader1.IsDBNull(1) ? 0 : reader1.GetInt32(1);
-                        nextTransaction.debit_amount = reader1.IsDBNull(2) ? 0 : reader1.GetDouble(2);
-                    }
-                    if (reader1.GetInt32(3) == Id)
-                    {
-                        nextTransaction.credit_account = reader1.IsDBNull(3) ? 0 : reader1.GetInt32(3);
-                        nextTransaction.credit_amount = reader1.IsDBNull(4) ? 0 : reader1.GetInt32(4);
-                    }
-                    nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
+                    nextTransaction.debit_account = reader1.IsDBNull(1) ? 0 : reader1.GetInt32(1);
+                    nextTransaction.debit_amount = reader1.IsDBNull(2) ? 0 : reader1.GetDouble(2);                        nextTransaction.credit_account = reader1.IsDBNull(3) ? 0 : reader1.GetInt32(3);
+                    nextTransaction.credit_amount = reader1.IsDBNull(4) ? 0 : reader1.GetInt32(4);
+                    nextTransaction.transaction_date = reader1.IsDBNull(5) ?    null : reader1.GetDateTime(5);
                     nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
                     nextTransaction.is_opening = reader1.IsDBNull(7) ? null : reader1.GetBoolean(7);
                     nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
@@ -1063,6 +1063,7 @@ namespace oa.Services
                     nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+                    nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();

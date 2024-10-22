@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => console.log(data))
                 .catch(error => console.error('Error:', error));
         }
+        
     });
 
     var journal_validation_elem = document.getElementById("journal_validation");
@@ -74,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             return false;
         }
+
     }
 
     function collectJournalData() {
@@ -187,11 +189,8 @@ function addNewLine(transactionId, referenceRow) {
     const newLineId = parseInt(lastLineId) + 1;
     const newLineItem = createNewLineItem(transactionId, newLineId);
     referenceRow.insertAdjacentElement('afterend', newLineItem);
-
     addCrTotallisteners();
     addDrTotallisteners();
-
-
 }
 
 // Add event listeners to the add line and remove line buttons
@@ -394,7 +393,7 @@ document.addEventListener('click', function (event) {
         addCrTotallisteners();
     }
 });
-// imediate update
+
 function formatCurrency() {
     document.querySelectorAll('.currencyField').forEach(function (input) {
 
@@ -438,6 +437,46 @@ function formatCurrency() {
     });
 }
 
+function formatCurrencyOnLoad() {
+
+    const currencyFields = document.querySelectorAll('.currencyField');
+    currencyFields.forEach(field => {
+        let input = field.target;
+        let value = field.value.trim(); // Trim spaces from the input
+        value = value.replace(/[^0-9.]/g, '');
+        let parts = value.split('.');
+        let integerPart = parts[0];
+        let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+
+        // Remove leading zeros and handle empty integerPart
+        var flt = parseInt(integerPart, 10);
+        if (isNaN(flt)) {
+            flt = 0;
+        }
+
+        // Back to string
+        integerPart = flt.toString();
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        let formattedValue = integerPart;
+        if (formattedValue.length >= 1) {
+            formattedValue = '$' + formattedValue;
+        } else {
+            formattedValue = '$0';
+        }
+        let newTail = "";
+        if (decimalPart === "") {
+            newTail = ".00";
+        } else if (decimalPart.length == 1) {
+            newTail = "." + decimalPart + "0";
+        } else if (decimalPart.length == 2) {
+            newTail = "." + decimalPart;
+        } else if (decimalPart.length > 2) {
+            newTail = "." + decimalPart.substring(0, 2);
+        }
+        formattedValue = formattedValue + newTail;
+        field.value = formattedValue;
+    });
+}
 function addCurrencyFieldListeners() {
     document.querySelectorAll('.currencyField').forEach(function (input) {
         input.addEventListener('fousout', function (e) {
@@ -557,10 +596,10 @@ function updateDrTotals() {
         console.log(total);
         drTotalElement.value = total;
         formatCurrency();
-
     }
     formatCurrency();
 }
+
 function addDrTotallisteners() {
     // Attach the updateTotals function to the focusout event for all cr_amount inputs
     document.querySelectorAll('[id="dr-amount"]').forEach(element => {
@@ -570,4 +609,6 @@ function addDrTotallisteners() {
 
 addCrTotallisteners();
 addDrTotallisteners();
-
+formatCurrencyOnLoad();
+updateDrTotals();
+updateCrTotals();
