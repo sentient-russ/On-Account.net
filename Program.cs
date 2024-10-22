@@ -195,7 +195,9 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "ViewAccountDetails",
     pattern: "{controller=AccountingController}/{action=ViewAccountDetails}/{id?}");
-
+app.MapControllerRoute(
+    name: "ViewJournalDetails",
+    pattern: "{controller=AccountingController}/{action=ViewJournalDetails}/{id?}");
 
 
 app.MapRazorPages();

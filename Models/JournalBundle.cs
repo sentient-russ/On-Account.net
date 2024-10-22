@@ -3,6 +3,7 @@ using oa.Services;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using Microsoft.AspNetCore.Mvc;
 
 namespace oa.Models
 {
@@ -16,7 +17,7 @@ namespace oa.Models
 
         [NotMapped]
         [ValidateNever]
-        List<TransactionModel> currentTransactions { get; set; }
+        List<TransactionModel>? currentTransactions { get; set; }
 
         [NotMapped]
         [ValidateNever]
@@ -46,6 +47,12 @@ namespace oa.Models
         [StringLength(50, MinimumLength = 1)]
         [DisplayName("Account created by:  (Auto assigned)")]
         public string? created_by { get; set; }
+
+        [ValidateNever]
+        [NotMapped]
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        [DisplayName("Total:")]
+        public string? total_adjustment { get; set; } = "$0.00";
 
         [NotMapped]
         [ValidateNever]

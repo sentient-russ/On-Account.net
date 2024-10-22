@@ -7,7 +7,8 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Globalization;
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
 namespace OnAccount.Controllers
 {
 
@@ -225,7 +226,7 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> Details()
         {
-            return View();
+            return RedirectToAction(nameof(ChartOfAccounts));
         }
 
         //All users can view accounts details pages
@@ -241,7 +242,7 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> ViewJournalDetails(string? id)
         {
-
+            List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             JournalBundle infoBundle = new JournalBundle();
             infoBundle.transactions_list = _dbConnectorService.GetAccountTransactionsByJournalNumber(id);
             infoBundle.journal_id = Int32.Parse(id);
@@ -249,9 +250,44 @@ namespace OnAccount.Controllers
             infoBundle.status = infoBundle.transactions_list[0].status;
             infoBundle.journal_date = infoBundle.transactions_list[0].journal_date;
 
+            for (int i = 0; i < infoBundle.transactions_list.Count; i++)
+            {
+                infoBundle.transactions_list[i].cr_description = currentAccounts
+                    .Where(account => account.number == infoBundle.transactions_list[i].credit_account)
+                    .Select(account => account.name)
+                    .FirstOrDefault();
+                if (infoBundle.transactions_list[i].credit_account != 0)
+                {
+                    infoBundle.transactions_list[i].cr_description = infoBundle.transactions_list[i].credit_account + " - " + infoBundle.transactions_list[i].cr_description;
+                } else
+                {
+                    infoBundle.transactions_list[i].cr_description = null;
+                }
+                
+                infoBundle.transactions_list[i].dr_description = currentAccounts
+                    .Where(account => account.number == infoBundle.transactions_list[i].debit_account)
+                    .Select(account => account.name)
+                    .FirstOrDefault();
 
-
-
+                if (infoBundle.transactions_list[i].debit_account != 0)
+                {
+                    infoBundle.transactions_list[i].dr_description = infoBundle.transactions_list[i].debit_account + " - " + infoBundle.transactions_list[i].dr_description;
+                }
+                else
+                {
+                    infoBundle.transactions_list[i].dr_description = null;
+                }
+            }
+            double balance = 0;            
+            //Just add one side of the T account for the total journal amount
+            for (int i = 0; i < infoBundle.transactions_list.Count; i++)
+            {
+                if (infoBundle.transactions_list[i].debit_amount >= 1)
+                {
+                    balance += (double)infoBundle.transactions_list[i].debit_amount;
+                }
+            }
+            infoBundle.total_adjustment = balance.ToString();
             return View(infoBundle);
         }
     }

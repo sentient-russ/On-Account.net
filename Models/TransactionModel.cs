@@ -24,6 +24,10 @@ namespace oa.Models
         [DisplayName("Dr.")]
         public double? debit_amount { get; set; } = 0;
 
+        [NotMapped]
+        [ValidateNever]
+        public string? dr_description { get; set; }
+
         [Required]
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 1)]
@@ -34,6 +38,10 @@ namespace oa.Models
         [IntegerValidator(MinValue = 1, MaxValue = 1000000000, ExcludeRange = true)]
         [DisplayName("Cr.")]
         public double? credit_amount { get; set; } = 0;
+
+        [NotMapped]
+        [ValidateNever]
+        public string? cr_description { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]
