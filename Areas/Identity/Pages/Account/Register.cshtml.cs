@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -134,6 +135,9 @@ namespace oa.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [NotMapped]
+            public string File { get; set; } = "";
         }
 
         public async Task OnGetAsync(string? returnUrl = null)
@@ -160,6 +164,7 @@ namespace oa.Areas.Identity.Pages.Account
                 user.Zip = Input.Zip;
                 user.DateofBirth = Input.DateofBirth;
                 user.LastPasswordChangedDate = System.DateTime.Now;
+                user.File = "default_user.svg";
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);

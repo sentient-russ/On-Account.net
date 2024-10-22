@@ -9,6 +9,7 @@ using System.Globalization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MimeKit.Cryptography;
 namespace OnAccount.Controllers
 {
 
@@ -207,16 +208,22 @@ namespace OnAccount.Controllers
         public async Task<IActionResult> ViewAccountDetails(string? id)
         {
             List<TransactionModel> currentTransactions = _dbConnectorService.GetAccountTransactions(id);
-
+            for(var i = 0; i < currentTransactions.Count; i++)
+            {
+                if (currentTransactions[i].status == "Pending")
+                {
+                    currentTransactions.RemoveAt(i);
+                } else if (currentTransactions[i].status == "Denied")
+                {
+                    currentTransactions.RemoveAt(i);
+                }
+            }
             ViewBag.AccountName = id + " - " + _dbConnectorService.GetAccoutName(id);
-
             DateTime currentDate = DateTime.Now;
             ViewBag.Date = currentDate.ToString("dd-MM-yyyy");
-
             double totalDebitAmount = currentTransactions.Sum(t => t.debit_amount ?? 0);
             double totalCreditAmount = currentTransactions.Sum(t => t.credit_amount ?? 0);
             double accountBalance = _dbConnectorService.CalculateAccountBalance(id);
-
             ViewBag.TotalDebitAmount = totalDebitAmount;
             ViewBag.TotalCreditAmount = totalCreditAmount;
             ViewBag.AccountBalance = accountBalance;
@@ -233,8 +240,47 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> GeneralJournal()
         {
-            List<TransactionModel> currentTransactions = _dbConnectorService.GetAllTransactions();
 
+            List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
+            List<TransactionModel> currentTransactions = _dbConnectorService.GetAllTransactions();
+            for(var i = 0; i < currentTransactions.Count; i++)
+            {
+                if (currentTransactions[i].debit_amount == 0)
+                {
+                    currentTransactions[i].debit_amount = null;
+                } 
+                else if (currentTransactions[i].credit_amount == 0)
+                {
+                    currentTransactions[i].credit_amount = null;
+                }
+            }
+            for (int i = 0; i < currentTransactions.Count; i++)
+            {
+                currentTransactions[i].cr_description = currentAccounts
+                    .Where(account => account.number == currentTransactions[i].credit_account)
+                    .Select(account => account.name)
+                    .FirstOrDefault();
+                if (currentTransactions[i].credit_account != 0)
+                {
+                    currentTransactions[i].cr_description = currentTransactions[i].credit_account + " - " + currentTransactions[i].cr_description;
+                }
+                else
+                {
+                    currentTransactions[i].cr_description = null;
+                }
+                currentTransactions[i].dr_description = currentAccounts
+                    .Where(account => account.number == currentTransactions[i].debit_account)
+                    .Select(account => account.name)
+                    .FirstOrDefault();
+                if (currentTransactions[i].debit_account != 0)
+                {
+                    currentTransactions[i].dr_description = currentTransactions[i].debit_account + " - " + currentTransactions[i].dr_description;
+                }
+                else
+                {
+                    currentTransactions[i].dr_description = null;
+                }
+            }
             return View(currentTransactions);
         }
 
@@ -290,5 +336,25 @@ namespace OnAccount.Controllers
             infoBundle.total_adjustment = balance.ToString();
             return View(infoBundle);
         }
+
+        //Only the manager can approve or deny a transaction.
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> DenyJournal(string? id)
+        {
+
+            _dbConnectorService.UpdateTransactionStatus(id, "Denied");
+
+            return RedirectToAction(nameof(GeneralJournal));
+        }
+        //Only the manager can approve or deny a transaction.
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> ApproveJournal(string? id)
+        {
+
+            _dbConnectorService.UpdateTransactionStatus(id, "Approved");
+
+            return RedirectToAction(nameof(GeneralJournal));
+        }
+
     }
 }

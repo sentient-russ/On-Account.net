@@ -1,15 +1,26 @@
 ﻿@model IEnumerable<oa.Models.TransactionModel>
-
 @{
-
-    ViewData["Title"] = "GeneralJournal";
+    int currentJournalNumber = 0;
 }
+<div class="text-center margin-top-120">
+    <img src="~/img/chart_of_accounts.jpg" style="max-height: 150px;" />
+</div>
+<h1 class="text-center mb-4">General Journal</h1>
 
-<h1>GeneralJournal</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div class="search-row">
+    <div class="search-colum-1">
+        @if (User.IsInRole("Accountant") || User.IsInRole("Manager"))
+        {
+            <a class="btn btn-primary" style="max-height:32px;" asp-action="AddJounalEntries" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Add account page to create a new journal entry.">Add Journal Entry</a>
+        }
+    </div>
+    <div class="search-colum-2">
+        <img src="~/img/search.svg" class="search-img" text-align:right;" />
+    </div>
+    <div class="search-colum-3">
+        <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
+    </div>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -17,88 +28,184 @@
                 @Html.DisplayNameFor(model => model.journal_id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.debit_account)
+                @Html.DisplayNameFor(model => model.transaction_date)
+            </th>
+            <th>
+               Account
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.debit_amount)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.credit_account)
-            </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.credit_amount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.transaction_date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.created_by)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.status)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.journal_description)
+                @Html.DisplayNameFor(model => model.created_by)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.journal_date)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.supporting_document)
+                @Html.DisplayNameFor(model => model.status)
             </th>
             <th></th>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                 <a asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the journal entry details.">
-                @Html.DisplayFor(modelItem => item.journal_id)
-                </a>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.debit_account)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.debit_amount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.credit_account)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.credit_amount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.transaction_date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.created_by)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.journal_description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.journal_date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.supporting_document)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
-            </td>
-        </tr>
-}
+    <tbody id="tableBody">
+        @{
+            var currentJournalId = 1000000000000000000;
+            var currentColorClass = "light-row";
+        }
+        @foreach (var item in Model) {
+            if (item.journal_id != currentJournalId) {
+                if (currentColorClass == "dark-row") {
+                    currentColorClass = "light-row";
+                } else
+                {
+                    currentColorClass = "dark-row";            
+                }
+            }
+            <tr class="@currentColorClass" style="max-height:45px;">
+                <td class="text-center">
+                    @if (item.journal_id != currentJournalId)
+                    {
+                        <a asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the journal entry details.">
+                            @Html.DisplayFor(modelItem => item.journal_id)
+                        </a>                        
+                    }
+                </td>
+                <td>
+                    @if (item.journal_id != currentJournalId)
+                    {
+                        @Html.DisplayFor(modelItem => item.transaction_date)
+                    }
+                    
+                </td>
+                <td>
+                    <a asp-action="ViewAccountDetails" asp-route-id="@item.debit_account" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the accounts details.">
+                        @Html.DisplayFor(modelItem => item.dr_description)
+                    </a>
+                    <a asp-action="ViewAccountDetails" asp-route-id="@item.credit_account" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the accounts details.">
+                        @Html.DisplayFor(modelItem => item.cr_description)
+                    </a>
+                </td>
+                <td>
+                    @FormatNegativeDouble(item.debit_amount)
+                </td>
+                <td>
+                    @FormatNegativeDouble(item.credit_amount)
+                </td>
+                <td>
+                    @if (item.journal_id != currentJournalId)
+                    {
+                        @Html.DisplayFor(modelItem => item.description)
+                    }                    
+                </td>
+                <td>
+                    @if (item.journal_id != currentJournalId)
+                    {
+                        @Html.DisplayFor(modelItem => item.created_by)
+                    }
+                    
+                </td>
+                <td>
+                    @if (item.journal_id != currentJournalId)
+                    {
+                        @Html.DisplayFor(modelItem => item.journal_date)
+                    }
+                    
+                </td>
+                <td>
+                    @if (item.journal_id != currentJournalId)
+                    {
+                        <div class="status-container">
+                            <div class="status-text-background">
+                                @Html.DisplayFor(modelItem => item.status)
+                            </div>
+                        
+                            @if(item.status == "Pending")
+                            {
+                                <div class="status-signifier-background">
+                                    <img class="status-signifier-img" src="~/img/blue_question.svg" />
+                                </div>
+                            } else if (item.status == "Approved")
+                            {
+                                <div class="status-signifier-background">
+                                    <img class="status-signifier-img" src="~/img/green_check.svg" />
+                                </div>
+                            } else
+                            {
+                                <div class="status-signifier-background">
+                                    <img class="status-signifier-img" style="margin-left:2.5px;" src="~/img/red_x.svg" />
+                                </div>
+                            }
+                        </div>
+                    }                    
+                </td>
+                @if (User.IsInRole("Manager"))
+                {
+                   <td>
+                        @if (item.journal_id != currentJournalId) {
+                            <a class="btn btn-outline-primary btn-table-margin" asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display journal details">Details</a>
+                            <a class="btn btn-outline-secondary btn-table-margin" asp-action="ApproveJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Aprove to add the journal to the ledger.">Aprove</a>
+                            <a class="btn btn-outline-danger btn-table-margin" asp-action="DenyJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Deny to keep the journal of the ledger.">Deny</a>
+                        }                    
+                    </td>
+                } else
+                {
+                    <td>
+
+                    </td>
+                }
+                @{
+                    currentJournalId = (int)item.journal_id;
+                }
+
+            </tr>
+        }
     </tbody>
 </table>
+@* format currency *@
+@functions {
+    public static string FormatNegativeDouble(double? value)
+    {
+        if (value.HasValue)
+        {
+            Console.WriteLine($"Formatting value: {value}");
+            if (value < 0)
+            {
+                return $"({Math.Abs(value.Value).ToString("C")})";
+            }
+            return value.Value.ToString("C");
+        }
+        return string.Empty;
+    }
+}
+@* Search and Filter *@
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let input = this.value.toLowerCase();
+        let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            let rowData = rows[i].getElementsByTagName('td');
+            let match = false;
+
+            for (let j = 0; j < rowData.length; j++) {
+                if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
+                    match = true;
+                    break;
+                }
+            }
+            if (match) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    });
+</script>

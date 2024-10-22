@@ -26,6 +26,7 @@ namespace oa.Models
 
         [NotMapped]
         [ValidateNever]
+        [DisplayName("Dr. Account")]
         public string? dr_description { get; set; }
 
         [Required]
@@ -41,9 +42,11 @@ namespace oa.Models
 
         [NotMapped]
         [ValidateNever]
+        [DisplayName("Cr. Account")]
         public string? cr_description { get; set; }
 
         [Required]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.DateTime)]
         [DisplayName("Transaction date:")]
         public DateTime? transaction_date { get; set; }
