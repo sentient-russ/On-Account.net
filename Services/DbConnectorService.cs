@@ -1,15 +1,9 @@
 ﻿using oa.Models;
 using MySql.Data.MySqlClient;
 using oa.Areas.Identity.Data;
-using oa.Migrations;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Identity;
-using System.Diagnostics;
-using System.Collections;
 using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
-using Org.BouncyCastle.Security;
-using System;
+
 
 namespace oa.Services
 {
@@ -658,7 +652,6 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@description", accountModelIn.description);
                 cmd1.Parameters.AddWithValue("@type", accountModelIn.type);
                 if (accountModelIn.term == null) { accountModelIn.term = ""; } else { cmd1.Parameters.AddWithValue("@term", accountModelIn.term); }
-                
                 cmd1.Parameters.AddWithValue("@statement_type", accountModelIn.statement_type);
                 cmd1.Parameters.AddWithValue("@opening_transaction_num", accountModelIn.opening_transaction_num);
                 cmd1.Parameters.AddWithValue("@current_balance", accountModelIn.current_balance);
@@ -1010,6 +1003,56 @@ namespace oa.Services
                     {
                         nextTransaction.credit_account = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
                         nextTransaction.credit_amount = reader1.IsDBNull(4) ? null : reader1.GetInt32(4);
+                    }
+                    nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
+                    nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    nextTransaction.is_opening = reader1.IsDBNull(7) ? null : reader1.GetBoolean(7);
+                    nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    nextTransaction.description = reader1.IsDBNull(9) ? null : reader1.GetString(9);
+                    nextTransaction.journal_id = reader1.IsDBNull(10) ? null : reader1.GetInt32(10);
+                    nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
+                    nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+                    transactionsList.Add(nextTransaction);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return transactionsList;
+        }
+        /*
+         * Gets all transaction for a specific journal number
+         */
+        public List<TransactionModel> GetAccountTransactionsByJournalNumber(string? jid)
+        {
+            List<TransactionModel> transactionsList = new List<TransactionModel>();
+            try
+            {
+                int Id = int.Parse(jid);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.transaction WHERE journal_id=@journal_id";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@journal_id", Id);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    TransactionModel nextTransaction = new TransactionModel();
+                    nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    //only return transaction data related to the requested account
+                    if (reader1.GetInt32(1) == Id)
+                    {
+                        nextTransaction.debit_account = reader1.IsDBNull(1) ? 0 : reader1.GetInt32(1);
+                        nextTransaction.debit_amount = reader1.IsDBNull(2) ? 0 : reader1.GetDouble(2);
+                    }
+                    if (reader1.GetInt32(3) == Id)
+                    {
+                        nextTransaction.credit_account = reader1.IsDBNull(3) ? 0 : reader1.GetInt32(3);
+                        nextTransaction.credit_amount = reader1.IsDBNull(4) ? 0 : reader1.GetInt32(4);
                     }
                     nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
                     nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);

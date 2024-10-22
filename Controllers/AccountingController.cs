@@ -119,6 +119,7 @@ namespace OnAccount.Controllers
             _dbConnectorService.UpdateExistingAccount(accountIn);
             return RedirectToAction(nameof(ChartOfAccounts));
         }
+
         // managers and users cannot disable accounts
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DisableAccount()
@@ -206,7 +207,7 @@ namespace OnAccount.Controllers
         {
             List<TransactionModel> currentTransactions = _dbConnectorService.GetAccountTransactions(id);
 
-            ViewBag.AccountName = id +" - "+ _dbConnectorService.GetAccoutName(id);
+            ViewBag.AccountName = id + " - " + _dbConnectorService.GetAccoutName(id);
 
             DateTime currentDate = DateTime.Now;
             ViewBag.Date = currentDate.ToString("dd-MM-yyyy");
@@ -217,7 +218,7 @@ namespace OnAccount.Controllers
 
             ViewBag.TotalDebitAmount = totalDebitAmount;
             ViewBag.TotalCreditAmount = totalCreditAmount;
-            ViewBag.AccountBalance = accountBalance; 
+            ViewBag.AccountBalance = accountBalance;
             return View(currentTransactions);
         }
         //All users can view accounts details pages
@@ -236,5 +237,22 @@ namespace OnAccount.Controllers
             return View(currentTransactions);
         }
 
+        //All users can view journal details
+        [Authorize(Roles = "Administrator, Manager, Accountant")]
+        public async Task<IActionResult> ViewJournalDetails(string? id)
+        {
+
+            JournalBundle infoBundle = new JournalBundle();
+            infoBundle.transactions_list = _dbConnectorService.GetAccountTransactionsByJournalNumber(id);
+            infoBundle.journal_id = Int32.Parse(id);
+            infoBundle.created_by = infoBundle.transactions_list[0].created_by;
+            infoBundle.status = infoBundle.transactions_list[0].status;
+            infoBundle.journal_date = infoBundle.transactions_list[0].journal_date;
+
+
+
+
+            return View(infoBundle);
+        }
     }
 }

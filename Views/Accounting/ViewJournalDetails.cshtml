@@ -1,0 +1,341 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using System.Globalization
+@using oa.Areas.Identity.Data
+@using oa.Services
+@using oa.Models;
+@model oa.Models.JournalBundle
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+@inject UserService CurrentUser
+@{
+    AppUserModel currentUser = CurrentUser.GetUser();
+    var UsersEmail = currentUser.Email;
+    var UserName = currentUser.ScreenName;
+    DateTime today = System.DateTime.Today;
+}
+<div class="form-container  margin-top-120">
+    <form class="add-account-form-container">
+        <div class="text-center">
+            <img src="~/img/journal.jpg" style="max-height: 150px;" />
+        </div>
+        <h3 class="text-center">Journal Entry</h3>
+        <hr />
+        @* row 0 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-2 greyed-out">
+                    <input class="form-control form-control-sm" placeholder="nextJournalId" value="@Model.journal_id" id="journal-id" readonly />
+                    <label for="journal_id" class="control-label">Journal Id:</label>
+                </div>
+            </div>
+        </div>
+        @* row 1 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-2 greyed-out">
+                    <input class="form-control form-control-sm" placeholder="Created by:" id="created-by" value="@UserName" readonly />
+                    <label for="created-by" class="control-label">User Name:</label>
+                </div>
+            </div>
+        </div>
+        @* row 2 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-2 greyed-out">
+                    <input class="form-control form-control-sm" placeholder="journal_date" value="@Model.journal_date?.ToString("MM-dd-yyyy", CultureInfo.InvariantCulture)" id="journal-date" readonly />
+                    <label for="journal_date" class="control-label">Journal Date:</label>
+                </div>
+            </div>
+        </div>
+        @* row 3 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating greyed-out">
+                    <input class="form-control form-control-sm currencyField" placeholder="total_adjustment" value="@Model.total_adjustment" id="journal-total-amount" readonly />
+                    <label class="control-label">Entry Total:</label>
+                </div>
+            </div>
+        </div>
+        @* row 4 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                </div>
+            </div>
+        </div>
+        @* row 5 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating">
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                </div>
+            </div>
+        </div>
+        @* row 6 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating  greyed-out">
+                    <input class="form-control form-control-sm" value="@Model.status" placeholder="account-status" id="journal-status" readonly />
+                    <label for="account-status" class="control-label">Status:</label>
+                </div>
+            </div>
+        </div>
+        @* row 7 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-2">
+                </div>
+            </div>
+            <div class="col-md">
+                @* empty spot *@
+            </div>
+        </div>
+        <hr />
+        <div class="transaction-container" data-transaction="1">
+            <div class="journal-container text-center">
+                <!-- heading row -->
+                <div class="journal-row-heading">
+                    <div class="col-md-3 transaction-date-container">
+                        <div class="journal-transaction-date">
+                            <input class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" data-transaction="1" data-line="0" id="transaction-date" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 transaction-upload-container ">
+                        <div class="journal-transaction-upload">
+                            <input class="form-control" type="file" data-transaction="1" id="transaction-upload">
+                        </div>
+                    </div>
+                    <div class="col-md-4 add-sub-transactions-container">
+                        <div class="col-6">
+                            <div class="add-sub-transactions-container">
+                                <span class="add-sub-transactions-label">@* Add/Subtract Transactions: *@</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="add-new-transaction btn btn-primary" data-transaction="1" id="add-transaction" hidden>
+                                <span class="btn-symbol">+</span>
+                            </div>
+                            <div class="remove-new-transaction btn btn-danger" hidden>
+                                <span class="btn-symbol">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*  line items start *@
+                <div class="journal-row">
+                    <!-- entry 1.1 row -->
+                    <div class="row g-1 journal-item-row" data-transaction="1" data-line="1">
+                        <div class="col-md-3">
+                            <span>Debit Account:</span>
+                            <select class="form-select form-control-sm" data-transaction="1" data-line="1" id="dr-account">
+                                <option value="unselected">Select a debit account</option>
+                                @{
+                                    if (Model.accounts_list != null)
+                                    {
+                                        @foreach (var item in Model.accounts_list)
+                                        {
+                                            <option value="@item.number">@item.number - @item.name</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Credit Account:</span>
+                            <input type="text" class="form-control muted" readonly />
+                            <select class="form-select form-control-sm " data-transaction="1" data-line="1" id="cr-account" hidden>
+                                <option value="unselected">Select a credit account</option>
+                                @{
+                                    if (Model.accounts_list != null)
+                                    {
+                                        @foreach (var item in Model.accounts_list)
+                                        {
+                                            <option value="@item.number">@item.number - @item.name</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <span>Post Ref:</span>
+                            <div class="">
+                                <input type="number" class="form-control muted" data-transaction="1" data-line="1" id="post-ref" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <span>Dr.</span>
+                            <div class="text-center">
+                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="1" id="dr-amount" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <span>Cr.</span>
+                            <div class="">
+                                <input type="text" class="form-control muted" readonly />
+                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="1" id="cr-amount" hidden />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end entry 1.1 row -->
+                    <!-- begin entry 1.2 row this is the section to reproduce in js -->
+                    <div class="row g-1 journal-item-row" data-transaction="1" data-line="2">
+                        <div class="col-md-3">
+                            <input type="text" class="form-control muted" readonly />
+                            <select class="form-select form-control-sm grey-select-background" data-transaction="1" data-line="2" id="dr-account" hidden>
+                                <option value="unselected">Select a debit account</option>
+                                @{
+                                    if (Model.accounts_list != null)
+                                    {
+                                        @foreach (var item in Model.accounts_list)
+                                        {
+                                            <option value="@item.number">@item.number - @item.name</option>
+                                        }
+                                    }
+                                }
+                            </select>
+
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select form-control-sm" data-transaction="1" data-line="2" id="cr-account">
+                                <option value="unselected">Select a credit account</option>
+                                @{
+                                    if (Model.accounts_list != null)
+                                    {
+                                        @foreach (var item in Model.accounts_list)
+                                        {
+                                            <option value="@item.number">@item.number - @item.name</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="">
+                                <input type="number" class="form-control muted" data-transaction="1" data-line="2" id="post-ref" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="text-center">
+                                <input type="text" class="form-control muted" readonly />
+                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="2" id="dr-amount" hidden />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="">
+                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="2" id="cr-amount" />
+                            </div>
+                        </div>
+                        <div class="col-00">
+                            <div class="add-new-line btn btn-outline-primary" id="add-new-line" data-line="2">
+                                <span class="btn-symbol">+</span>
+                            </div>
+                            <div class="remove-new-line btn btn-outline-danger">
+                                <span class="btn-symbol">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    @* end entry 1.2 row  *@
+                    @*  line items end *@
+                    <div class="add-transaction-placeholder"></div>
+
+                    <div class="row g-1 journal-item-row">
+                        @* totals *@
+                        <div class="row g-1 journal-item-row">
+                            <div class="col-md-6">
+                                <div class="transaction-description">
+                                    <input style="text-align:left;" class="form-control transaction-description" placeholder="Transaction Description" data-transaction="1" id="transaction-description" />
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="journal-totals">
+                                    <span class="totals"></span>
+
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="margin-left: 5px;">
+                                <hr class="hr-journal-totals" />
+                                <hr class="hr-journal-totals" />
+                                <div class="">
+                                    <input class="form-control text-end currencyField" value="$0.00" data-val="false" data-transaction="1" id="dr-total" readonly />
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="margin-left:2.5px">
+                                <hr class="hr-journal-totals" />
+                                <hr class="hr-journal-totals" />
+                                <div class="">
+                                    <input class="form-control text-end currencyField" value="$0.00" data-val="false" data-transaction="1" id="cr-total" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="warning-row">
+                                <div class="text-danger text-right" id="journal_validation"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* journal description input *@
+            <div class="journal-row">
+                <div class="journal-final-input-row">
+                    <div class="col-md-11">
+                        <div class="journal-description">
+                            <input class="form-control" placeholder="Journal Note" data-val="false" id="journal-description" />
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+            </div>
+            <div class="journal-save-row"
+            <div class="mt-3 text-align-l">
+                <div class="form-floating">
+                        @if (Model.current_balance != 0 || Model.current_balance == null)
+                        {
+                                <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn">
+                        }
+                        else
+                        {
+                                <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn" disabled>
+                        }
+                </div>
+                <div>
+                    <a asp-action="ChartOfAccounts">Back to List</a>
+                </div>
+        </div>
+    </form>
+    <div />
+    <script src="~/js/journal.js" asp-append-version="true"></script>
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
