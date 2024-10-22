@@ -8,7 +8,10 @@
 @* code here to remove button if the user is not admin or manager *@
 <div class="search-row">
     <div class="search-colum-1">
-        <a class="btn btn-primary" style="max-height:32px;" asp-action="AddAccount" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Add account page to create a new account for the chart of accounts">Add New</a>
+        @if (User.IsInRole("Administrator"))
+        {
+            <a class="btn btn-primary" style="max-height:32px;" asp-action="AddAccount" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Add account page to create a new account for the chart of accounts">Add New</a>
+        }
     </div>
     <div class="search-colum-2">
         <img src="~/img/search.svg" class="search-img" text-align:right;"/>
@@ -49,12 +52,12 @@
         <tr>
             <td>
                 
-                    <a asp-action="ViewAccountDetails" asp-route-id="@item.number" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Redirects to the Account details of this account with transactions">
+                    <a asp-action="ViewAccountDetails" asp-route-id="@item.number" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the Account details of this account with transactions">
                 @Html.DisplayFor(modelItem => item.number)
                 </a>
             </td>
             <td>
-                    <a asp-action="ViewAccountDetails" asp-route-id="@item.number" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Redirects to the Account details of this account with transactions">
+                    <a asp-action="ViewAccountDetails" asp-route-id="@item.number" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the Account details of this account with transactions">
                 @Html.DisplayFor(modelItem => item.name)
                 </a>
             </td>
@@ -75,7 +78,7 @@
                 @Html.DisplayFor(modelItem => item.account_status)
             </td>
             <td>
-                    <a class="btn btn-outline-secondary" asp-action="EditAccount" asp-route-id="@item.id" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Display details of account and allows editing">Details</a>
+                    <a class="btn btn-outline-secondary" asp-action="EditAccount" asp-route-id="@item.id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display details of account and allows editing">Details</a>
             </td>
         </tr>
 }
