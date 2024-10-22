@@ -52,13 +52,13 @@
         <tr>
             <td>
                 
-                    <a asp-action="ViewAccountDetails" asp-route-id="@item.number" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the Account details of this account with transactions">
-                @Html.DisplayFor(modelItem => item.number)
+                <a asp-action="ViewAccountDetails" asp-route-id="@item.number" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the Account details of this account with transactions">
+                    @Html.DisplayFor(modelItem => item.number)
                 </a>
             </td>
             <td>
-                    <a asp-action="ViewAccountDetails" asp-route-id="@item.number" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the Account details of this account with transactions">
-                @Html.DisplayFor(modelItem => item.name)
+                <a asp-action="ViewAccountDetails" asp-route-id="@item.number" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the Account details of this account with transactions">
+                 @Html.DisplayFor(modelItem => item.name)
                 </a>
             </td>
             <td>
@@ -78,7 +78,7 @@
                 @Html.DisplayFor(modelItem => item.account_status)
             </td>
             <td>
-                    <a class="btn btn-outline-secondary" asp-action="EditAccount" asp-route-id="@item.id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display details of account and allows editing">Details</a>
+                 <a class="btn btn-outline-secondary" asp-action="EditAccount" asp-route-id="@item.id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display details of account and allows editing">Details</a>
             </td>
         </tr>
 }

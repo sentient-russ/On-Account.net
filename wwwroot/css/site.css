@@ -1,6 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Baskervville+SC&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Baskervville+SC&family=Outfit:wght@100..900&display=swap');
-
+.dark-row {
+    --bs-table-bg: --var(transparent);
+    background-color: #6c757d31;
+}
+.ligth-row {
+    --bs-table-bg: --var(transparent);
+    background-color: #7d766c31
+}
+.btn-table-margin{
+    margin-top: -5px;
+    margin-bottom: -5px;
+}
+.status-signifier-background{
+    max-height: 25px;
+    max-width: 25px;
+    border-radius: 17.5px 17.5px 17.5px 17.5px;
+    background-color: white;
+    border-color: white;
+    border-width: 5px;
+    margin-left:5px;
+    display:flex;
+}
+.status-signifier-img{
+    max-height:20px;
+    max-width: 20px;
+}
+.status-container {
+    display: flex;
+    flex-direction: row;
+    text-align:center;
+}
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:active,
