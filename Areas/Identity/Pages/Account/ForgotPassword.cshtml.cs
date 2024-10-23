@@ -59,6 +59,8 @@ namespace oa.Areas.Identity.Pages.Account
                 string inputDOB=Input.SecurityQuestion;
                 int inputDOBLength = Input.SecurityQuestion.Length;
                 string inputDob =(inputDOB.Substring(5)+"-"+yearOfInput);
+                dob = dob.Replace(" ", "");
+                inputDOB = inputDOB.Replace(" ", "");
                 if (dob.Length == 9 && !inputDob[0].Equals('1')){
                     inputDob = inputDob.Substring(1);
                 }
