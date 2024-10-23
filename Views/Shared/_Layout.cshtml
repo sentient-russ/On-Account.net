@@ -46,7 +46,9 @@
                                             <img class="help-img tools-menu" onclick="toggleWidget(`onahelp`)" src="~/img/help.svg" />
                                         </div>
                                         <div class="tool-btn">
-                                            <img class="mail-img tools-menu" onclick="toggleWidget(`onahelp`)" src="~/img/mail_black.svg" />
+                                            <a asp-controller="Accounting" asp-action="EmailAdmin" data - bs - toggle="tooltip" data - bs - placement="left" data - bs - title="Send email to administration">
+                                                <img class="mail-img tools-menu" src="~/img/mail_black.svg" />
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
