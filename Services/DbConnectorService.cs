@@ -1206,9 +1206,36 @@ namespace oa.Services
             {
                 Console.WriteLine(ex.ToString());
             }
+            if (newStatusIn == "Approved")
+            {
+                // addd transaction id to journal entry post ref feild where journalNumIn == JournalNum
+            }
         }
 
+        /*
+         * Updates the post ref for a journal after it has been approved
+         */
+        public void UpdatePostRef(string? journalIdIn, string? newRefId)
+        {
+/*            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "UPDATE on_account.transaction SET post = @current_balance WHERE number = @number";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
 
+                cmd1.Parameters.AddWithValue("@number", acctNum);
+                cmd1.Parameters.AddWithValue("@current_balance", newBal);
+
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }*/
+        }
     }
 }
 

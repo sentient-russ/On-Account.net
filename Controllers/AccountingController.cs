@@ -223,6 +223,7 @@ namespace OnAccount.Controllers
                 }
             }
             ViewBag.AccountName = id + " - " + _dbConnectorService.GetAccoutName(id);
+            ViewBag.AccountNumber = id;
             DateTime currentDate = DateTime.Now;
             ViewBag.Date = currentDate.ToString("dd-MM-yyyy");
             double totalDebitAmount = currentTransactions.Sum(t => t.debit_amount ?? 0);
@@ -368,7 +369,7 @@ namespace OnAccount.Controllers
 
             AppUser emailBundle = new AppUser();
 
-            emailBundle.AdminManagerEmails = administrativeEmails;
+/*            emailBundle.AdminManagerEmails = administrativeEmails;*/
 
             return View(emailBundle);
         }
