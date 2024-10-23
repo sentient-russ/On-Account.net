@@ -1,4 +1,12 @@
-﻿@model IEnumerable<oa.Models.TransactionModel>
+﻿@using oa.Models
+@using oa.Services
+@model IEnumerable<oa.Models.TransactionModel>
+@{
+    double runningBalance = 0; // Initialize running balance
+    DbConnectorService dbConnection = new DbConnectorService();
+    string normalSide = dbConnection.GetAccountNormalSideByNumber(ViewBag.AccountNumber);
+
+}
 <div class="text-center margin-top-120">
     @* <img src="~/img/balance_sheet.jpg" style="max-height: 150px;" /> *@
 </div>
@@ -10,7 +18,6 @@
 @* code here to remove button if the user is not admin or manager *@
 <div class="search-row">
     <div class="search-colum-1">
-        
     </div>
     <div class="search-colum-2">
         <img src="~/img/search.svg" class="search-img" text-align:right;" />
@@ -43,38 +50,51 @@
             <th>
                 @Html.DisplayNameFor(model => model.status)
             </th>
-
-            <th></th>
+            <th>
+                Running Balance
+            </th>
         </tr>
     </thead>
     <tbody id="tableBody">
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.journal_id)
-            </td>
-            <td>
-                @FormatNegativeDouble(item.debit_amount)
-            </td>
-            <td>
-                @FormatNegativeDouble(item.credit_amount)
-            </td>
-            <td>
-               @(item.transaction_date.HasValue ? item.transaction_date.Value.ToString("MM/dd/yyyy") : string.Empty)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.created_by)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.status)
-            </td>
-
-            <td></td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.journal_id)
+                </td>
+                <td>
+                    @FormatNegativeDouble(item.debit_amount)
+                </td>
+                <td>
+                    @FormatNegativeDouble(item.credit_amount)
+                </td>
+                <td>
+                    @(item.transaction_date.HasValue ? item.transaction_date.Value.ToString("MM/dd/yyyy") : string.Empty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.created_by)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.status)
+                </td>
+                <td>
+                    @{
+                        if(normalSide == "Debit")
+                        {
+                            runningBalance += item.debit_amount.GetValueOrDefault() - item.credit_amount.GetValueOrDefault();
+                        } else if (normalSide == "Credit")
+                        {
+                            runningBalance += item.credit_amount.GetValueOrDefault() - item.debit_amount.GetValueOrDefault();
+                        }
+                        
+                        @FormatNegativeDouble(runningBalance)
+                    }
+                </td>
+            </tr>
+        }
         <tr>
             <th><strong>Totals</strong></th>
             <th><strong>@FormatNegativeDouble((double?)ViewBag.TotalDebitAmount)</strong></th>
@@ -83,6 +103,7 @@
             <th><strong></strong></th>
             <th><strong></strong></th>
             <th><strong></strong></th>
+            <th><strong>@FormatNegativeDouble(runningBalance)</strong></th>
             <th><strong></strong></th>
         </tr>
 
