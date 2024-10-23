@@ -198,6 +198,9 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "ViewJournalDetails",
     pattern: "{controller=AccountingController}/{action=ViewJournalDetails}/{id?}");
+app.MapControllerRoute(
+    name: "EmailAdmin",
+    pattern: "{controller=AccountingController}/{action=EmailAdmin}/{id?}");
 
 
 app.MapRazorPages();
