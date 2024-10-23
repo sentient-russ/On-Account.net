@@ -1,0 +1,40 @@
+﻿@model oa.Areas.Identity.Data.AppUser
+@{
+    ViewData["Title"] = "Email Administration";
+}
+
+<div class="row">
+    <div class="col-md-4 mx-auto">
+        <h1 class=" margin-top-120">Send Email to Administration</h1>
+        <form asp-action="SendEmailAdmin">
+            <hr />
+            <span style="margin-bottom:20px;">Emails sent from this form are deliverd through the cs@magnadigi.com partner account.</span>
+            <div class="form-floating mb-3" style="margin-top: 20px;">
+                <input asp-for="Email" class="form-control" autocomplete="Gregory" aria-required="true" placeholder="Email" />
+                <label asp-for="Email" class="control-label"></label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Subject" class="form-control" aria-required="true" placeholder="Subject" />
+                <label asp-for="Subject" class="control-label"></label>
+                <span asp-validation-for="Subject" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <textarea asp-for="Message" class="form-control" aria-required="true" placeholder="Message" style="height:200px;"></textarea>
+                <label asp-for="Message" class="control-label"></label>
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Saves the email file and sends it to the user">
+                <input type="submit" value="Send email" class="btn btn-primary" />
+            </div>
+        </form>
+        <div>
+            <a asp-controller="Home" asp-action="Index" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Return to user home page">Back to Home</a>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

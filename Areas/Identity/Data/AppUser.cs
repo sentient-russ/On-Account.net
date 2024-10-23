@@ -64,7 +64,9 @@ namespace oa.Areas.Identity.Data
         [NotMapped]
         public string? File { get; set; } = "";
 
-
+        [NotMapped]
+        [ValidateNever]
+        public List<String> AdminManagerEmails { get; set; }
     }
 
 }
