@@ -201,9 +201,12 @@ namespace OnAccount.Controllers
                     transactionIn.debit_amount = (double?)journalEntry.Transactions[j].LineItems[i].DrAmount;
                     transactionIn.description = journalEntry.Transactions[j].TransactionDescription;
                     transactionIn.supporting_document = uploadFileName;
+                    
                     _dbConnectorService.AddTransaction(transactionIn);
                 }
+                _dbConnectorService.logModelCreator(journalEntry.UserName,"Created Journal entry", "");//adds a log to username based on the transactions for each one
             }
+            
             return RedirectToAction(nameof(ChartOfAccounts));
         }
 
@@ -348,7 +351,7 @@ namespace OnAccount.Controllers
         {
 
             _dbConnectorService.UpdateTransactionStatus(id, "Denied");
-
+            // need log update here
             return RedirectToAction(nameof(GeneralJournal));
         }
         //Only the manager can approve or deny a transaction.
@@ -357,7 +360,7 @@ namespace OnAccount.Controllers
         {
 
             _dbConnectorService.UpdateTransactionStatus(id, "Approved");
-
+           // need log update here
             return RedirectToAction(nameof(GeneralJournal));
         }
 

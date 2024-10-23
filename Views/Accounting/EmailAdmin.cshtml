@@ -5,12 +5,24 @@
 
 <div class="row">
     <div class="col-md-4 mx-auto">
-        <h1 class=" margin-top-120">Send Email</h1>
-        <form asp-action="SendEmail">
+        <h1 class=" margin-top-120">Send Email to Administration</h1>
+        <form asp-action="SendEmailAdmin">
             <hr />
             <span style="margin-bottom:20px;">Emails sent from this form are deliverd through the cs@magnadigi.com partner account.</span>
             <div class="form-floating mb-3" style="margin-top: 20px;">
-                <input asp-for="Email" class="form-control" autocomplete="@Model.Email" aria-required="true" placeholder="Email" />
+                @*Backup -> temp -> <input asp-for="Email" class="form-control" autocomplete="Gregory" aria-required="true" placeholder="Email" />*@
+                <select class="form-select form-control" data-transaction="1" data-line="1">
+                    <option value="unselected">Select an administrative email</option>
+                    @{
+                        if (Model.AdminManagerEmails != null)
+                        {
+                            @foreach (var item in Model.AdminManagerEmails)
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        }
+                    }
+                </select>
                 <label asp-for="Email" class="control-label"></label>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
