@@ -18,7 +18,7 @@ namespace oa.Services
                 {
                     LogModel logModel = new LogModel();
                     logModel.ChangeDate = DateTime.Now;
-                    logModel.UserId = oldUser.Id;
+                    logModel.UserId = oldUser.UserName;
                     string changedProperty = property.Name;
                     string oldValueString = oldValue?.ToString() ?? "null";
                     string newValueString = newValue?.ToString() ?? "null";
@@ -32,9 +32,10 @@ namespace oa.Services
             //iterate through the loglist to get rid of null entries.
             for(int i = 0; i < logList.Count; i++)
             {
-                if (logList[i].ChangedFrom.Contains("null") || logList[i].ChangedTo.Contains("null"))
+                if (logList[i].ChangedFrom.Contains("null") || logList[i].ChangedTo.Contains("null") || logList[i].ChangedTo.Contains("LastPasswordChangedDate") )
                 {
                     logList.RemoveAt(i);
+                    i--;
                 }
             }
             return logList;
