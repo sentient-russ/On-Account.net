@@ -26,12 +26,13 @@ namespace OnAccount.Controllers
         private readonly IEmailSender _emailSender;
 
         public AccountingController(DbConnectorService connectorService,
-            UserService userService)
+            UserService userService, IEmailSender emailSender)
         {
             _dbConnectorService = connectorService;
             _userService = userService;
             currentAccounts = _dbConnectorService.GetChartOfAccounts();
             accountModel = new AccountsModel();
+            this._emailSender = emailSender;
         }
         //All users can view the accounting home landing page
         [Authorize(Roles = "Administrator,Manager,Accountant")]
@@ -379,11 +380,12 @@ namespace OnAccount.Controllers
         [HttpPost]
         public async Task<IActionResult> SendEmailAdmin([Bind("Id, Email, Subject, Message")] AppUserModel detailsIn)
         {
+            
             AppUserModel appUserMessage = new AppUserModel();
             appUserMessage = detailsIn;
             await _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message);
             // return RedirectToAction(nameof(HomeController.Index)); <- Backup (temp)
-            return RedirectToAction("Index", "HomeController");
+            return RedirectToAction("Index", "Home");
         }
     }
 }
