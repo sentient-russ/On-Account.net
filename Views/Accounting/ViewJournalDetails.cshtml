@@ -169,9 +169,21 @@
                         </div>
                         <div class="col-md-1">
                             <span>Post Ref:</span>
-                            <div class="">
-                                <input type="number" class="form-control muted" data-transaction="1" data-line="1" id="post-ref" readonly>
-                            </div>
+                            @if (@Model.transactions_list[0].transaction_number != 0)
+                            {
+                                <div class="">
+                                    <a asp-action="GeneralJournal" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
+                                        <input type="number" class="form-control muted" style="color: blue;" value="@Model.transactions_list[0].transaction_number" data-transaction="1" data-line="1" id="post-ref" readonly>
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="">
+                                    <input type="number" class="form-control muted" data-transaction="1" data-line="1" id="post-ref" readonly>
+                                </div>
+                            }
+
                         </div>
                         <div class="col-md-2">
                             <span>Dr.</span>
@@ -204,9 +216,22 @@
                             </select>
                         </div>
                         <div class="col-md-1">
-                            <div class="">
-                                <input type="number" class="form-control muted" data-transaction="1" data-line="2" id="post-ref" readonly>
-                            </div>
+                             @if (@Model.transactions_list[1].transaction_number != 0)
+                            {
+                                <div class="">
+                                    <a asp-action="GeneralJournal" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
+                                        <input type="number" class="form-control muted" style="color: blue;" value="@Model.transactions_list[1].transaction_number" data-transaction="1" data-line="2" id="post-ref" readonly>
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="">
+                                   <input type="number" class="form-control muted" data-transaction="1" data-line="2" id="post-ref" readonly>
+                                </div>
+                            }
+
+
                         </div>
                         <div class="col-md-2">
                             <div class="text-center">
@@ -245,9 +270,21 @@
                                     </select>
                                 </div>
                                 <div class="col-md-1">
-                                    <div class="">
-                                        <input type="number" class="form-control muted" id="post-ref" readonly>
-                                    </div>
+                                    @if (@Model.transactions_list[1].transaction_number != 0)
+                                    {
+                                        <div class="">
+                                            <a asp-action="GeneralJournal" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
+                                                <input type="number" class="form-control muted" style="color: blue;" value="@Model.transactions_list[i].transaction_number" id="post-ref" readonly>
+                                            </a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="">
+                                                <input type="number" class="form-control muted" id="post-ref" readonly>
+                                        </div>
+                                    }
+
                                 </div>
                                 <div class="col-md-2">
                                     <div class="text-center">

@@ -358,7 +358,7 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> ApproveJournal(string? id)
         {
-
+            
             _dbConnectorService.UpdateTransactionStatus(id, "Approved");
            // need log update here
             return RedirectToAction(nameof(GeneralJournal));
@@ -383,6 +383,7 @@ namespace OnAccount.Controllers
             AppUserModel appUserMessage = new AppUserModel();
             appUserMessage = detailsIn;
             await _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message);
+
             // return RedirectToAction(nameof(HomeController.Index)); <- Backup (temp)
             return RedirectToAction("Index", "HomeController");
         }

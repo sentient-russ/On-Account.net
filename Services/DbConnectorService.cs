@@ -3,6 +3,8 @@ using MySql.Data.MySqlClient;
 using oa.Areas.Identity.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
+using oa.Areas.Identity.Services;
+using oa.Migrations;
 
 
 namespace oa.Services
@@ -1185,6 +1187,37 @@ namespace oa.Services
             return nextJournalId;
         }
         /*
+         * Gets transaction number from journal id
+         * 
+         */
+        public string GetTransactionNum(string? journalId)
+        {
+            string transactionId = "";
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT id FROM on_account.transaction WHERE journal_id = @journal_id";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@journal_id", journalId);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                transactionId = reader1.GetInt32(0).ToString();
+/*              //currently assigns them all to the first transaction id
+ *              while (reader1.Read())
+                {
+                    transactionId = reader1.GetInt32(0).ToString();
+                }*/
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return transactionId;
+        }
+
+        /*
          * Updates journal transaction status
          * 
          */
@@ -1208,7 +1241,9 @@ namespace oa.Services
             }
             if (newStatusIn == "Approved")
             {
+                string transactionId = GetTransactionNum(journalNumIn);
                 // addd transaction id to journal entry post ref feild where journalNumIn == JournalNum
+                UpdatePostRef(journalNumIn, transactionId);
             }
         }
 
@@ -1217,15 +1252,15 @@ namespace oa.Services
          */
         public void UpdatePostRef(string? journalIdIn, string? newRefId)
         {
-/*            try
+            try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "UPDATE on_account.transaction SET post = @current_balance WHERE number = @number";
+                string command = "UPDATE on_account.transaction SET transaction_number = @transaction_number WHERE journal_id = @journal_id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
 
-                cmd1.Parameters.AddWithValue("@number", acctNum);
-                cmd1.Parameters.AddWithValue("@current_balance", newBal);
+                cmd1.Parameters.AddWithValue("@transaction_number", newRefId);
+                cmd1.Parameters.AddWithValue("@journal_id", journalIdIn);
 
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
@@ -1234,7 +1269,10 @@ namespace oa.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-            }*/
+            }
+            
+
+
         }
     }
 }
