@@ -18,6 +18,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     public virtual DbSet<oa.Models.PassHashModel> pass_hash { get; set; } = default!;
     public virtual DbSet<oa.Models.TransactionModel> transaction { get; set; } = default!;
     public virtual DbSet<oa.Models.LogModel> log { get; set; } = default!;
+    public virtual DbSet<oa.Models.ErrorModel> error { get; set; } = default!;
 
     //the next section overrides the default db naming
     protected override void OnModelCreating(ModelBuilder builder)
