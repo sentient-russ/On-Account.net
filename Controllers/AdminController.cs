@@ -204,7 +204,7 @@ namespace OnAccount.Controllers
         {
             List<LogModel> logs = new List<LogModel>();
             logs = _dbConnectorService.GetLogs();
-
+            logs.Reverse();
             return View(logs);
         }
     }
