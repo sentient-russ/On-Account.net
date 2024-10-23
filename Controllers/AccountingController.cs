@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MimeKit.Cryptography;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using oa.Controllers;
 namespace OnAccount.Controllers
 {
 
@@ -20,6 +22,7 @@ namespace OnAccount.Controllers
         private readonly UserService _userService;
         List<AccountsModel> currentAccounts;
         AccountsModel accountModel;
+        private readonly IEmailSender _emailSender;
 
         public AccountingController(DbConnectorService connectorService,
             UserService userService)
@@ -346,6 +349,7 @@ namespace OnAccount.Controllers
 
             return RedirectToAction(nameof(GeneralJournal));
         }
+
         //Only the manager can approve or deny a transaction.
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> ApproveJournal(string? id)
@@ -363,6 +367,16 @@ namespace OnAccount.Controllers
             List<String> administrativeEmails = _dbConnectorService.GetAdministrativeEmails();
 
             return View(administrativeEmails);
+        }
+
+        [Authorize(Roles = "Manager, Accountant, Administrator")]
+        [HttpPost]
+        public async Task<IActionResult> SendEmailAdmin([Bind("Id, Email, Subject, Message")] AppUserModel detailsIn)
+        {
+            AppUserModel appUserMessage = new AppUserModel();
+            appUserMessage = detailsIn;
+            await _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message);
+            return RedirectToAction(nameof(HomeController.Index));
         }
     }
 }
