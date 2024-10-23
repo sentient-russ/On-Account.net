@@ -970,7 +970,37 @@ namespace oa.Services
             }
             balance = cr - dr;
             return balance;
-        }            
+        }
+
+
+
+        // grabs list of all transactions in ledger with all values
+        public List<TransactionModel> getAllTransactions()
+        {
+            using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+            string command = "select * from on_account.transaction";
+            conn1.Open();
+            MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+            MySqlDataReader reader1 = cmd1.ExecuteReader();
+            List<TransactionModel> allTransactions = new List<TransactionModel>();
+            while (reader1.Read())
+            {
+                TransactionModel nextTransaction = new TransactionModel();
+                nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                nextTransaction.debit_account = reader1.IsDBNull(1) ? null : reader1.GetInt32(1);
+                nextTransaction.debit_amount = reader1.IsDBNull(2) ? null : reader1.GetDouble(2);
+                nextTransaction.credit_account = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+                nextTransaction.credit_amount = reader1.IsDBNull(4) ? null : reader1.GetInt32(4);                
+                nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
+                nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                nextTransaction.is_opening = reader1.IsDBNull(7) ? null : reader1.GetBoolean(7);
+                nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                nextTransaction.description = reader1.IsDBNull(9) ? null : reader1.GetString(9);
+                nextTransaction.journal_id = reader1.IsDBNull(10) ? null : reader1.GetInt32(10);
+                allTransactions.Add(nextTransaction);
+                }
+            return allTransactions;
+        }
         
     }
 }

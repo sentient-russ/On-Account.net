@@ -1,0 +1,111 @@
+﻿@using oa.Models
+@model IEnumerable<oa.Models.TransactionModel>
+<div class="text-center margin-top-120">
+    <img src="~/img/OnAccount_Logo_Black.png" style="max-height: 150px;" />
+</div>
+<h1 class="text-center mb-4">General Ledger</h1>
+@* code here to remove button if the user is not admin or manager *@
+<div class="search-row">
+    <div class="search-colum-1" style="margin-left: 60px;">
+    </div>
+    <div class="search-colum-2">
+        <img src="~/img/search.svg" class="search-img" text-align:right;" />
+    </div>
+    <div class="search-colum-3">
+        <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                id
+            </th>
+            <th>
+                Debit Account
+            </th>
+            <th>
+                Debit Ammount
+            </th>
+            <th>
+                Credit Account
+            </th>
+            <th>
+                Credit Amount
+            </th>
+            <th>
+                Transaction Date
+            </th>
+            <th>
+                Created by
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Description
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="tableBody">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.debit_account)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.debit_amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.credit_account)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.credit_amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.transaction_date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.created_by)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.description)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@* Search and Filter *@
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let input = this.value.toLowerCase();
+        let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            let rowData = rows[i].getElementsByTagName('td');
+            let match = false;
+
+            for (let j = 0; j < rowData.length; j++) {
+                if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (match) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    });
+</script>

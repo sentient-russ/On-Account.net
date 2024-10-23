@@ -177,6 +177,8 @@ namespace OnAccount.Controllers
             //_dbConnectorService.immediateLockout(Id, userScreenName);
             return RedirectToAction(nameof(EditAccountDetails), new { Id = Id });
         }
+
+
         [Authorize(Roles = "Administrator")]
         [HttpGet]
         public async Task<IActionResult> Unlock(string? Id)
@@ -203,8 +205,9 @@ namespace OnAccount.Controllers
         public async Task<IActionResult> ViewLogs(string? Id)
         {
             List<LogModel> logs = new List<LogModel>();
+            
             logs = _dbConnectorService.GetLogs();
-
+            logs.Reverse();
             return View(logs);
         }
     }

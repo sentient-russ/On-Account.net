@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 using System.Text;
 using Newtonsoft.Json;
+using System.Diagnostics.Metrics;
 
 namespace OnAccount.Controllers
 {
@@ -130,7 +131,7 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> AddJounalEntries()
         {
-            List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
+/*            List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             AccountsModel accountModel = new AccountsModel();
             accountModel.accounts_list = currentAccounts;
             accountModel.journal_id = _dbConnectorService.GetNextJournalId();
@@ -141,8 +142,8 @@ namespace OnAccount.Controllers
 
             journalAccount.journal_date = System.DateTime.Today;
             journalAccount.journal_id = accountModel.journal_id;
-            journalAccount.accounts_list = currentAccounts;
-            return View(journalAccount);
+            journalAccount.accounts_list = currentAccounts;*/
+            return View();
         }
         [HttpPost]
         [Route("api/journal")]
@@ -173,17 +174,10 @@ namespace OnAccount.Controllers
             }
 
 
-  
-
             // Save or process the dataTransactions as needed
 
             return Ok(journalEntry);
         }
-
-
-
-
-
 
         //All users can view accounts details pages
         [Authorize(Roles = "Administrator, Manager, Accountant")]
@@ -203,6 +197,19 @@ namespace OnAccount.Controllers
             ViewBag.TotalCreditAmount = totalCreditAmount;
             ViewBag.AccountBalance = accountBalance; 
             return View(currentTransactions);
+        }
+
+
+
+        //creates view of ViewGeneralLedgerm
+        [Authorize(Roles ="Administrator, Manager, Accountant")]
+        public async Task<IActionResult> ViewGeneralLedger()
+        {
+            DbConnectorService dbConnectorService = _dbConnectorService;
+            List<TransactionModel> listOfTransactions= dbConnectorService.getAllTransactions();
+
+
+            return View(listOfTransactions);
         }
     }
 }
