@@ -207,6 +207,13 @@ namespace OnAccount.Controllers
                 }
                 _dbConnectorService.logModelCreator(journalEntry.UserName,"Created Journal entry", "");//adds a log to username based on the transactions for each one
             }
+
+            // Functionality for sending email to managers
+            //List<String> managerEmails = _dbConnectorService.GetManagerEmails();
+            //for (var item in managerEmails)
+            //{
+
+            //}
             
             return RedirectToAction(nameof(ChartOfAccounts));
         }
@@ -381,12 +388,13 @@ namespace OnAccount.Controllers
         [HttpPost]
         public async Task<IActionResult> SendEmailAdmin([Bind("Id, Email, Subject, Message")] AppUserModel detailsIn)
         {
-            
             AppUserModel appUserMessage = new AppUserModel();
-            appUserMessage = detailsIn;
-            await _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message);
 
-            // return RedirectToAction(nameof(HomeController.Index)); <- Backup (temp)
+            appUserMessage = detailsIn;
+
+            // Task runs in a standalone discard while the redirection takes place. (No more await)
+            _ = Task.Run(() => _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message));
+
             return RedirectToAction("Index", "Home");
         }
     }
