@@ -373,7 +373,7 @@ namespace OnAccount.Controllers
 
             AppUser emailBundle = new AppUser();
 
-/*            emailBundle.AdminManagerEmails = administrativeEmails;*/
+            emailBundle.AdminManagerEmails = administrativeEmails;
 
             return View(emailBundle);
         }
