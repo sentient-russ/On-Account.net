@@ -789,6 +789,13 @@ input:-webkit-autofill:focus {
     padding-top:5px;
 }
 
+.mail-img {
+    max-height: 35px;
+    min-height: 35px;
+    padding: 4px;
+    padding-top: 5px;
+}
+
 .tools-row-inner-col {
     display: flex;
     flex-direction: column;
@@ -944,8 +951,10 @@ input:-webkit-autofill:focus {
     border-color:transparent;
     border-radius: 4px 4px 4px 4px;
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0);
-    min-height: 40px;
-    min-width: 40px;
+    min-height: 20px;
+    min-width: 20px;
+    max-height: 35px;
+    max-width: 35px;
 }
     .tool-btn:hover {
         border: 1px solid;
