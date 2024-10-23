@@ -69,6 +69,32 @@ namespace oa.Services
             return foundEmail;
         }
         /*
+         * Get list of emails pertaining to users of an administrative/managerial role
+         */
+        public List<String> GetAdministrativeEmails()
+        {
+            List<String>? foundAdministrativeEmails = new List<string>();
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT Email FROM on_account.Users WHERE UserRole = \"Administrator\" OR UserRole = \"Manager\";";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    foundAdministrativeEmails.Add(reader1.GetString(0));
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.ToString());
+            }
+            return foundAdministrativeEmails;
+        }
+        /*
          * Gets a users details from db by Id
          */
         public AppUserModel GetUserDetailsById(string idIn)
