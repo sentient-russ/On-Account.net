@@ -356,5 +356,13 @@ namespace OnAccount.Controllers
             return RedirectToAction(nameof(GeneralJournal));
         }
 
+        // Viewable and usable by ANY logged-in user/role
+        [Authorize(Roles = "Manager, Accountant, Administrator")]
+        public async Task<IActionResult> EmailAdmin(string? id)
+        {
+            List<String> administrativeEmails = _dbConnectorService.GetAdministrativeEmails();
+
+            return View(administrativeEmails);
+        }
     }
 }
