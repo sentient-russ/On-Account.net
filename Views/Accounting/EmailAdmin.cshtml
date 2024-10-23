@@ -9,9 +9,28 @@
         <form asp-action="SendEmailAdmin">
             <hr />
             <span style="margin-bottom:20px;">Emails sent from this form are deliverd through the cs@magnadigi.com partner account.</span>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ScreenName" />
+            <input type="hidden" asp-for="FirstName" />
+            <input type="hidden" asp-for="LastName" />
+            <input type="hidden" asp-for="PhoneNumber" />
+            <input type="hidden" asp-for="Address" />
+            <input type="hidden" asp-for="City" />
+            <input type="hidden" asp-for="State" />
+            <input type="hidden" asp-for="Zip" />
+            <input type="hidden" asp-for="DateofBirth" />
+            <input type="hidden" asp-for="UserRole" />
+            <input type="hidden" asp-for="ActiveStatus" />
+            <input type="hidden" asp-for="UserName" />
+            <input type="hidden" asp-for="NormalizedUserName" />
+            <input type="hidden" asp-for="AcctSuspensionDate" />
+            <input type="hidden" asp-for="AcctReinstatementDate" />
+            <input type="hidden" asp-for="LastPasswordChangedDate" />
+            <input type="hidden" asp-for="PasswordResetDays" />
             <div class="form-floating mb-3" style="margin-top: 20px;">
                 @*Backup -> temp -> <input asp-for="Email" class="form-control" autocomplete="Gregory" aria-required="true" placeholder="Email" />*@
-                <select class="form-select form-control" data-transaction="1" data-line="1">
+                <select class="form-select form-control" asp-for="Email" aria-required="true" placeholder="Email">
                     <option value="unselected">Select an administrative email</option>
                     @{
                         if (Model.AdminManagerEmails != null)
