@@ -226,8 +226,8 @@ namespace OnAccount.Controllers
                     _dbConnectorService.AddTransaction(transactionIn);
                 }
             }
-
-            return Ok(new { message = "Journal data received successfully", journalData = journalData });
+            
+            return RedirectToAction(nameof(ChartOfAccounts));
         }
     
 
@@ -402,12 +402,13 @@ namespace OnAccount.Controllers
         [HttpPost]
         public async Task<IActionResult> SendEmailAdmin([Bind("Id, Email, Subject, Message")] AppUserModel detailsIn)
         {
-            
             AppUserModel appUserMessage = new AppUserModel();
-            appUserMessage = detailsIn;
-            await _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message);
 
-            // return RedirectToAction(nameof(HomeController.Index)); <- Backup (temp)
+            appUserMessage = detailsIn;
+
+            // Task runs in a standalone discard while the redirection takes place. (No more await)
+            _ = Task.Run(() => _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message));
+
             return RedirectToAction("Index", "Home");
         }
     }
