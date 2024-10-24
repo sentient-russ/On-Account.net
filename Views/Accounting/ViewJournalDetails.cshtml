@@ -123,7 +123,7 @@
         <div class="transaction-container" data-transaction="1">
             <div class="journal-container text-center">
                 <!-- heading row -->
-                <div class="journal-row-heading">
+                <div class="journal-row-heading" style="padding-left: 6.5%;">
                     <div class="col-md-3 transaction-date-container">
                         
                         <div class="journal-transaction-date">
@@ -141,20 +141,13 @@
                                 <span class="add-sub-transactions-label">@* Add/Subtract Transactions: *@</span>
                             </div>
                         </div>
-                        <div class="col-4">
-                            <div class="add-new-transaction btn btn-primary" data-transaction="1" id="add-transaction" hidden>
-                                <span class="btn-symbol">+</span>
-                            </div>
-                            <div class="remove-new-transaction btn btn-danger" hidden>
-                                <span class="btn-symbol">-</span>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
                 @*  line items start *@
-                <div class="journal-row">
+                <div class="journal-row" style="padding-left: 6.5%;">
                     <!-- entry 1.1 row -->
-                    <div class="row g-1 journal-item-row" data-transaction="1" data-line="1">
+                    <div class="row g-1 journal-item-row"  data-transaction="1" data-line="1">
                         <div class="col-md-3">
                             <span>Debit Account:</span>
                             <select class="form-select form-control-sm" data-transaction="1" data-line="1" id="dr-account" readonly>
@@ -204,17 +197,29 @@
                     <!-- begin entry 1.2 row this is the section to reproduce in js -->
                     <div class="row g-1 journal-item-row" data-transaction="1" data-line="2">
                         <div class="col-md-3">
-                            <input type="text" class="form-control muted" readonly />
-                            <select class="form-select form-control-sm grey-select-background" data-transaction="1" data-line="2" id="dr-account" hidden>
-                                <option value="unselected">Select a debit account</option>
-
-                            </select>
+                            @if (@Model.transactions_list[1].debit_account != 0)
+                            {
+                                <select class="form-select form-control-sm" id="dr-account" readonly>
+                                    <option value="@Model.transactions_list[1].debit_account">@Model.transactions_list[1].dr_description</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input type="number" class="form-control muted" id="" readonly>
+                            }
 
                         </div>
                         <div class="col-md-3">
-                            <select class="form-select form-control-sm" data-transaction="1" data-line="2" id="cr-account" readonly>
-                                <option value="@Model.transactions_list[1].credit_account">@Model.transactions_list[1].cr_description</option>
-                            </select>
+                            @if (@Model.transactions_list[1].credit_account != 0)
+                            {
+                                <select class="form-select form-control-sm" id="dr-account" readonly>
+                                    <option value="@Model.transactions_list[1].credit_account">@Model.transactions_list[1].cr_description</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input type="number" class="form-control muted" id="" readonly>
+                            }
                         </div>
                         <div class="col-md-1">
                              @if (@Model.transactions_list[1].transaction_number != 0)
@@ -235,24 +240,30 @@
 
                         </div>
                         <div class="col-md-2">
-                            <div class="text-center">
+                            @if (@Model.transactions_list[1].debit_amount != 0)
+                            {
+                                <div class="text-center">
+                                    <input class="form-control text-end currencyField" value="@Model.transactions_list[1].debit_amount" id="dr-amount" readonly />
+                                </div>
+                            }
+                            else
+                            {
                                 <input type="text" class="form-control muted" readonly />
-                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="2" id="dr-amount" hidden />
-                            </div>
+                            }
                         </div>
                         <div class="col-md-2">
-                            <div class="">
-                                <input class="form-control text-end currencyField" value="@Model.transactions_list[1].credit_amount" data-transaction="1" data-line="2" id="cr-amount" readonly />
-                            </div>
+                            @if (@Model.transactions_list[1].credit_amount != 0)
+                            {
+                                <div class="">
+                                    <input class="form-control text-end currencyField" value="@Model.transactions_list[1].credit_amount" id="cr-amount" readonly />
+                                </div>
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control muted" readonly />
+                            }
                         </div>
-                        <div class="col-00">
-                            <div class="add-new-line btn btn-outline-primary" id="add-new-line" data-line="2" readonly>
-                                <span class="btn-symbol">+</span>
-                            </div>
-                            <div class="remove-new-line btn btn-outline-danger" readonly>
-                                <span class="btn-symbol">-</span>
-                            </div>
-                        </div>
+
                     </div>
                     @* end entry 1.2 row *@
                     @* line items end, dynamic lines begin*@
@@ -261,17 +272,31 @@
                         {
                             <div class="row g-1 journal-item-row" data-transaction="1" data-line="@i">
                                 <div class="col-md-3">
-                                    <select class="form-select form-control-sm" id="dr-account" readonly>
-                                        <option value="@Model.transactions_list[i].debit_account">@Model.transactions_list[i].dr_description</option>
-                                    </select>
+                                    @if (@Model.transactions_list[i].debit_account != 0)
+                                    {
+                                        <select class="form-select form-control-sm" id="dr-account" readonly>
+                                            <option value="@Model.transactions_list[i].debit_account">@Model.transactions_list[i].dr_description</option>
+                                        </select>
+                                    } else
+                                    {
+                                        <input type="number" class="form-control muted" id="post-ref" readonly>
+                                    }
+
                                 </div>
                                 <div class="col-md-3">
-                                    <select class="form-select form-control-sm" id="cr-account" readonly>
-                                        <option value="@Model.transactions_list[i].credit_account">@Model.transactions_list[i].cr_description</option>
-                                    </select>
+                                    @if (@Model.transactions_list[i].credit_account != 0)
+                                    {
+                                        <select class="form-select form-control-sm" id="cr-account" readonly>
+                                            <option value="@Model.transactions_list[i].credit_account">@Model.transactions_list[i].cr_description</option>
+                                        </select>
+                                    } else
+                                    {
+                                        <input type="number" class="form-control muted" id="post-ref" readonly>
+                                    }
+
                                 </div>
                                 <div class="col-md-1">
-                                    @if (@Model.transactions_list[1].transaction_number != 0)
+                                    @if (@Model.transactions_list[i].transaction_number != 0)
                                     {
                                         <div class="">
                                             <a asp-action="GeneralJournal" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
@@ -285,26 +310,28 @@
                                                 <input type="number" class="form-control muted" id="post-ref" readonly>
                                         </div>
                                     }
+                                </div>
+                                <div class="col-md-2">
+                                    @if (@Model.transactions_list[i].debit_amount != 0){
+                                        <div class="text-center">
+                                            <input class="form-control text-end currencyField" value="@Model.transactions_list[i].debit_amount" id="dr-amount" readonly />
+                                        </div>
+                                    } else
+                                    {
+                                        <input type="text" class="form-control muted" readonly />
+                                    }
+                                </div>
+                                <div class="col-md-2">
+                                    @if (@Model.transactions_list[i].credit_amount != 0){
+                                        <div class="">
+                                            <input class="form-control text-end currencyField" value="@Model.transactions_list[i].credit_amount" id="cr-amount" readonly />
+                                        </div>
+                                    } else 
+                                    {
+                                        <input type="text" class="form-control muted" readonly />
+                                    }
+                                </div>
 
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="text-center">
-                                        <input class="form-control text-end currencyField" value="@Model.transactions_list[i].debit_amount" id="dr-amount" readonly />
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="">
-                                        <input class="form-control text-end currencyField" value="@Model.transactions_list[i].credit_amount" id="cr-amount" readonly />
-                                    </div>
-                                </div>
-                                <div class="col-00">
-                                    <div class="add-new-line btn btn-outline-primary" id="add-new-line">
-                                        <span class="btn-symbol">+</span>
-                                    </div>
-                                    <div class="remove-new-line btn btn-outline-danger" id="remove-new-line">
-                                        <span class="btn-symbol">-</span>
-                                    </div>
-                                </div>
                             </div>
                         }
                     }
@@ -345,7 +372,7 @@
                 </div>
             </div>
             @* journal description input *@
-            <div class="journal-row">
+            <div class="journal-row" style="padding-left: 6.5%;">
                 <div class="journal-final-input-row">
                     <div class="col-md-11">
                         <div class="journal-description">
@@ -358,10 +385,13 @@
             </div>
             <div class="journal-save-row">
                 <div class="mt-3 text-align-l">
-                    <div class="form-floating">
+                    <div class="form-floating" style="padding-left: 6.5%;">
                         <a asp-action="GeneralJournal">Back to List</a>
                     </div>
                </div>
+            </div>
+            <div>
+                <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn" hidden>
             </div>
     </form>
     <div />
@@ -371,3 +401,4 @@
             await Html.RenderPartialAsync("_ValidationScriptsPartial");
         }
     }
+    

@@ -2,22 +2,9 @@
 using oa.Services;
 using oa.Models;
 using Microsoft.AspNetCore.Authorization;
-using System.Text.Json;
-using System.Text;
 using Newtonsoft.Json;
-using System.Globalization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using MimeKit.Cryptography;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using oa.Controllers;
 using oa.Areas.Identity.Data;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace OnAccount.Controllers
 {
@@ -35,7 +22,7 @@ namespace OnAccount.Controllers
         {
             _dbConnectorService = connectorService;
             _userService = userService;
-            currentAccounts = _dbConnectorService.GetChartOfAccounts();
+            currentAccounts = _dbConnectorService.GetChartOfAccounts().OrderBy(a => a.number).ToList();
             accountModel = new AccountsModel();
             this._emailSender = emailSender;
         }
@@ -50,6 +37,7 @@ namespace OnAccount.Controllers
         public async Task<IActionResult> ChartOfAccounts()
         {
             List<AccountsModel> accountsModels = currentAccounts;
+
             return View(accountsModels);
         }
         //Only administrators can add accounts
@@ -226,8 +214,8 @@ namespace OnAccount.Controllers
                     _dbConnectorService.AddTransaction(transactionIn);
                 }
             }
-            
-            return RedirectToAction(nameof(ChartOfAccounts));
+
+            return Ok(new { message = "Journal data received successfully", journalData = journalData });
         }
     
 
@@ -250,7 +238,7 @@ namespace OnAccount.Controllers
             ViewBag.AccountName = id + " - " + _dbConnectorService.GetAccoutName(id);
             ViewBag.AccountNumber = id;
             DateTime currentDate = DateTime.Now;
-            ViewBag.Date = currentDate.ToString("dd-MM-yyyy");
+            ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
             double totalDebitAmount = currentTransactions.Sum(t => t.debit_amount ?? 0);
             double totalCreditAmount = currentTransactions.Sum(t => t.credit_amount ?? 0);
             double accountBalance = _dbConnectorService.CalculateAccountBalance(id);
@@ -258,12 +246,6 @@ namespace OnAccount.Controllers
             ViewBag.TotalCreditAmount = totalCreditAmount;
             ViewBag.AccountBalance = accountBalance;
             return View(currentTransactions);
-        }
-        //All users can view accounts details pages
-        [Authorize(Roles = "Administrator, Manager, Accountant")]
-        public async Task<IActionResult> Details()
-        {
-            return RedirectToAction(nameof(ChartOfAccounts));
         }
 
         //All users can view accounts details pages
