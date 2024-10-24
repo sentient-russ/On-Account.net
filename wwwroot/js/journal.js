@@ -1,5 +1,4 @@
-﻿
-let transaction_array = [];
+﻿let transaction_array = [];
 let journal_array = [];
 var journal_id = document.getElementById('journal-id');
 var created_by = document.getElementById('created-by');
@@ -28,18 +27,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Response:', data);
-                if (data.message === "Journal data received successfully") {
-                    window.location.href = '/Accounting/';
-                } else {
-                    console.error('Unexpected response:', data);
-                }
-            })
-            .catch(error => console.error('Error:', error));    }
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Response:', data);
+                    if (data.message === "Journal data received successfully") {
+                        window.location.href = '/Accounting/';
+                    } else {
+                        console.error('Unexpected response:', data);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
     });
+
     var journal_validation_elem = document.getElementById("journal_validation");
+
     function runValidation() {
         var validation_str = "";
         const dr_total_element = document.getElementById('dr-total');
@@ -90,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
             journal_notes: document.getElementById('journal-description').value,
             transactions: []
         };
+
         const transactionContainers = document.querySelectorAll('.transaction-container');
         transactionContainers.forEach(container => {
             const transactionId = container.getAttribute('data-transaction');
@@ -100,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 transaction_upload: document.querySelector(`#transaction-upload[data-transaction="${transactionId}"]`).value,
                 line_items: []
             };
+
             const lineItems = container.querySelectorAll(`.journal-item-row[data-transaction="${transactionId}"]`);
             lineItems.forEach(lineItem => {
                 const lineId = lineItem.getAttribute('data-line');
@@ -109,16 +113,19 @@ document.addEventListener('DOMContentLoaded', function () {
                         dr_account: document.querySelector(`#dr-account[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
                         cr_account: document.querySelector(`#cr-account[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
                         post_ref: document.querySelector(`#post-ref[data-transaction="${transactionId}"][data-line="${lineId}"]`).value,
-                        dr_amount: parseFloat(document.querySelector(`#dr-amount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', '')),
-                        cr_amount: parseFloat(document.querySelector(`#cr-amount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', ''))
+                        dr_amount: parseFloat(document.querySelector(`#dr-amount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', '').replace(/,/g, '')),
+                        cr_amount: parseFloat(document.querySelector(`#cr-amount[data-transaction="${transactionId}"][data-line="${lineId}"]`).value.replace('$', '').replace(/,/g, ''))
                     };
                     transaction.line_items.push(line);
                 }
             });
             journalEntry.transactions.push(transaction);
         });
-        return journalEntry;    }
+
+        return journalEntry;
+    }
 });
+
 // Create a new line item
 function createNewLineItem(transactionId, lineId) {
     const newLineItem = document.createElement('div');
@@ -158,10 +165,10 @@ function createNewLineItem(transactionId, lineId) {
                 </div>
             </div>
             <div class="col-00">
-                <div class="add-new-line btn btn-outline-primary" id="add-new-line">
+                <div class="add-new-line btn btn-outline-primary"  data-transaction="${transactionId}" data-line="${lineId}" id="add-new-line">
                     <span class="btn-symbol">+</span>
                 </div>
-                <div class="remove-new-line btn btn-outline-danger" id="remove-new-line">
+                <div class="remove-new-line btn btn-outline-danger" data-transaction="${transactionId}" data-line="${lineId}" id="remove-new-line">
                     <span class="btn-symbol">-</span>
                 </div>
             </div>
@@ -177,200 +184,45 @@ function addNewLine(transactionId, referenceRow) {
     addCrTotallisteners();
     addDrTotallisteners();
     accountSelectionListeners();
+    toggleButtonStates(transactionId);
 }
-// Add event listeners to the add line and remove line buttons
+// toggle add remove
+function toggleButtonStates(transactionId) {
+    const allRows = document.querySelectorAll(`.journal-item-row[data-transaction="${transactionId}"]`);
+    allRows.forEach((row, index) => {
+        const addButton = row.querySelector('.add-new-line');
+        const removeButton = row.querySelector('.remove-new-line');
+
+        if (addButton) {
+            const isPriorRow = index <= allRows.length - 2;
+            if (isPriorRow) {
+                addButton.classList.add('btn-disabled');
+                removeButton.classList.add('btn-disabled');
+            } else {
+                addButton.classList.remove('btn-disabled');
+                removeButton.classList.remove('btn-disabled');
+            }
+        }
+    });
+}
+// add remove new line listeners
 document.addEventListener('click', function (event) {
-    if (event.target.closest('#add-new-line')) {
+    if (event.target.closest('.add-new-line')) {
         const referenceRow = event.target.closest('.journal-item-row');
         const transactionId = referenceRow.getAttribute('data-transaction');
         addNewLine(transactionId, referenceRow);
-    } else if (event.target.closest('#remove-new-line')) {
+    } else if (event.target.closest('.remove-new-line')) {
         const referenceRow = event.target.closest('.journal-item-row');
-        referenceRow.remove();
-    }
-});
-function addNewTransaction(event) {
-    const currentTransaction = event.target.closest('.transaction-container');
-    const lastTransactionId = parseInt(currentTransaction.getAttribute('data-transaction'));
-    const newTransactionId = lastTransactionId + 1;
-    const newTransaction = document.createElement('div');
-    newTransaction.className = 'transaction-container';
-    newTransaction.setAttribute('data-transaction', newTransactionId);
-    const existingDrAccount = document.querySelector(`#dr-account[data-transaction="1"][data-line="1"]`);
-    const existingCrAccount = document.querySelector(`#cr-account[data-transaction="1"][data-line="1"]`);
-    const drAccountOptions = existingDrAccount ? existingDrAccount.innerHTML : '';
-    const crAccountOptions = existingCrAccount ? existingCrAccount.innerHTML : '';
-    newTransaction.innerHTML = `
-                <div class="journal-container text-center">
-                    <!-- heading row -->
-                    <div class="journal-row-heading">
-                        <div class="col-md-3 transaction-date-container">
-                            <div class="journal-transaction-date">
-                                <input class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" data-transaction="${newTransactionId}" data-line="0" id="transaction-date" />
-                            </div>
-                        </div>
-                        <div class="col-md-6 transaction-upload-container ">
-                            <div class="journal-transaction-upload">
-                                <input class="form-control" type="file" data-transaction="${newTransactionId}" id="transaction-upload">
-                            </div>
-                        </div>
-                        <div class="col-md-4 add-sub-transactions-container">
-                            <div class="col-6">
-                                <div class="add-sub-transactions-container">
-                                    <span class="add-sub-transactions-label">Add/Subtract Transactions:</span>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="add-new-transaction btn btn-primary" data-transaction="${newTransactionId}" id="add-transaction">
-                                    <span class="btn-symbol">+</span>
-                                </div>
-                                <div class="remove-new-transaction btn btn-danger" data-transaction="${newTransactionId}" id="remove-transaction">
-                                    <span class="btn-symbol">-</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="journal-row">
-                        <!-- entry 1.1 row -->
-                        <div class="row g-1 journal-item-row" data-transaction="${newTransactionId}" data-line="1">
-                            <div class="col-md-3">
-                                <span>Debit Account:</span>
-                                <select class="form-select form-control-sm" data-transaction="${newTransactionId}" data-line="1" id="dr-account">
-                                <option value="unselected">Select a debit account</option>
-                                ${drAccountOptions}
-                            </select>
-                            </div>
-                            <div class="col-md-3">
-                                <span>Credit Account:</span>
-                                <select class="form-select form-control-sm" data-transaction="${newTransactionId}" data-line="1" id="cr-account">
-                                <option value="unselected">Select a credit account</option>
-                                ${crAccountOptions}
-                            </select>
-                            </div>
-                            <div class="col-md-1">
-                                <span>Post Ref:</span>
-                                <div class="">
-                                    <input type="number" class="form-control muted" data-transaction="${newTransactionId}" data-line="1" id="post-ref" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <span>Dr.</span>
-                                <div class="text-center">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="1" id="dr-amount" />
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <span>Cr.</span>
-                                <div class="">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="1" id="cr-amount" />
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end entry 1.1 row -->
-                        <!-- entry 1.2 row -->
-                        <div class="row g-1 journal-item-row" data-transaction="${newTransactionId}" data-line="2">
-                            <div class="col-md-3">
-                                <select class="form-select form-control-sm" data-transaction="${newTransactionId}" data-line="2" id="dr-account">
-                                <option value="unselected">Select a debit account</option>
-                                ${drAccountOptions}
-                            </select>
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-select form-control-sm" data-transaction="${newTransactionId}" data-line="2" id="cr-account">
-                                <option value="unselected">Select a credit account</option>
-                                ${crAccountOptions}
-                            </select>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="">
-                                    <input type="number" class="form-control muted" data-transaction="${newTransactionId}" data-line="2" id="post-ref" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="text-center">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="2" id="dr-amount" />
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" data-line="2" id="cr-amount" />
-                                </div>
-                            </div>
-                            <div class="col-00">
-                                <div class="add-new-line btn btn-outline-primary" id="add-new-line" data-line="2">
-                                    <span class="btn-symbol">+</span>
-                                </div>
-                                <div class="remove-new-line btn btn-outline-danger" >
-                                    <span class="btn-symbol">-</span>
-                                </div>
-                            </div>
-
-                        </div>
-                        <!-- end entry 1.2 row -->
-                        <div class="row g-1 journal-item-row">
-                            <div class="row g-1 journal-item-row">
-                                <div class="col-md-6">
-                                    <div class="transaction-description">
-                                        <input style="text-align:left;" class="form-control transaction-description" placeholder="Transaction Description" data-transaction="${newTransactionId}" id="transaction-description" />
-                                    </div>
-                                </div>
-                                <div class="col-md-1">
-                                    <div class="journal-totals">
-                                        <span class="totals">Totals</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-2" style="margin-left: 5px;">
-                                    <hr class="hr-journal-totals" />
-                                    <hr class="hr-journal-totals" />
-                                    <div class="">
-                                        <input class="form-control text-end currencyField" value="$0.00" data-val="false" data-transaction="${newTransactionId}" id="dr-total" readonly />
-                                    </div>
-                                </div>
-                                <div class="col-md-2" style="margin-left:2.5px">
-                                    <hr class="hr-journal-totals" />
-                                    <hr class="hr-journal-totals" />
-                                    <div class="">
-                                        <input class="form-control text-end currencyField" value="$0.00" data-transaction="${newTransactionId}" id="cr-total" readonly />
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="warning-row">
-                                    <div class="text-danger text-right" id="journal_validation"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-    // Find the journal-container element
-    const journalContainer = currentTransaction.querySelector('.journal-container');
-
-    // Insert the new transaction after the journal-container element
-    journalContainer.insertAdjacentElement('afterend', newTransaction);
-    addCrTotallisteners();
-    addDrTotallisteners();
-    accountSelectionListeners();
-}
-// Remove transaction
-function removeTransaction(event) {
-    const currentTransaction = event.target.closest('.transaction-container');
-    const firstTransaction = document.querySelector('.transaction-container:first-of-type');
-
-    if (currentTransaction !== firstTransaction) {
-        currentTransaction.remove();
-        addCrTotallisteners();
-    }
-}
-// Add event listeners to the add transaction and remove transaction buttons
-document.addEventListener('click', function (event) {
-    if (event.target.closest('#add-transaction')) {
-        addNewTransaction(event);
-        addCrTotallisteners();
-    } else if (event.target.closest('#remove-transaction')) {
-        removeTransaction(event);
-        addCrTotallisteners();
+        const lineId = referenceRow.getAttribute('data-line');
+        // encforce two line min rule
+        if (lineId !== '2') {  // Skip removing the first line
+            referenceRow.remove();
+            addCrTotallisteners();
+            addDrTotallisteners();
+            accountSelectionListeners();
+            const transactionId = referenceRow.getAttribute('data-transaction');
+            toggleButtonStates(transactionId);
+        }
     }
 });
 function formatCurrency() {
@@ -458,7 +310,6 @@ function addCurrencyFieldListeners() {
             let parts = value.split('.');
             let integerPart = parts[0];
             let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-
             // Remove leading zeros and handle empty integerPart
             var flt = parseInt(integerPart, 10);
             if (isNaN(flt)) {
@@ -491,6 +342,7 @@ function addCurrencyFieldListeners() {
 function currencyToFloat(currencyString) {
     return parseFloat(currencyString.replace(/[$,]/g, ''));
 }
+
 function updateCrTotals() {
     const crAmountElements = document.querySelectorAll('[id="cr-amount"]');
     const totalsByTransaction = {};
@@ -509,13 +361,13 @@ function updateCrTotals() {
         crTotalElement.value = total;
         formatCurrency();
     }
-    formatCurrency();}
+    formatCurrency();
+}
 function addCrTotallisteners() {
     document.querySelectorAll('[id="cr-amount"]').forEach(element => {
         element.addEventListener('focusout', updateCrTotals);
     });
 }
-
 function updateDrTotals() {
     const drAmountElements = document.querySelectorAll('[id="dr-amount"]');
     const totalsByTransaction = {};
@@ -538,7 +390,6 @@ function updateDrTotals() {
     }
     formatCurrency();
 }
-
 function addDrTotallisteners() {
     document.querySelectorAll('[id="dr-amount"]').forEach(element => {
         element.addEventListener('focusout', updateDrTotals);

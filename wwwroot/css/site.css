@@ -520,6 +520,7 @@ input.currency {
     margin-top: 0px;
     padding-left: 10px;
     padding-right: 10px;
+    min-width: 1125px;
 }
 
 .col-00 {
@@ -527,6 +528,7 @@ input.currency {
     min-height: 35px;
     max-height: 35px;
     font-weight: 600;
+    min-width: 90px;
 }
 
 .margin-top-20 {
@@ -830,8 +832,6 @@ input:-webkit-autofill:focus {
 .add-new-line {
     min-height: 32px;
     min-width: 40px;
-    padding-top: 7px;
-    padding-bottom: 0px;
 }
 
 .btn-symbol {
@@ -927,7 +927,7 @@ input:-webkit-autofill:focus {
 
 .muted {
     border: 1px solid #6c757d87;
-    background-color: #6c757d0b;
+    background-color: rgb(0, 0, 0, 0.05);
 }
 
 .add-new-transaction-btn-label{
@@ -963,4 +963,9 @@ input:-webkit-autofill:focus {
         border-color: black;
     }
 
-
+.btn-disabled {
+    background-color: rgb(0, 0, 0, 0.05) !important;
+    border-color: rgb(0, 0, 0, 0.15) !important;
+    color: rgb(0, 0, 0, 0.00) !important;
+    pointer-events: none;
+}
