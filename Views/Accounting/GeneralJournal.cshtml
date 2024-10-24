@@ -51,9 +51,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.status)
             </th>
-@*             <th>
-                Running Balance
-            </th> *@
             <th></th>
         </tr>
     </thead>
@@ -154,14 +151,7 @@
                         </div>
                     }
                 </td>
-@*                 <td>
-                    @{
-                        // Calculate running balance
-                        runningBalance += item.debit_amount.GetValueOrDefault() - item.credit_amount.GetValueOrDefault();
-                        @FormatNegativeDouble(runningBalance)
-                    }
-                </td> *@
-                @if (User.IsInRole("Manager"))
+                @if (User.IsInRole("Manager") && item.journal_id != currentJournalId)
                 {
                     <td>
                         @if (item.journal_id != currentJournalId)
@@ -172,12 +162,16 @@
                         }
                     </td>
                 }
-                else
+                else if (item.journal_id != currentJournalId)
                 {
                     <td>
                         <a class="btn btn-outline-primary btn-table-margin" asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display journal details">Details</a>
                     </td>
+                } else
+                {
+                    <td></td>
                 }
+
                 @{
                     currentJournalId = (int)item.journal_id;
                 }
