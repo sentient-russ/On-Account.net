@@ -13,9 +13,14 @@ using MimeKit.Cryptography;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using oa.Controllers;
 using oa.Areas.Identity.Data;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+
 namespace OnAccount.Controllers
 {
-
     [BindProperties(SupportsGet = true)]
     public class AccountingController : Controller
     {
@@ -148,6 +153,7 @@ namespace OnAccount.Controllers
             journalAccount.accounts_list = currentAccounts;
             return View(journalAccount);
         }
+        
         [HttpPost]
         [Route("api/journal")]
         public async Task<IActionResult> PostJournalEntry()
@@ -155,17 +161,28 @@ namespace OnAccount.Controllers
             var uploadFileName = "";
             var formData = await Request.ReadFormAsync();
             var journalData = formData["journalData"].FirstOrDefault();
-            if (journalData == null)
-            {
-                return BadRequest("Journal data missing.");
-            }
-            var journalEntry = JsonConvert.DeserializeObject<JournalEntry>(journalData);
 
-            var uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+            if (string.IsNullOrEmpty(journalData))
+            {
+                return BadRequest("Journal data is empty or null.");
+            }
+
+            JournalEntry journalEntry;
+            try
+            {
+                journalEntry = JsonConvert.DeserializeObject<JournalEntry>(journalData);
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                return BadRequest($"Invalid JSON data: {ex.Message}");
+            }
+
+            var uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploaded_docs");
             if (!Directory.Exists(uploadDirectory))
             {
                 Directory.CreateDirectory(uploadDirectory);
             }
+
             foreach (var file in formData.Files)
             {
                 var fileName = file.FileName;
@@ -176,6 +193,7 @@ namespace OnAccount.Controllers
                 {
                     await file.CopyToAsync(stream);
                 }
+
                 var transaction = journalEntry.Transactions.FirstOrDefault(t => t.TransactionUpload == fileName);
                 if (transaction != null)
                 {
@@ -183,36 +201,39 @@ namespace OnAccount.Controllers
                     uploadFileName = newFileName;
                 }
             }
-            // loop handles infinite transactions and line items.
+
             for (int j = 0; j < journalEntry.Transactions.Count; j++)
             {
                 for (int i = 0; i < journalEntry.Transactions[j].LineItems.Count; i++)
                 {
-                    TransactionModel transactionIn = new TransactionModel();
-                    transactionIn.created_by = journalEntry.UserName;
-                    transactionIn.journal_date = DateTime.Parse(journalEntry.JournalDate);
-                    transactionIn.journal_description = journalEntry.JournalNotes;
-                    transactionIn.status = journalEntry.JournalStatus;
-                    transactionIn.journal_id = journalEntry.JournalId;
-                    transactionIn.transaction_number = j;
-                    transactionIn.transaction_date = journalEntry.Transactions[j].TransactionDate;
-                    if (journalEntry.Transactions[j].LineItems[i].CrAccount == "unselected") { transactionIn.credit_account = 0; } else { transactionIn.credit_account = int.Parse(journalEntry.Transactions[j].LineItems[i].CrAccount); };
-                    transactionIn.credit_amount = (double?)journalEntry.Transactions[j].LineItems[i].CrAmount;
-                    if (journalEntry.Transactions[j].LineItems[i].DrAccount == "unselected") { transactionIn.debit_account = 0; } else { transactionIn.debit_account = int.Parse(journalEntry.Transactions[j].LineItems[i].DrAccount); };
-                    transactionIn.debit_amount = (double?)journalEntry.Transactions[j].LineItems[i].DrAmount;
-                    transactionIn.description = journalEntry.Transactions[j].TransactionDescription;
-                    transactionIn.supporting_document = uploadFileName;
-                    
+                    var transactionIn = new TransactionModel
+                    {
+                        created_by = journalEntry.UserName,
+                        journal_date = DateTime.Parse(journalEntry.JournalDate),
+                        journal_description = journalEntry.JournalNotes,
+                        status = journalEntry.JournalStatus,
+                        journal_id = journalEntry.JournalId,
+                        transaction_number = j,
+                        transaction_date = journalEntry.Transactions[j].TransactionDate,
+                        credit_account = journalEntry.Transactions[j].LineItems[i].CrAccount == "unselected" ? 0 : int.Parse(journalEntry.Transactions[j].LineItems[i].CrAccount),
+                        credit_amount = (double)journalEntry.Transactions[j].LineItems[i].CrAmount,
+                        debit_account = journalEntry.Transactions[j].LineItems[i].DrAccount == "unselected" ? 0 : int.Parse(journalEntry.Transactions[j].LineItems[i].DrAccount),
+                        debit_amount = (double)journalEntry.Transactions[j].LineItems[i].DrAmount,
+                        description = journalEntry.Transactions[j].TransactionDescription,
+                        supporting_document = uploadFileName
+                    };
+
                     _dbConnectorService.AddTransaction(transactionIn);
                 }
-                _dbConnectorService.logModelCreator(journalEntry.UserName,"Created Journal entry", "");//adds a log to username based on the transactions for each one
             }
-            
-            return RedirectToAction(nameof(ChartOfAccounts));
-        }
 
-        //All users can view accounts details pages
-        [Authorize(Roles = "Administrator, Manager, Accountant")]
+            return Ok(new { message = "Journal data received successfully", journalData = journalData });
+        }
+    
+
+
+    //All users can view accounts details pages
+    [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> ViewAccountDetails(string? id)
         {
             List<TransactionModel> currentTransactions = _dbConnectorService.GetAccountTransactions(id);

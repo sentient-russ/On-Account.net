@@ -7,7 +7,6 @@ using System.ComponentModel;
 using oa.Services;
 using System.Configuration;
 using System.Transactions;
-
 /*
  This model serves as the primary module for working with the accounting system accounts.
  The fields reflect all attributes in the on_account.account database table.
@@ -19,7 +18,6 @@ namespace oa.Models
 
     {
         private const string CurrentBalancePropertyName = "current_balance";
-
         public int? id { get; set; }
 
         [Required]
@@ -61,7 +59,7 @@ namespace oa.Models
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 0)]
         [DisplayName("Term:")]
-        public string? term { get; set; }
+        public string? term { get; set; } = "";
 
         [Required]
         [DataType(DataType.Text)]
@@ -75,7 +73,7 @@ namespace oa.Models
         public DateTime? account_creation_date { get; set; } = System.DateTime.Now;
 
         [DisplayName("Opening Transaction Number: (Auto assigned)")]
-        public string? opening_transaction_num { get; set; }
+        public string? opening_transaction_num { get; set; } = "";
 
         [ValidateNever]
         [ModelBinder(BinderType = typeof(CurrencyModelBinder))]
@@ -97,7 +95,7 @@ namespace oa.Models
         [ValidateNever]
         [ModelBinder(BinderType = typeof(CurrencyModelBinder))]
         [DisplayName("Starting Balance:")]
-        public decimal? starting_balance { get; set; }
+        public decimal? starting_balance { get; set; } = 0;
 
         [Required]
         [NotMapped]

@@ -779,9 +779,9 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@description", transactionIn.description);
                 cmd1.Parameters.AddWithValue("@journal_id", transactionIn.journal_id);
                 cmd1.Parameters.AddWithValue("@transaction_number", transactionIn.transaction_number);
-
                 cmd1.Parameters.AddWithValue("@journal_description", transactionIn.journal_description);
                 cmd1.Parameters.AddWithValue("@journal_date", transactionIn.journal_date);
+                cmd1.Parameters.AddWithValue("@supporting_document", transactionIn.supporting_document);
 
 
                 MySqlDataReader reader1 = cmd1.ExecuteReader();

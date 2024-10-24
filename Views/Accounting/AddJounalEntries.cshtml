@@ -124,7 +124,7 @@
                 <div class="journal-row-heading">
                     <div class="col-md-3 transaction-date-container">
                         <div class="journal-transaction-date">
-                            <input class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" data-transaction="1" data-line="0" id="transaction-date" />
+                            <input class="form-control" style="margin-left:10px;" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" data-transaction="1" data-line="0" id="transaction-date" />
                         </div>
                     </div>
                     <div class="col-md-6 transaction-upload-container ">
@@ -171,18 +171,8 @@
                         </div>
                         <div class="col-md-3">
                             <span>Credit Account:</span>
-                            <input type="text" class="form-control muted" readonly />
-                            <select class="form-select form-control-sm " data-transaction="1" data-line="1" id="cr-account" hidden>
-                                <option value="unselected">Select a credit account</option>
-                                @{
-                                    if (Model.accounts_list != null)
-                                    {
-                                        @foreach (var item in Model.accounts_list)
-                                        {
-                                            <option value="@item.number">@item.number - @item.name</option>
-                                        }
-                                    }
-                                }
+                            <select class="form-select form-control-sm" style="background-color: #6c757d0b;" data-transaction="1" data-line="1" id="cr-account">
+                                <option value="unselected">(Note: First line must be a debit.)</option>
                             </select>
                         </div>
                         <div class="col-md-1">
@@ -200,8 +190,7 @@
                         <div class="col-md-2">
                             <span>Cr.</span>
                             <div class="">
-                                <input type="text" class="form-control muted" readonly />
-                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="1" id="cr-amount" hidden />
+                                <input class="form-control text-end currencyField" style="background-color: #6c757d0b;" value="$0.00" data-transaction="1" data-line="1" id="cr-amount" readonly />
                             </div>
                         </div>
                     </div>
@@ -209,8 +198,7 @@
                     <!-- begin entry 1.2 row this is the section to reproduce in js -->
                     <div class="row g-1 journal-item-row" data-transaction="1" data-line="2">
                         <div class="col-md-3">
-                            <input type="text" class="form-control muted" readonly />
-                            <select class="form-select form-control-sm grey-select-background" data-transaction="1" data-line="2" id="dr-account" hidden>
+                            <select class="form-select form-control-sm grey-select-background" data-transaction="1" data-line="2" id="dr-account">
                                 <option value="unselected">Select a debit account</option>
                                 @{
                                     if (Model.accounts_list != null)
@@ -245,8 +233,7 @@
                         </div>
                         <div class="col-md-2">
                             <div class="text-center">
-                                <input type="text" class="form-control muted" readonly />
-                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="2" id="dr-amount" hidden />
+                                <input class="form-control text-end currencyField" value="$0.00" data-transaction="1" data-line="2" id="dr-amount" />
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -317,7 +304,7 @@
                     </div>
                 </div>
             </div>
-            <div class="journal-save-row"
+            <div class="journal-save-row">
             <div class="mt-3 text-align-l">
                 <div class="form-floating">
                         @if (Model.current_balance != 0 || Model.current_balance == null)
@@ -334,7 +321,7 @@
                 </div>
         </div>
     </form>
-    <div />
+    </div>
     <script src="~/js/journal.js" asp-append-version="true"></script>
     @section Scripts {
         @{
