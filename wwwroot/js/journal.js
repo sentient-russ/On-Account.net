@@ -451,12 +451,18 @@ function accountSelectionListeners() {
 document.addEventListener('DOMContentLoaded', function () {
     accountSelectionListeners();
 });
-document.addEventListener('DOMContentLoaded', function () {
-    accountSelectionListeners();
-});
+
 addCrTotallisteners();
 addDrTotallisteners();
 formatCurrencyOnLoad();
 updateDrTotals();
 updateCrTotals();
 accountSelectionListeners();
+
+document.getElementById('transaction-upload').addEventListener('change', function (e) {
+    const fileInput = e.target;
+    const fileName = fileInput.files[0] ? fileInput.files[0].name : 'Supporting Document';
+    const fileLink = document.getElementById('file-link');
+    const fileUrl = 'https://on-account.net/uploaded_docs/' + fileName;
+    fileLink.innerHTML = `<a href="${fileUrl}" target="_blank">${fileName}</a>`;
+});
