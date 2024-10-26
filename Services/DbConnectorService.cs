@@ -786,12 +786,12 @@ namespace oa.Services
          * Adds a single transaction 
          */
         public void AddTransaction(TransactionModel transactionIn)
-        {//make sure db has empty strings rather than null
+        {
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "INSERT INTO on_account.transaction (debit_account, debit_amount, credit_account, credit_amount, transaction_date, created_by, status, is_opening, description, journal_id, transaction_number, journal_description, journal_date) " + 
-                    "VALUES (@debit_account, @debit_amount, @credit_account, @credit_amount, @transaction_date, @created_by, @status, @is_opening, @description, @journal_id, @transaction_number, @journal_description, @journal_date)";
+                string command = "INSERT INTO on_account.transaction (debit_account, debit_amount, credit_account, credit_amount, transaction_date, created_by, status, is_opening, description, journal_id, transaction_number, journal_description, journal_date, supporting_document) " + 
+                    "VALUES (@debit_account, @debit_amount, @credit_account, @credit_amount, @transaction_date, @created_by, @status, @is_opening, @description, @journal_id, @transaction_number, @journal_description, @journal_date, @supporting_document)";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@debit_account", transactionIn.debit_account);
@@ -808,7 +808,6 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@journal_description", transactionIn.journal_description);
                 cmd1.Parameters.AddWithValue("@journal_date", transactionIn.journal_date);
                 cmd1.Parameters.AddWithValue("@supporting_document", transactionIn.supporting_document);
-
 
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();

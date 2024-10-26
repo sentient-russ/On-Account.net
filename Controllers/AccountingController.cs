@@ -181,13 +181,7 @@ namespace OnAccount.Controllers
                 {
                     await file.CopyToAsync(stream);
                 }
-
-                var transaction = journalEntry.Transactions.FirstOrDefault(t => t.TransactionUpload == fileName);
-                if (transaction != null)
-                {
-                    transaction.TransactionUpload = filePath;
-                    uploadFileName = newFileName;
-                }
+                uploadFileName = newFileName;
             }
 
             for (int j = 0; j < journalEntry.Transactions.Count; j++)
@@ -225,7 +219,8 @@ namespace OnAccount.Controllers
         public async Task<IActionResult> ViewAccountDetails(string? id)
         {
             List<TransactionModel> currentTransactions = _dbConnectorService.GetAccountTransactions(id);
-            for(var i = 0; i < currentTransactions.Count; i++)
+
+            for(var i = currentTransactions.Count -1; 0 < i; i--)
             {
                 if (currentTransactions[i].status == "Pending")
                 {
@@ -252,7 +247,6 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> GeneralJournal()
         {
-
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             List<TransactionModel> currentTransactions = _dbConnectorService.GetAllTransactions();
             for(var i = 0; i < currentTransactions.Count; i++)

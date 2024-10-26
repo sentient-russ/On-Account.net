@@ -14,7 +14,7 @@
     DateTime today = System.DateTime.Today;
     var numNewLines = Model.transactions_list.Count - 2;
 }
-<div class="form-container  margin-top-120">
+<div class="form-container margin-top-120">
     <form class="add-account-form-container">
         <div class="text-center">
             <img src="~/img/journal.jpg" style="max-height: 150px;" />
@@ -130,9 +130,29 @@
                             <input class="form-control text-center" style="margin-left:10px;" value="@Model.journal_date?.ToString("MM-dd-yyyy", CultureInfo.InvariantCulture)" data-transaction="1" data-line="0" id="transaction-date" readonly/>
                         </div>
                     </div>
-                    <div class="col-md-6 transaction-upload-container ">
+                    <div class="col-md-6 transaction-upload-container">
                         <div class="journal-transaction-upload">
-                            <input class="form-control" style="margin-left:10px;" type="file" data-transaction="1" value="@Model.transactions_list[0].supporting_document" id="transaction-upload" readonly>
+                            <div class="file-input-wrapper">
+                                 <div class="faux-upload-container">
+                                     <div class="faux-upload-btn-container">
+                                         <div class="faux-upload-btn-row">
+                                             Upload
+                                         </div>
+                                     </div>
+                                     <div class="faux-upload-file-container">
+                                         <div class="faux-upload-file-row">
+                                            @if (!string.IsNullOrEmpty(Model.transactions_list[0].supporting_document))
+                                            {
+                                                <a href="~/uploaded_docs/@Model.transactions_list[0].supporting_document" download>Supporting Document</a>
+                                            }
+                                            else
+                                            {
+                                                @:Supporting Document
+                                            }
+                                         </div>
+                                     </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-4 add-sub-transactions-container">
@@ -352,14 +372,14 @@
                                 <hr class="hr-journal-totals" />
                                 <hr class="hr-journal-totals" />
                                 <div class="">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-val="false" data-transaction="1" id="dr-total" readonly />
+                                    <input class="form-control text-end currencyField" value="@Model.total_adjustment" data-val="false" data-transaction="1" readonly />
                                 </div>
                             </div>
                             <div class="col-md-2" style="margin-left:2.5px">
                                 <hr class="hr-journal-totals" />
                                 <hr class="hr-journal-totals" />
                                 <div class="">
-                                    <input class="form-control text-end currencyField" value="$0.00" data-val="false" data-transaction="1" id="cr-total" readonly />
+                                    <input class="form-control text-end currencyField" value="@Model.total_adjustment" data-val="false" data-transaction="1" readonly />
                                 </div>
                             </div>
                         </div>

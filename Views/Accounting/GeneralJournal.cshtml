@@ -153,7 +153,7 @@
                 </td>
                 @if (User.IsInRole("Manager") && item.journal_id != currentJournalId)
                 {
-                    <td>
+                    <td style="min-width: 210px;">
                         @if (item.journal_id != currentJournalId)
                         {
                             <a class="btn btn-outline-primary btn-table-margin" asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display journal details">Details</a>
@@ -164,7 +164,7 @@
                 }
                 else if (item.journal_id != currentJournalId)
                 {
-                    <td>
+                    <td style="min-width: 70px;">
                         <a class="btn btn-outline-primary btn-table-margin" asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display journal details">Details</a>
                     </td>
                 } else

@@ -65,10 +65,21 @@
                 </a>
                 </td>
                 <td>
-                    @FormatNegativeDouble(item.debit_amount)
+                    @{
+                        if(item.debit_amount != 0)
+                        {
+                            @FormatNegativeDouble(item.debit_amount)
+                        }
+
+                    }
+                    
                 </td>
-                <td>
-                    @FormatNegativeDouble(item.credit_amount)
+                <td>@{
+                        if(item.credit_amount != 0)
+                        {
+                            @FormatNegativeDouble(item.credit_amount)
+                        }
+                    }                    
                 </td>
                 <td>
                     @(item.transaction_date.HasValue ? item.transaction_date.Value.ToString("MM/dd/yyyy") : string.Empty)
