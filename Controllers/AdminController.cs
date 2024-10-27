@@ -154,7 +154,7 @@ namespace OnAccount.Controllers
         {
             AppUserModel appUserMessage = new AppUserModel();
             appUserMessage = detailsIn;
-            await _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message);
+            _ = Task.Run(() => _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message));
             return RedirectToAction(nameof(ManageAccounts));
         }
         [Authorize(Roles = "Administrator")]
