@@ -347,7 +347,7 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DenyJournal(string? id)
         {
-
+            
             _dbConnectorService.UpdateTransactionStatus(id, "Denied");
             // need log update here
             return RedirectToAction(nameof(GeneralJournal));
@@ -356,7 +356,6 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> ApproveJournal(string? id)
         {
-            
             _dbConnectorService.UpdateTransactionStatus(id, "Approved");
            // need log update here
             return RedirectToAction(nameof(GeneralJournal));
