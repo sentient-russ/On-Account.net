@@ -356,7 +356,26 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> ApproveJournal(string? id)
         {
+            
             _dbConnectorService.UpdateTransactionStatus(id, "Approved");
+            List<TransactionModel> listOfTransactions = _dbConnectorService.GetAccountTransactionsByJournalNumber(id);
+            List<int?> listOfAccount=new List<int?>();
+            for(int i = 0; i<listOfTransactions.Count(); i++)
+            {
+                if (listOfTransactions[i].debit_account != 0)
+                {
+                    listOfAccount.Add(listOfTransactions[i].debit_account);
+                }
+                else if (listOfTransactions[i].credit_account != 0)
+                {
+                    listOfAccount.Add(listOfTransactions[i].credit_account);
+                }
+            }
+            for (int i=0;i<listOfAccount.Count();i++)
+            {
+                _dbConnectorService.CalculateAccountBalance(listOfAccount[i].ToString());
+                
+            }
            // need log update here
             return RedirectToAction(nameof(GeneralJournal));
         }

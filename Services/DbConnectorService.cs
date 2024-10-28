@@ -758,7 +758,7 @@ namespace oa.Services
             double dr = 0;
             double cr = 0;
             double balance = 0;
-            List<TransactionModel> accountTransactions = GetAccountTransactions(accountNumberIn);
+            List<TransactionModel> accountTransactions = GetApprovedAccountTransactions(accountNumberIn);
 
             for (int i = 0; i < accountTransactions.Count; i++)
             {
@@ -779,7 +779,7 @@ namespace oa.Services
             {
                 balance = cr - dr;
             }
-
+            UpdateAccountBalance(accountNumberIn,balance);
             return balance;
         }
         /*
@@ -1071,6 +1071,55 @@ namespace oa.Services
             }
             return transactionsList;
         }
+        //pulls only account transactions based on account number of accounts that are of approved status
+        public List<TransactionModel> GetApprovedAccountTransactions(string? accountNumberIn)
+        {
+            List<TransactionModel> transactionsList = new List<TransactionModel>();
+            try
+            {
+                int acctNum = int.Parse(accountNumberIn);
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.transaction WHERE (debit_account=@number OR credit_account=@number) AND status='Approved'";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@number", acctNum);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    TransactionModel nextTransaction = new TransactionModel();
+                    nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    //only return transaction data related to the requested account
+                    if (reader1.GetInt32(1) == acctNum)
+                    {
+                        nextTransaction.debit_account = reader1.IsDBNull(1) ? null : reader1.GetInt32(1);
+                        nextTransaction.debit_amount = reader1.IsDBNull(2) ? null : reader1.GetDouble(2);
+                    }
+                    if (reader1.GetInt32(3) == acctNum)
+                    {
+                        nextTransaction.credit_account = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+                        nextTransaction.credit_amount = reader1.IsDBNull(4) ? null : reader1.GetInt32(4);
+                    }
+                    nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
+                    nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    nextTransaction.is_opening = reader1.IsDBNull(7) ? null : reader1.GetBoolean(7);
+                    nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    nextTransaction.description = reader1.IsDBNull(9) ? null : reader1.GetString(9);
+                    nextTransaction.journal_id = reader1.IsDBNull(10) ? null : reader1.GetInt32(10);
+                    nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
+                    nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+                    nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    transactionsList.Add(nextTransaction);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return transactionsList;
+        }
         /*
          * Gets all transaction for a specific account number
          */
@@ -1144,7 +1193,8 @@ namespace oa.Services
                     TransactionModel nextTransaction = new TransactionModel();
                     nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
                     nextTransaction.debit_account = reader1.IsDBNull(1) ? 0 : reader1.GetInt32(1);
-                    nextTransaction.debit_amount = reader1.IsDBNull(2) ? 0 : reader1.GetDouble(2);                        nextTransaction.credit_account = reader1.IsDBNull(3) ? 0 : reader1.GetInt32(3);
+                    nextTransaction.debit_amount = reader1.IsDBNull(2) ? 0 : reader1.GetDouble(2);                       
+                    nextTransaction.credit_account = reader1.IsDBNull(3) ? 0 : reader1.GetInt32(3);
                     nextTransaction.credit_amount = reader1.IsDBNull(4) ? 0 : reader1.GetInt32(4);
                     nextTransaction.transaction_date = reader1.IsDBNull(5) ?    null : reader1.GetDateTime(5);
                     nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
@@ -1308,7 +1358,7 @@ namespace oa.Services
             if (newStatusIn == "Approved")
             {
                 string transactionId = GetTransactionNum(journalNumIn);
-                // add transaction id to journal entry post ref feild where journalNumIn == JournalNum
+                // add transaction id to journal entry post ref field where journalNumIn == JournalNum
                 UpdatePostRef(journalNumIn, transactionId);
             }
         }
