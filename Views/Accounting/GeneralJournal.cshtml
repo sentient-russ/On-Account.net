@@ -1,7 +1,21 @@
 ﻿@model IEnumerable<oa.Models.TransactionModel>
+@using oa.Services
+@using oa.Models
 @{
     int currentJournalNumber = 0;
     double runningBalance = 0; // Initialize running balance
+    DbConnectorService db = new DbConnectorService();
+    List<TransactionModel> transactions = db.GetAllTransactions();
+    List<JournalStringConcatenator.JournalString> journalStrings = new List<JournalStringConcatenator.JournalString>();
+    for(int i = 0; i< transactions.Count; i++)
+    {
+        JournalStringConcatenator.JournalString journalString = new JournalStringConcatenator.JournalString();
+        journalString.JournalId = transactions[i].journal_id;
+        journalString.concatenatedString = transactions[i].ConcatenateValues();
+        journalStrings.Add(journalString);
+    }
+    JournalStringConcatenator processor = new JournalStringConcatenator();
+    List<JournalStringConcatenator.JournalString> combinedJournalStrings = processor.CombineJournalStrings(journalStrings);
 }
 <div class="text-center margin-top-120">
     <img src="~/img/chart_of_accounts.jpg" style="max-height: 150px;" />
@@ -24,6 +38,9 @@
 <table class="table">
     <thead>
         <tr>
+            <th hidden>
+               This row is in place to allow data gathering for multi-row search.
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.journal_id)
             </th>
@@ -72,7 +89,11 @@
                     currentColorClass = "dark-row";
                 }
             }
-            <tr class="@currentColorClass" style="max-height:45px;">
+            <tr class="@currentColorClass" style="max-height:45px;" data-journal-id="@item.journal_id">
+                <td class="text-center" hidden>
+                    @combinedJournalStrings.FirstOrDefault(js => js.JournalId == item.journal_id)?.concatenatedString
+
+                </td>
                 <td class="text-center">
                     @if (item.journal_id != currentJournalId)
                     {
@@ -219,4 +240,33 @@
             }
         }
     });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const tableRows = document.querySelectorAll('table tr');
+
+        searchInput.addEventListener('input', function () {
+            let visibleRows = Array.from(tableRows).filter(row => row.style.display !== 'none');
+            let groupedRows = {};
+            visibleRows.forEach(row => {
+                let journalId = row.getAttribute('data-journal-id');
+                if (!groupedRows[journalId]) {
+                    groupedRows[journalId] = [];
+                }
+                groupedRows[journalId].push(row);
+            });
+            let alternateClass = false;
+            Object.values(groupedRows).forEach(group => {
+                if (group.length > 0) {
+                    let className = alternateClass ? 'dark-row' : 'light-row';
+                    group.forEach(row => {
+                        row.className = className;
+                    });
+                    alternateClass = !alternateClass;
+                }
+            });
+        });
+    });
+
+
 </script>
