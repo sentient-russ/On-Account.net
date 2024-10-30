@@ -193,6 +193,12 @@ namespace oa.Models
         [DisplayName("Journal Id:")]
 
         public int? nextJournalId { get; set; }
+
+        [DataType(DataType.Text)]
+        [StringLength(300, MinimumLength = 1)]
+        [DisplayName("Comments:")]
+        public string? comments { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             return new List<ValidationResult>();

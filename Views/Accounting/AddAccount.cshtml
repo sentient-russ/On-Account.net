@@ -171,8 +171,16 @@
                     @* empty spot *@
             </div>
         </div>
+        @* row 8 *@
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating mb-3">                        
+                    <textarea class="form-control" asp-for="comments" id="commentsTextarea" rows="3"></textarea>
+                    <label asp-for="comments" for="commentsTextarea" class="control-label"></label>
+                    <span asp-validation-for="comments" class="text-danger"></span>
+                </div>
+            </div>
         </div>
-
         @* save btn *@
         <div class="mt-3 text-align-l">
             <div class="form-floating">
