@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using oa.Areas.Identity.Data;
+using oa.Areas.Identity.Services;
 
 namespace OnAccount.Controllers
 {
@@ -208,12 +209,17 @@ namespace OnAccount.Controllers
                     _dbConnectorService.AddTransaction(transactionIn);
                 }
             }
-
+            List<string> managerEmails = _dbConnectorService.GetManagerEmails();
+            for (int i = 0; i < managerEmails.Count; i++)
+            {
+                string subject = $"On-Account notification: JID: {journalEntry.JournalId}";
+                string message = $"A new journal entry has been submitted. JID: {journalEntry.JournalId}";
+                await _emailSender.SendEmailAsync(managerEmails[i],subject,"");
+            }
+            
             return Ok(new { message = "Journal data received successfully", journalData = journalData });
         }
     
-
-
     //All users can view accounts details pages
     [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> ViewAccountDetails(string? id)
@@ -287,6 +293,7 @@ namespace OnAccount.Controllers
                     currentTransactions[i].dr_description = null;
                 }
             }
+
             return View(currentTransactions);
         }
 

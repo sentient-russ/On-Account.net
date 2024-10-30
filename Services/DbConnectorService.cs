@@ -6,7 +6,6 @@ using System.Globalization;
 using oa.Areas.Identity.Services;
 using oa.Migrations;
 
-
 namespace oa.Services
 {
     public class DbConnectorService
@@ -748,7 +747,6 @@ namespace oa.Services
                 Console.WriteLine(ex.ToString());
             }
         }
-
 
         public double CalculateAccountBalance(string? accountNumberIn)
         {
