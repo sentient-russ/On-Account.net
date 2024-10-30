@@ -307,14 +307,22 @@
             <div class="journal-save-row">
             <div class="mt-3 text-align-l">
                 <div class="form-floating">
-                        @if (Model.current_balance != 0 || Model.current_balance == null)
-                        {
-                                <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn">
-                        }
-                        else
-                        {
-                                <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn" disabled>
-                        }
+                     <a href="/Accounting/AddJounalEntries" style="text-decoration: none;">
+                    <div class="reset-btn">
+
+                                <span class="text-btn">Reset Journal</span>
+                    </div>
+                    </a>
+                </div>
+                <div class="form-floating">
+                    @if (Model.current_balance != 0 || Model.current_balance == null)
+                    {
+                        <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn">
+                    }
+                    else
+                    {
+                        <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn" disabled>
+                    }
                 </div>
                 <div>
                     <a asp-action="ChartOfAccounts">Back to List</a>
