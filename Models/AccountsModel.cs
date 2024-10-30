@@ -215,6 +215,11 @@ namespace oa.Models
         [DisplayName("Status:")]
         public string? status { get; set; } = "Pending";
 
+        [DataType(DataType.Text)]
+        [StringLength(300, MinimumLength = 1)]
+        [DisplayName("Comments:")]
+        public string? comments { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             return new List<ValidationResult>();

@@ -54,7 +54,7 @@ namespace OnAccount.Controllers
         //Only administrators can add accounts
         [HttpPost]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> SaveNewAccountDetails([Bind("id, name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, transaction_1_date, transaction_1_dr, transaction_1_cr, transaction_2_date, transaction_2_dr, transaction_2_cr, transaction_dr_total, transaction_cr_total, accounts_list")] AccountsModel newaccountDetailsIn)
+        public async Task<IActionResult> SaveNewAccountDetails([Bind("id, name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, transaction_1_date, transaction_1_dr, transaction_1_cr, transaction_2_date, transaction_2_dr, transaction_2_cr, transaction_dr_total, transaction_cr_total, accounts_list, comments")] AccountsModel newaccountDetailsIn)
         {
             if (!ModelState.IsValid)
             {
@@ -87,12 +87,13 @@ namespace OnAccount.Controllers
             editAccount.current_balance = account.current_balance;
             editAccount.sort_priority = account.sort_priority;
             editAccount.account_status = account.account_status;
+            editAccount.comments = account.comments;
 
             return View(editAccount);
         }
         //managers and accountants cannot edit accounts
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> UpdateAccountDetails([Bind("id, name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, transaction_1_date, transaction_1_dr, transaction_1_cr, transaction_2_date, transaction_2_dr, transaction_2_cr, transaction_dr_total, transaction_cr_total, accounts_list")] AccountsModelEdit accountDetailsIn)
+        public async Task<IActionResult> UpdateAccountDetails([Bind("id, name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, transaction_1_date, transaction_1_dr, transaction_1_cr, transaction_2_date, transaction_2_dr, transaction_2_cr, transaction_dr_total, transaction_cr_total, accounts_list, comments")] AccountsModelEdit accountDetailsIn)
         {
             if (!ModelState.IsValid)
             {
@@ -113,6 +114,7 @@ namespace OnAccount.Controllers
                 editAccount.sort_priority = accountDetailsIn.sort_priority;
                 editAccount.account_status = accountDetailsIn.account_status;
                 editAccount.accounts_list = currentAccounts;
+                editAccount.comments = accountDetailsIn.comments;
                 return View("EditAccount", editAccount);
             }
 

@@ -564,6 +564,8 @@ namespace oa.Services
                     account.created_by = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     account.account_status = reader1.IsDBNull(13) ? null : reader1.GetString(13);
                     account.starting_balance = reader1.IsDBNull(14) ? null : reader1.GetDecimal(14);
+                    account.comments = reader1.IsDBNull(15) ? null : reader1.GetString(15);
+
                     accountsModels.Add(account);
                 }
                 reader1.Close();
@@ -607,6 +609,7 @@ namespace oa.Services
                     account.created_by = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     account.account_status = reader1.IsDBNull(13) ? null : reader1.GetString(13);
                     account.starting_balance = reader1.IsDBNull(14) ? null : reader1.GetDecimal(14);
+                    account.comments = reader1.IsDBNull(15) ? null : reader1.GetString(15);
                 }
                 reader1.Close();
                 conn1.Close();
@@ -653,8 +656,8 @@ namespace oa.Services
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "INSERT INTO on_account.account (name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, account_creation_date)" +
-                    " VALUES (@name, @number, @sort_priority, @normal_side, @description, @type, @term, @statement_type, @opening_transaction_num, @current_balance, @created_by, @account_status, @starting_balance, @account_creation_date)";
+                string command = "INSERT INTO on_account.account (name, number, sort_priority, normal_side, description, type, term, statement_type, opening_transaction_num, current_balance, created_by, account_status, starting_balance, account_creation_date, comments)" +
+                    " VALUES (@name, @number, @sort_priority, @normal_side, @description, @type, @term, @statement_type, @opening_transaction_num, @current_balance, @created_by, @account_status, @starting_balance, @account_creation_date, @comments)";
                 
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
@@ -672,6 +675,7 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@account_status", accountModelIn.account_status);
                 cmd1.Parameters.AddWithValue("@starting_balance", accountModelIn.starting_balance);
                 cmd1.Parameters.AddWithValue("@account_creation_date", accountModelIn.account_creation_date);
+                cmd1.Parameters.AddWithValue("@comments", accountModelIn.comments);
 
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
@@ -694,7 +698,7 @@ namespace oa.Services
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "UPDATE on_account.account SET name = @name, number = @number, sort_priority = @sort_priority, normal_side = @normal_side, description = @description, type = @type, term = @term, statement_type = @statement_type, opening_transaction_num = @opening_transaction_num, current_balance = @current_balance, created_by = @created_by, account_status = @account_status, starting_balance = @starting_balance, account_creation_date = @account_creation_date WHERE id = @id";
+                string command = "UPDATE on_account.account SET name = @name, number = @number, sort_priority = @sort_priority, normal_side = @normal_side, description = @description, type = @type, term = @term, statement_type = @statement_type, opening_transaction_num = @opening_transaction_num, current_balance = @current_balance, created_by = @created_by, account_status = @account_status, starting_balance = @starting_balance, account_creation_date = @account_creation_date, comments = @comments WHERE id = @id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@id", accountModelIn.id);
@@ -712,6 +716,8 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@account_status", accountModelIn.account_status);
                 cmd1.Parameters.AddWithValue("@starting_balance", accountModelIn.starting_balance);
                 cmd1.Parameters.AddWithValue("@account_creation_date", accountModelIn.account_creation_date);
+                cmd1.Parameters.AddWithValue("@comments", accountModelIn.comments);
+
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
                 conn1.Close();
