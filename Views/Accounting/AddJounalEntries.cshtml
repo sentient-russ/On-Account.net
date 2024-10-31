@@ -306,26 +306,27 @@
             </div>
             <div class="journal-save-row">
             <div class="mt-3 text-align-l">
-                <div class="form-floating">
-                     <a href="/Accounting/AddJounalEntries" style="text-decoration: none;">
-                    <div class="reset-btn">
 
-                                <span class="text-btn">Reset Journal</span>
-                    </div>
-                    </a>
-                </div>
                 <div class="form-floating">
                     @if (Model.current_balance != 0 || Model.current_balance == null)
                     {
-                        <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn">
+                            <input type="submit" value="Submit" class="btn btn-primary reset-btn" id="save_journal_btn">
                     }
                     else
                     {
-                        <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn" disabled>
+                            <input type="submit" value="Submit" class="btn btn-primary reset-btn" id="save_journal_btn" disabled>
                     }
-                </div>
-                <div>
-                    <a asp-action="ChartOfAccounts">Back to List</a>
+                    <a href="/Accounting/AddJounalEntries" style="text-decoration: none;">
+                        <div class="btn btn-outline-primary reset-btn">
+
+                            <span class="">Reset</span>
+                        </div>
+                        </a>
+                        <a asp-action="ChartOfAccounts">
+                            <div class="btn btn-outline-primary reset-btn">
+                                <span class="">Back to List</span>
+                            </div>
+                        </a>
                 </div>
         </div>
     </form>
