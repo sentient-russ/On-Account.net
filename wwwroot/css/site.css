@@ -12,25 +12,43 @@
     margin-top: -5px;
     margin-bottom: -5px;
 }
-.status-signifier-background{
+.status-signifier-background {
     max-height: 25px;
     max-width: 25px;
-    border-radius: 17.5px 17.5px 17.5px 17.5px;
-    background-color: white;
-    border-color: white;
-    border-width: 5px;
-    margin-left:5px;
-    display:flex;
+    border-radius: 7px;
+    background-color: #f1f1f1;
+    border-width: 13px;
+    border-top-width: 13px;
+    border-right-width: 13px;
+    border-bottom-width: 13px;
+    border-left-width: 13px;
+    margin-left: 10px;
+    display: flex;
+    justify-content: center;
 }
-.status-signifier-img{
-    max-height:20px;
+.status-signifier-img {
+    max-height: 20px;
     max-width: 20px;
+    color: #bdbdbd;
 }
 .status-container {
     display: flex;
     flex-direction: row;
     text-align:center;
 }
+
+.status-sub-container-name {
+    min-width: 75px;
+    text-align: right;
+}
+
+.status-sub-container-symbol {
+    text-align: center;
+}
+.container, .container-lg, .container-md, .container-sm, .container-xl {
+    max-width: 98vw;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:active,
@@ -348,6 +366,9 @@ header {
 .background-white {
     background-color: white;
 }
+.margin-bottom-20{
+    margin-bottom:20px;
+}
 
 .background-default-b {
     background-color: #0d6efd;
@@ -495,8 +516,8 @@ input.currency {
 
 .journal-row {
     margin-top: 5px;
-    border: 1px solid #6c757d31;
-    background-color: #6c757d0b;
+    border: 1px solid #8C8C8C;
+    background-color: #dbdcde;
     border-radius: 5px;
     padding-top: 6.5px;
     padding-bottom: 6.5px;
@@ -521,6 +542,7 @@ input.currency {
     padding-left: 10px;
     padding-right: 10px;
     min-width: 1125px;
+
 }
 
 .col-00 {
@@ -557,6 +579,7 @@ input.currency {
     background-color: #6c757d31;
     --bs-body-bg: transparent;
     border-radius: 5px 5px 5px 5px;
+    border-color: #8C8C8C !important;
 }
 
 .journal-row-bottom {
@@ -875,8 +898,8 @@ input:-webkit-autofill:focus {
 
 .journal-row-heading {
     margin-top: 5px;
-    border: 1px solid #6c757d31;
-    background-color: #6c757d0b;
+    border: 1px solid #8C8C8C;
+    background-color: #dbdcde;
     border-radius: 5px;
     padding-top: 6.5px;
     padding-bottom: 6.5px;
@@ -885,9 +908,10 @@ input:-webkit-autofill:focus {
     justify-content: space-between;
 }
 
-.journal-description{
+.journal-description {
     margin-left: 10px;
-    margin-right:10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
 }
 
 .transaction-upload-container {
@@ -914,7 +938,8 @@ input:-webkit-autofill:focus {
     text-align:right;
 }
 .journal-transaction-upload {
-    min-width:200px;
+    min-width: 200px;
+    margin-left: 10px;
 }
 
 .journal-transaction-date {
@@ -1030,3 +1055,44 @@ input:-webkit-autofill:focus {
 .reset-btn:hover {
     background-color: #0366f8;
 }
+
+.table-top-row {
+    --bs-table-bg: #55555539;
+    background-color: #1F1F1F03;
+    color: rgba(0,0,0,1);
+    font-size: 16px;
+    vertical-align: bottom;
+}
+
+.table-wrapper {
+    overflow: auto;
+    border-radius: 10px;
+    border: .2px solid rgba(0,0,0,.3);
+}
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  border-style: hidden;
+  width:100%;
+  max-width: 100%;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+.accent-color {
+    color:#cf8520 !important;
+}
+.journal-wrapper {
+    display: flex;
+    flex-direction: column;
+    border: 1.5px solid;
+    border-color: black;
+    border-radius: 10px 10px 10px 10px;
+    padding: 10px;
+    background-color: #2727270C;
+}
+/*#cf8520*/

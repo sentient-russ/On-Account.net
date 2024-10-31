@@ -10,6 +10,16 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('save_journal_btn').addEventListener('click', function (event) {
         event.preventDefault();
         var passed_check = false;
+        var saveBtn = document.getElementById('save_journal_btn');
+        var resetBtn = document.getElementById('journal_reset_btn');
+        var backBtn = document.getElementById('journal_back_btn');
+        var resetBtnHref = document.getElementById('journal_reset_href');
+        var backBtnHref = document.getElementById('journal_back_href');
+        saveBtn.classList.add('disabled');
+        resetBtn.classList.add('disabled');
+        backBtn.classList.add('disabled');
+        resetBtnHref.classList.add('disabled');
+        backBtnHref.classList.add('disabled');
         passed_check = runValidation();
         if (passed_check) {
             const journalData = collectJournalData();

@@ -13,13 +13,13 @@
     var UserName = currentUser.ScreenName;
     DateTime today = System.DateTime.Today;
 }
-<div class="form-container  margin-top-120">
+<div class="text-center margin-top-120">
+    <img src="~/img/journal.jpg" style="max-height: 150px;" />
+</div>
+<h3 class="text-center  margin-bottom-20">Journal Entry</h3>
+<div class="journal-wrapper">
+<div class="form-container">
     <form class="add-account-form-container">
-        <div class="text-center">
-            <img src="~/img/journal.jpg" style="max-height: 150px;" />
-        </div>
-        <h3 class="text-center">Journal Entry</h3>
-        <hr />
         @* row 0 *@
         <div class="row g-2">
             <div class="col-md">
@@ -316,14 +316,14 @@
                     {
                             <input type="submit" value="Submit" class="btn btn-primary reset-btn" id="save_journal_btn" disabled>
                     }
-                    <a href="/Accounting/AddJounalEntries" style="text-decoration: none;">
-                        <div class="btn btn-outline-primary reset-btn">
+                        <a href="/Accounting/AddJounalEntries" id="journal_reset_href" style="text-decoration: none;">
+                        <div class="btn btn-outline-primary reset-btn" id="journal_reset_btn">
 
-                            <span class="">Reset</span>
+                            <span>Reset</span>
                         </div>
                         </a>
-                        <a asp-action="ChartOfAccounts">
-                            <div class="btn btn-outline-primary reset-btn">
+                        <a asp-action="ChartOfAccounts" id="journal_back_href" >
+                            <div class="btn btn-outline-primary reset-btn" id="journal_back_btn">
                                 <span class="">Back to List</span>
                             </div>
                         </a>
@@ -331,6 +331,7 @@
         </div>
     </form>
     </div>
+</div>
     <script src="~/js/journal.js" asp-append-version="true"></script>
     @section Scripts {
         @{

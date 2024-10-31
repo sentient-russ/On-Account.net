@@ -25,7 +25,7 @@
     <div class="search-colum-1">
         @if (User.IsInRole("Accountant") || User.IsInRole("Manager"))
         {
-            <a class="btn btn-primary" style="max-height:32px;" asp-action="AddJounalEntries" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Add account page to create a new journal entry.">Add Journal Entry</a>
+            <a class="btn btn-primary" style="white-space: nowrap;; max-height:37.5px; min-width: fit-content; padding-top:5px; font-size:16px;" asp-action="AddJounalEntries" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Add account page to create a new journal entry.">Add Entry</a>
         }
     </div>
     <div class="search-colum-2">
@@ -35,8 +35,9 @@
         <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
     </div>
 </div>
-<table class="table">
-    <thead>
+<div class="table-wrapper">
+<table class="table-striped">
+    <thead class="table-top-row">
         <tr>
             <th hidden>
                This row is in place to allow data gathering for multi-row search.
@@ -65,16 +66,20 @@
             <th>
                 @Html.DisplayNameFor(model => model.journal_date)
             </th>
-            <th>
+            <th style="margin-right: 50px;">
                 @Html.DisplayNameFor(model => model.status)
             </th>
-            <th></th>
+            <th>
+                Actions:
+            </th>
         </tr>
     </thead>
     <tbody id="tableBody">
         @{
             var currentJournalId = 9999999999999999;
             var currentColorClass = "light-row";
+                var divider1 = "border-top: 2px solid black;";
+                var divider2 = "border-top: .5px solid #bdbdbd;";
         }
         @foreach (var item in Model)
         {
@@ -89,12 +94,12 @@
                     currentColorClass = "dark-row";
                 }
             }
-            <tr class="@currentColorClass" style="max-height:45px;" data-journal-id="@item.journal_id">
+                <tr class="@currentColorClass" style="@(item.journal_id != currentJournalId ? divider1 : divider2)" data-journal-id="@item.journal_id">
                 <td class="text-center" hidden>
                     @combinedJournalStrings.FirstOrDefault(js => js.JournalId == item.journal_id)?.concatenatedString
 
                 </td>
-                <td class="text-center">
+                <td class="text-center" style="opacity: .7;">
                     @if (item.journal_id != currentJournalId)
                     {
                         <a asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the journal entry details.">
@@ -107,9 +112,8 @@
                     {
                         @Html.DisplayFor(modelItem => item.transaction_date)
                     }
-
                 </td>
-                <td>
+                    <td style="text-align:left; opacity: .7;">
                     <a asp-action="ViewAccountDetails" asp-route-id="@item.debit_account" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the accounts details.">
                         @Html.DisplayFor(modelItem => item.dr_description)
                     </a>
@@ -117,19 +121,19 @@
                         @Html.DisplayFor(modelItem => item.cr_description)
                     </a>
                 </td>
-                <td>
+                <td style ="text-align:right;">
                     @FormatNegativeDouble(item.debit_amount)
                 </td>
-                <td>
+                <td style ="text-align:right;">
                     @FormatNegativeDouble(item.credit_amount)
                 </td>
-                <td>
+                    <td style="text-align:left; color: rgba(0,0,0,.4);">
                     @if (item.journal_id != currentJournalId)
                     {
                         @Html.DisplayFor(modelItem => item.description)
                     }
                 </td>
-                <td>
+                    <td style=" color: rgba(0,0,0,.4)">
                     @if (item.journal_id != currentJournalId)
                     {
                         @Html.DisplayFor(modelItem => item.created_by)
@@ -147,10 +151,12 @@
                     @if (item.journal_id != currentJournalId)
                     {
                         <div class="status-container">
-                            <div class="status-text-background">
-                                @Html.DisplayFor(modelItem => item.status)
+                            <div class="status-sub-container-name">
+                                <div class="status-text-background">
+                                    @Html.DisplayFor(modelItem => item.status)
+                                </div>
                             </div>
-
+                            <div class="status-sub-container-symbol">
                             @if (item.status == "Pending")
                             {
                                 <div class="status-signifier-background">
@@ -169,12 +175,13 @@
                                     <img class="status-signifier-img" style="margin-left:2.5px;" src="~/img/red_x.svg" />
                                 </div>
                             }
+                            </div>
                         </div>
                     }
                 </td>
                 @if (User.IsInRole("Manager") && item.journal_id != currentJournalId)
                 {
-                    <td style="min-width: 210px;">
+                    <td style="min-width: 225px; margin-right: 20px;">
                         @if (item.journal_id != currentJournalId)
                         {
                             <a class="btn btn-outline-primary btn-table-margin" asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display journal details">Details</a>
@@ -185,7 +192,7 @@
                 }
                 else if (item.journal_id != currentJournalId)
                 {
-                    <td style="min-width: 70px;">
+                    <td style="min-width: 70px; margin-right: 40px;">
                         <a class="btn btn-outline-primary btn-table-margin" asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display journal details">Details</a>
                     </td>
                 } else
@@ -201,6 +208,7 @@
         }
     </tbody>
 </table>
+</div>
 @* format currency *@
 @functions {
     public static string FormatNegativeDouble(double? value)
@@ -267,6 +275,4 @@
             });
         });
     });
-
-
 </script>
