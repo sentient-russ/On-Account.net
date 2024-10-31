@@ -71,8 +71,9 @@
                 @Html.DisplayFor(modelItem => item.account_creation_date)
             </td>
             <td>
-                @FormatNegativeDouble(item.current_balance)
-
+                <div style="background-color: black; padding-left: 5px; padding-right: 5px; border-radius: 5px; color: white;">
+                        @FormatNegativeDouble(item.current_balance)
+                </div>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.account_status)
