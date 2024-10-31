@@ -223,6 +223,8 @@ document.addEventListener('click', function (event) {
             const transactionId = referenceRow.getAttribute('data-transaction');
             toggleButtonStates(transactionId);
         }
+        updateDrTotals();
+        updateCrTotals();
     }
 });
 function formatCurrency() {

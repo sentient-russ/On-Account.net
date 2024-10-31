@@ -178,7 +178,7 @@
                         @if (item.journal_id != currentJournalId)
                         {
                             <a class="btn btn-outline-primary btn-table-margin" asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display journal details">Details</a>
-                            <a class="btn btn-outline-secondary btn-table-margin" asp-action="ApproveJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Aprove to add the journal to the ledger.">Aprove</a>
+                            <a class="btn btn-outline-secondary btn-table-margin" asp-action="ApproveJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Approve to add the journal to the ledger.">Approve</a>
                             <a class="btn btn-outline-danger btn-table-margin" asp-action="DenyJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Deny to keep the journal of the ledger.">Deny</a>
                         }
                     </td>

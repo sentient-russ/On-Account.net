@@ -1023,22 +1023,10 @@ input:-webkit-autofill:focus {
 
 
 .reset-btn {
-    flex-direction: row;
-    text-align: center;
-    border: 1px solid;
-    border-color:#6c757d31;
-    border-radius: 5px 5px 5px 5px;
-    height: 40px;
-    max-width: 125px;
-    padding: 10px;
-    font-weight: 600;    
-    color: white;
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,.4);
-    background-color: #0d6efd;
+    max-height: 40px;
     margin-bottom: 10px;
 }
 
 .reset-btn:hover {
-
     background-color: #0366f8;
 }
