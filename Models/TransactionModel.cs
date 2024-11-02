@@ -52,7 +52,7 @@ namespace oa.Models
         public string? cr_description { get; set; }
 
         [Required]
-        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.DateTime)]
         [DisplayName("Transaction date:")]
         public DateTime? transaction_date { get; set; }
@@ -89,7 +89,7 @@ namespace oa.Models
         public string? journal_description { get; set; } = "";
 
         [Required]
-        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.DateTime)]
         [DisplayName("Journal Date:")]
         public DateTime? journal_date { get; set; }

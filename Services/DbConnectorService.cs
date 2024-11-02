@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
 using oa.Areas.Identity.Services;
 using oa.Migrations;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace oa.Services
 {
@@ -982,6 +983,76 @@ namespace oa.Services
                 Console.WriteLine(ex.ToString());
             }
             return transactionsList;
+        }
+        /*
+         * Gets and calculates the totals for all of the journal entries and returns them in a list of journal objects.  This necessary for searching by journal amount in the General Journal
+         */
+        public List<JournalBundle> GetJournalTotals()
+        {
+            List<JournalBundle> returnBundle = new List<JournalBundle>();
+            List<TransactionModel> transactionsList = new List<TransactionModel>();
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.transaction";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    TransactionModel nextTransaction = new TransactionModel();
+                    nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    nextTransaction.debit_account = reader1.IsDBNull(1) ? null : reader1.GetInt32(1);
+                    nextTransaction.debit_amount = reader1.IsDBNull(2) ? null : reader1.GetDouble(2);
+                    nextTransaction.credit_account = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+                    nextTransaction.credit_amount = reader1.IsDBNull(4) ? null : reader1.GetInt32(4);
+                    nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
+                    nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    nextTransaction.is_opening = reader1.IsDBNull(7) ? null : reader1.GetBoolean(7);
+                    nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    nextTransaction.description = reader1.IsDBNull(9) ? null : reader1.GetString(9);
+                    nextTransaction.journal_id = reader1.IsDBNull(10) ? null : reader1.GetInt32(10);
+                    nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
+                    nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+                    nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    transactionsList.Add(nextTransaction);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            Dictionary<int?, double?> journalTotals = new Dictionary<int?, double?>();
+            foreach (var transaction in transactionsList)
+            {
+                if (transaction.journal_id != null && transaction.credit_amount > 0)
+                {
+                    if (journalTotals.ContainsKey(transaction.journal_id))
+                    {
+                        journalTotals[transaction.journal_id] += transaction.credit_amount;
+                    }
+                    else
+                    {
+                        journalTotals[transaction.journal_id] = transaction.credit_amount;
+                    }
+                }
+            }
+
+            foreach (var kvp in journalTotals)
+            {
+                JournalBundle bundle = new JournalBundle
+                {
+                    journal_id = kvp.Key,
+                    total_adjustment = kvp.Value
+                };
+                returnBundle.Add(bundle);
+            }
+
+            return returnBundle;
         }
 
         //only gets transactions that have been approved

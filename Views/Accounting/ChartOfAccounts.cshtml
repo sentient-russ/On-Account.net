@@ -6,7 +6,7 @@
 </div>
 <h1 class="text-center mb-4">Chart of Accounts</h1>
 @* code here to remove button if the user is not admin or manager *@
-<div class="search-row">
+<div class="search-row-secondary">
     <div class="search-colum-1">
         @if (User.IsInRole("Administrator"))
         {
@@ -14,13 +14,14 @@
         }
     </div>
     <div class="search-colum-2">
-        <img src="~/img/search.svg" class="search-img" text-align:right;"/>
+        
     </div>
     <div class="search-colum-3">
+        <img src="~/img/search.svg" class="search-img" text-align:right;" />
         <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
     </div>
 </div>
-<div class="table-wrapper">
+<div class="table-wrapper margin-top-20">
     <table class="table  table-striped">
         <thead class="table-top-row">
         <tr>

@@ -13,21 +13,22 @@
     var UserName = currentUser.ScreenName;
     DateTime today = System.DateTime.Today;
 }
-<div class="text-center margin-top-120">
-    <img src="~/img/journal.jpg" style="max-height: 150px;" />
+<div class="text-center" style="margin-top: -90px;">
+    <img src="~/img/journal.jpg" style="max-height: 150px; transform:translateY(225px);" />
 </div>
-<h3 class="text-center  margin-bottom-20">Journal Entry</h3>
+<h3 class="text-center" style="transform:translateY(250px);">Journal Entry</h3>
 <div class="journal-wrapper">
 <div class="form-container">
     <form class="add-account-form-container">
         @* row 0 *@
-        <div class="row g-2">
+        <div class="journal-upper-container">
+        <div class="row g-2 journal-col">
             <div class="col-md">
                 <div class="form-floating mb-2">
                 </div>
             </div>
-            <div class="col-md">
-                <div class="form-floating mb-2 greyed-out">
+                    <div class="col-md journal-col">
+                        <div class="form-floating" style="margin-bottom: -7px;">
                     <input class="form-control form-control-sm" placeholder="nextJournalId" value="@Model.journal_id" id="journal-id" readonly />
                     <label for="journal_id" class="control-label">Journal Id:</label>
                 </div>
@@ -35,12 +36,12 @@
         </div>
         @* row 1 *@
         <div class="row g-2">
-            <div class="col-md">
+            <div class="col-">
                 <div class="form-floating mb-2">
                 </div>
             </div>
-            <div class="col-md">
-                <div class="form-floating mb-2 greyed-out">
+            <div class="col-md journal-col">
+                <div class="form-floating mb-2 ">
                     <input class="form-control form-control-sm" placeholder="Created by:" id="created-by" value="@UserName" readonly />
                     <label for="created-by" class="control-label">User Name:</label>
                 </div>
@@ -52,8 +53,8 @@
                 <div class="form-floating mb-2">
                 </div>
             </div>
-            <div class="col-md">
-                <div class="form-floating mb-2 greyed-out">
+            <div class="col-md journal-col">
+                <div class="form-floating mb-2">
                     <input class="form-control form-control-sm" placeholder="journal_date" value="@Model.journal_date?.ToString("MM-dd-yyyy", CultureInfo.InvariantCulture)" id="journal-date" readonly />
                     <label for="journal_date" class="control-label">Journal Date:</label>
                 </div>
@@ -65,8 +66,8 @@
                 <div class="form-floating mb-2">
                 </div>
             </div>
-            <div class="col-md">
-                <div class="form-floating greyed-out">
+            <div class="col-md journal-col">
+                <div class="form-floating">
                     <input class="form-control form-control-sm currencyField" placeholder="total_adjustment" value="@Model.total_adjustment" id="journal-total-amount" readonly />
                     <label class="control-label">Entry Total:</label>
                 </div>
@@ -100,8 +101,8 @@
                 <div class="form-floating mb-2">
                 </div>
             </div>
-            <div class="col-md">
-                <div class="form-floating  greyed-out">
+            <div class="col-md journal-col">
+                <div class="form-floating">
                     <input class="form-control form-control-sm" value="@Model.status" placeholder="account-status" id="journal-status" readonly />
                     <label for="account-status" class="control-label">Status:</label>
                 </div>
@@ -117,7 +118,7 @@
                 @* empty spot *@
             </div>
         </div>
-        <hr />
+        </div>
         <div class="transaction-container" data-transaction="1">
             <div class="journal-container text-center">
                 <!-- heading row -->
