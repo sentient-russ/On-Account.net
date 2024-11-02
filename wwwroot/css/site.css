@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Baskervville+SC&family=Outfit:wght@100..900&display=swap');
 .dark-row {
     --bs-table-bg: --var(transparent);
-    background-color: #6c757d31;
+    background-color: #db1e1e00;
 }
 .ligth-row {
     --bs-table-bg: --var(transparent);
@@ -16,7 +16,7 @@
     max-height: 25px;
     max-width: 25px;
     border-radius: 7px;
-    background-color: #f1f1f1;
+    background-color: #fff;
     border-width: 13px;
     border-top-width: 13px;
     border-right-width: 13px;
@@ -517,7 +517,7 @@ input.currency {
 .journal-row {
     margin-top: 5px;
     border: 1px solid #8C8C8C;
-    background-color: #dbdcde;
+    background-color: #ffcb6f29;
     border-radius: 5px;
     padding-top: 6.5px;
     padding-bottom: 6.5px;
@@ -681,6 +681,15 @@ input.currency {
 .search-row {
     display: flex;
     flex-direction: row;
+    max-width: 94vw;
+    margin-bottom: 10px;
+}
+.search-row-secondary {
+    display: flex;
+    flex-direction: row;
+    max-width: 94vw;
+    margin-bottom: 10px;
+    min-height: 25px;
 }
 
 .search-colum-1 {
@@ -691,12 +700,17 @@ input.currency {
 .search-colum-2 {
     display: flex;
     justify-content: right;
-    padding-left: 82%;
+    max-width:fit-content;
 }
 
 .search-colum-3 {
     display: flex;
-    justify-content: right;
+    position:absolute;
+    right:30px;
+}
+.search-row-btn{
+    margin-left: 5px;
+    max-height: 35px;
 }
 
 .search-img {
@@ -899,7 +913,7 @@ input:-webkit-autofill:focus {
 .journal-row-heading {
     margin-top: 5px;
     border: 1px solid #8C8C8C;
-    background-color: #dbdcde;
+    background-color: #ffcb6f29;
     border-radius: 5px;
     padding-top: 6.5px;
     padding-bottom: 6.5px;
@@ -1046,7 +1060,6 @@ input:-webkit-autofill:focus {
     background-color: white;
 }
 
-
 .reset-btn {
     max-height: 40px;
     margin-bottom: 10px;
@@ -1057,12 +1070,13 @@ input:-webkit-autofill:focus {
 }
 
 .table-top-row {
-    --bs-table-bg: #55555539;
-    background-color: #1F1F1F03;
+    --bs-table-bg: #fcb14f75;
+    background-color: #fcb14f75;
     color: rgba(0,0,0,1);
     font-size: 16px;
     vertical-align: bottom;
 }
+
 
 .table-wrapper {
     overflow: auto;
@@ -1092,7 +1106,28 @@ th, td {
     border: 1.5px solid;
     border-color: black;
     border-radius: 10px 10px 10px 10px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0);
+    box-shadow: 0px 3px 3px 2px rgba(0,0,0,.4);
     padding: 10px;
-    background-color: #2727270C;
+    background-color: #fff;
 }
+.general-journal-total-row {
+    --bs-table-bg: #fcb14f45;
+    background-color: #fcb14f10;
+}
+.table-striped > tbody > tr:nth-of-type(2n+1) > * {
+    --bs-table-bg-type: #fcb14f15;
+}
+
+.journal-upper-container{
+    display:flex;
+    flex-direction:column;
+ 
+}
+.journal-col {
+    text-align: right;
+    justify-content: right;
+    display: flex;
+}
+
 /*#cf8520*/

@@ -295,7 +295,6 @@ namespace OnAccount.Controllers
                     currentTransactions[i].dr_description = null;
                 }
             }
-
             return View(currentTransactions);
         }
 
@@ -348,7 +347,7 @@ namespace OnAccount.Controllers
                     balance += (double)infoBundle.transactions_list[i].debit_amount;
                 }
             }
-            infoBundle.total_adjustment = balance.ToString();
+            infoBundle.total_adjustment = balance;
             return View(infoBundle);
         }
 
@@ -361,6 +360,7 @@ namespace OnAccount.Controllers
             // need log update here
             return RedirectToAction(nameof(GeneralJournal));
         }
+
         //Only the manager can approve or deny a transaction.
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> ApproveJournal(string? id)

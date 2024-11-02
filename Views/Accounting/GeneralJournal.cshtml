@@ -16,6 +16,22 @@
     }
     JournalStringConcatenator processor = new JournalStringConcatenator();
     List<JournalStringConcatenator.JournalString> combinedJournalStrings = processor.CombineJournalStrings(journalStrings);
+    //retreives amounts for searching.
+    List<JournalBundle> journalsWithTotals = new List<JournalBundle>();
+    journalsWithTotals = db.GetJournalTotals();
+}
+@functions {
+    public string GetFirstDayOfYear()
+    {
+        int currentYear = DateTime.Now.Year;
+        DateTime firstDayOfYear = new DateTime(currentYear, 1, 1);
+        return firstDayOfYear.ToString("MM/dd/yyyy");
+    }
+
+    public string GetCurrentDay()
+    {
+        return DateTime.Now.ToString("MM/dd/yyyy");
+    }
 }
 <div class="text-center margin-top-120">
     <img src="~/img/chart_of_accounts.jpg" style="max-height: 150px;" />
@@ -25,14 +41,67 @@
     <div class="search-colum-1">
         @if (User.IsInRole("Accountant") || User.IsInRole("Manager"))
         {
-            <a class="btn btn-primary" style="white-space: nowrap;; max-height:37.5px; min-width: fit-content; padding-top:5px; font-size:16px;" asp-action="AddJounalEntries" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Add account page to create a new journal entry.">Add Entry</a>
+            <a class="btn btn-primary" style="white-space: nowrap; max-height:37.5px; min-width: fit-content; padding-top:5px; font-size:16px;" asp-action="AddJounalEntries" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Add account page to create a new journal entry.">Add Entry</a>
         }
     </div>
     <div class="search-colum-2">
-        <img src="~/img/search.svg" class="search-img" text-align:right;" />
+    </div>
+    <div class="search-colum-1">            
+    </div>
+    <div class="search-colum-1">            
+    </div>
+    <div class="search-colum-1">            
     </div>
     <div class="search-colum-3">
+        <img src="~/img/search.svg" class="search-img" text-align:right;" />
         <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
+
+        <div class="btn-group">
+            <button class="btn btn-outline-primary dropdown-toggle search-row-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-placement="bottom" data-bs-title="Select the status that your would like to view.">
+                <img style="max-height:25px; padding-right: 5px; padding-bottom: 3px; " src="~/img/filter-right.svg" />Status
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end text-center">
+                <li><a class="dropdown-item" href="#">Show All</a></li>
+                <li><a class="dropdown-item" href="#">Pending</a></li>
+                <li><a class="dropdown-item" href="#">Approved</a></li>
+                <li><a class="dropdown-item" href="#">Denied</a></li>
+            </ul>
+        </div>
+        <div class="dropdown">
+            <button type="button" class="btn btn-outline-primary search-row-btn dropdown-toggle" data-bs-toggle="dropdown"  id="find-date-range-btn" aria-expanded="false" data-bs-auto-close="outside">
+                <img style="max-height:25px; padding-right: 5px; padding-bottom: 3px;" src="~/img/filter-right.svg" />By Date
+            </button>
+            <form class="dropdown-menu dropdown-menu-end p-4 text-center">
+                <div class="mb-3">
+                    <label for="startDateDropdownForm" class="form-label">Beginning Date</label>
+                    <input type="date" class="form-control" id="startDateDropdownForm" value="@GetFirstDayOfYear()">
+                </div>
+                <div class="mb-3">
+                    <label for="endDateDropdownForm" class="form-label">Ending Date</label>
+                    <input type="date" class="form-control" id="endDateDropdownForm" value="@GetCurrentDay()">
+                </div>
+                <button type="submit" class="btn btn-primary" id="getDateRangeButton">Get Dates</button>
+            </form>
+        </div>
+        <div class="dropdown">
+            <button type="button" class="btn btn-outline-primary search-row-btn dropdown-toggle" id="find-amount-range-btn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                <img style="max-height:25px; padding-right: 5px; padding-bottom: 3px; " src="~/img/filter-right.svg" />By Amount
+            </button>
+            <form class="dropdown-menu dropdown-menu-end p-4 text-center" style="min-width: 178px;">
+                <div class="mb-3">
+                    <label for="startAmountDropdownForm" class="form-label">Beginning Amount</label>
+                    <input type="text" class="form-control currencyField" id="startAmountDropdownForm" style="text-align:right;" value="$0.00">
+                </div>
+                <div class="mb-3">
+                    <label for="endAmountDropdownForm" class="form-label">Ending Amount</label>
+                    <input type="text" class="form-control currencyField" id="endAmountDropdownForm" style="text-align:right;" value=" $0.00">
+                </div>
+                <button type="submit" class="btn btn-primary" id="getAmountRangeButton">Get Amounts</button>
+            </form>
+        </div>
+        <div class="btn-group">
+            <button id="resetTableButton" class="btn btn-primary search-row-btn">Reset Table</button>
+        </div>        
     </div>
 </div>
 <div class="table-wrapper">
@@ -42,7 +111,7 @@
             <th hidden>
                This row is in place to allow data gathering for multi-row search.
             </th>
-            <th>
+            <th id="jid-column">
                 @Html.DisplayNameFor(model => model.journal_id)
             </th>
             <th>
@@ -80,6 +149,9 @@
             var currentColorClass = "light-row";
                 var divider1 = "border-top: 2px solid black;";
                 var divider2 = "border-top: .5px solid #bdbdbd;";
+            var transactionsCount = Model.Count();
+            var instertedRowsCount = 0;
+            
         }
         @foreach (var item in Model)
         {
@@ -94,12 +166,54 @@
                     currentColorClass = "dark-row";
                 }
             }
+                 @* this inserts the total row before for the previouse journal before continuing the the current or next journal record *@
+                 @if (item.journal_id != currentJournalId && currentJournalId != 9999999999999999)
+                 {
+                     <tr class="general-journal-total-row" style="border-top: .5px solid #bdbdbd; width:100%;" data-journal-id="@currentJournalId">
+                        <td class="text-center" hidden>
+                            @combinedJournalStrings.FirstOrDefault(js => js.JournalId == item.journal_id)?.concatenatedString
+
+                        </td>
+                        <td id="transaction-date" hidden>
+                            @if (item.journal_id != currentJournalId)
+                            {
+                                @Html.DisplayFor(modelItem => item.transaction_date)
+                            }
+                        </td>
+                        <td id="transaction-date" hidden>
+                            @if (item.journal_id != currentJournalId)
+                            {
+                                @Html.DisplayFor(modelItem => item.transaction_date)
+                            }
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                       <td style="text-align:right;  font-weight:600; transform:translateX(50px);">Total: </td>
+                        <td id="transaction-amount" style="text-align:right; padding-right: 90px;">
+                             @{
+                                 var totalAmount = journalsWithTotals.FirstOrDefault(j => j.journal_id == currentJournalId);
+
+                             }
+                             @if (totalAmount != null)
+                             {
+                                 @totalAmount.total_adjustment?.ToString("C")
+                             }
+                         </td>                        
+                     </tr>
+                 }
+                @* this makes sure that the first row of any new transaction is formated with a heavy top border *@
                 <tr class="@currentColorClass" style="@(item.journal_id != currentJournalId ? divider1 : divider2)" data-journal-id="@item.journal_id">
                 <td class="text-center" hidden>
                     @combinedJournalStrings.FirstOrDefault(js => js.JournalId == item.journal_id)?.concatenatedString
 
                 </td>
-                <td class="text-center" style="opacity: .7;">
+                <td class="text-center" style="opacity: .85;">
                     @if (item.journal_id != currentJournalId)
                     {
                         <a asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the journal entry details.">
@@ -107,13 +221,13 @@
                         </a>
                     }
                 </td>
-                <td>
+                <td id="transaction-date">
                     @if (item.journal_id != currentJournalId)
                     {
                         @Html.DisplayFor(modelItem => item.transaction_date)
                     }
                 </td>
-                    <td style="text-align:left; opacity: .7;">
+                    <td style="text-align:left; opacity: .85;">
                     <a asp-action="ViewAccountDetails" asp-route-id="@item.debit_account" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the accounts details.">
                         @Html.DisplayFor(modelItem => item.dr_description)
                     </a>
@@ -138,14 +252,12 @@
                     {
                         @Html.DisplayFor(modelItem => item.created_by)
                     }
-
                 </td>
                 <td>
                     @if (item.journal_id != currentJournalId)
                     {
                         @Html.DisplayFor(modelItem => item.journal_date)
                     }
-
                 </td>
                 <td>
                     @if (item.journal_id != currentJournalId)
@@ -199,12 +311,56 @@
                 {
                     <td></td>
                 }
+                    @{
+                        currentJournalId = (int)item.journal_id;
+                        instertedRowsCount++;
+                    }
+          </tr>
 
-                @{
-                    currentJournalId = (int)item.journal_id;
+                @* this inserts the total row before for the previouse journal before continuing the the current or next journal record *@
+                @if (instertedRowsCount == transactionsCount)
+                {
+                    <tr class="general-journal-total-row" style="border-top: .5px solid #bdbdbd; width:100%;border-bottom: 1px solid black;" data-journal-id="@currentJournalId">
+                        <td class="text-center" hidden>
+                            @combinedJournalStrings.FirstOrDefault(js => js.JournalId == item.journal_id)?.concatenatedString
+
+                        </td>
+                        <td id="transaction-date" hidden>
+                            @if (item.journal_id != currentJournalId)
+                            {
+                                @Html.DisplayFor(modelItem => item.transaction_date)
+                            }
+                        </td>
+                        <td id="transaction-date" hidden>
+                            @if (item.journal_id != currentJournalId)
+                            {
+                                @Html.DisplayFor(modelItem => item.transaction_date)
+                            }
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        
+                        <td style="text-align:right;  font-weight:600; transform:translateX(50px);">Total: </td>
+                        <td id="transaction-amount" style="text-align:right; padding-right: 90px;">
+                            @{
+                                var totalAmount = journalsWithTotals.FirstOrDefault(j => j.journal_id == currentJournalId);
+
+                            }
+                            @if (totalAmount != null)
+                            {
+                                @totalAmount.total_adjustment?.ToString("C")
+                            }
+                        </td>
+                       
+                        
+                    </tr>
                 }
-
-            </tr>
         }
     </tbody>
 </table>
@@ -249,30 +405,38 @@
         }
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('searchInput');
-        const tableRows = document.querySelectorAll('table tr');
+// Wait for the document to be fully loaded before executing the script
+document.addEventListener('DOMContentLoaded', function () {
+    const getDateRangeButton = document.getElementById('getDateRangeButton');
+    const startDateInput = document.getElementById('startDateDropdownForm');
+    const endDateInput = document.getElementById('endDateDropdownForm');
 
-        searchInput.addEventListener('input', function () {
-            let visibleRows = Array.from(tableRows).filter(row => row.style.display !== 'none');
-            let groupedRows = {};
-            visibleRows.forEach(row => {
-                let journalId = row.getAttribute('data-journal-id');
-                if (!groupedRows[journalId]) {
-                    groupedRows[journalId] = [];
+    // Add event listener to the "Get Date Range" button
+    getDateRangeButton.addEventListener('click', function (event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Get start and end dates from inputs
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        // Get all table rows except the header row
+        const rows = document.querySelectorAll('#tableBody tr');
+
+        rows.forEach((row) => {
+            // Assuming transaction date is in the first td element
+            const transactionDateCell = row.getElementsByTagName('td')[1];
+            if (transactionDateCell) {
+                const transactionDate = new Date(transactionDateCell.textContent);
+
+                // Check if the transaction date falls within the range
+                if (startDate <= transactionDate && transactionDate <= endDate) {
+                    row.style.display = ''; // Show row
+                } else {
+                    row.style.display = 'none'; // Hide row
                 }
-                groupedRows[journalId].push(row);
-            });
-            let alternateClass = false;
-            Object.values(groupedRows).forEach(group => {
-                if (group.length > 0) {
-                    let className = alternateClass ? 'dark-row' : 'light-row';
-                    group.forEach(row => {
-                        row.className = className;
-                    });
-                    alternateClass = !alternateClass;
-                }
-            });
+            }
         });
     });
+});
 </script>
+<script src="~/js/filter.js"></script>

@@ -29,7 +29,7 @@ namespace oa.Models
 
         [NotMapped]
         [ValidateNever]
-        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.DateTime)]
         [DisplayName("Journal Date:")]
         public DateTime? journal_date { get; set; }
@@ -52,7 +52,7 @@ namespace oa.Models
         [NotMapped]
         [DisplayFormat(DataFormatString = "{0:C}")]
         [DisplayName("Total:")]
-        public string? total_adjustment { get; set; } = "$0.00";
+        public double? total_adjustment { get; set; }
 
         [NotMapped]
         [ValidateNever]
