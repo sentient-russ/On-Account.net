@@ -174,7 +174,7 @@ namespace OnAccount.Controllers
             }
             _dbConnectorService.logModelCreator(userScreenName, "locked account: " + lockedAccountModel.ScreenName, "");
             //disable user account
-            //_dbConnectorService.immediateLockout(Id, userScreenName);
+            _dbConnectorService.immediateLockout(Id);
             return RedirectToAction(nameof(EditAccountDetails), new { Id = Id });
         }
         [Authorize(Roles = "Administrator")]
@@ -190,12 +190,12 @@ namespace OnAccount.Controllers
                 var userId = user.Id;
                 userModel = _dbConnectorService.GetUserDetailsById(userId);
                 userScreenName = userModel.ScreenName;  //This is the login name for the user log.
-                // all other properties are now available is the userModel object two lines above.
+                // all other propertiAes are now available is the userModel object two lines above.
 
             }
             _dbConnectorService.logModelCreator(userScreenName, "unlocked account: " + lockedAccountModel.ScreenName, "");
             //enable user account
-            //_dbConnectorService.disableLockout(Id, userScreenName);
+            _dbConnectorService.disableLockout(Id);
             return RedirectToAction(nameof(EditAccountDetails), new { Id = Id });
         }
         [Authorize(Roles = "Administrator")]
