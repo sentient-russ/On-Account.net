@@ -423,9 +423,17 @@ namespace OnAccount.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+        [Authorize(Roles = "Manager")]
 
-
-        //
+        public async Task<IActionResult> viewAccountLogs(string? id)
+        {
+            AccountsModel currentAccount = _dbConnectorService.GetAccount(id);
+            ViewBag.Accountname=currentAccount.name;
+            string accountName = currentAccount.name;
+            List<LogModel> logs = _dbConnectorService.GetAccountLogs(accountName);
+            logs.Reverse();
+            return View(logs);
+        }
 
     }
 }
