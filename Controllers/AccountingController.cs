@@ -423,6 +423,10 @@ namespace OnAccount.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+
+
+        //grabs all logs that are relative to a specific account in the chart of accounts for the view
         [Authorize(Roles = "Manager")]
 
         public async Task<IActionResult> viewAccountLogs(string? id)
@@ -435,5 +439,34 @@ namespace OnAccount.Controllers
             return View(logs);
         }
 
+
+
+        [Authorize(Roles = "Manager, Accountant, Administrator")]
+ 
+        public async Task<IActionResult> viewTrialBalance()
+        {
+            List<AccountsModel> listOfAccounts=new List<AccountsModel>();
+            listOfAccounts = _dbConnectorService.GetNonZeroAccounts();
+            
+            List<TrialBalanceModel> trialBalanceModels = new List<TrialBalanceModel>();
+            for (int i = 0; i < listOfAccounts.Count(); i++)
+            {
+                TrialBalanceModel trialBalanceTemp = new TrialBalanceModel();
+                if (listOfAccounts[i].normal_side.Equals("Debit"))
+                {
+                    trialBalanceTemp.accountname = listOfAccounts[i].number+" - "+listOfAccounts[i].name;
+                    trialBalanceTemp.debit = (double)listOfAccounts[i].current_balance;
+                }
+                if (listOfAccounts[i].normal_side.Equals("Credit"))
+                {
+                    trialBalanceTemp.accountname = listOfAccounts[i].number + " - " + listOfAccounts[i].name;
+                    trialBalanceTemp.credit = (double)listOfAccounts[i].current_balance;
+                }
+                trialBalanceModels.Add(trialBalanceTemp);
+            }
+            DateTime currentDate = DateTime.Now;
+            ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
+            return View(trialBalanceModels);
+        }
     }
 }

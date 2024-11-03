@@ -1,0 +1,115 @@
+﻿@using oa.Models;
+@model IEnumerable<oa.Models.TrialBalanceModel>
+
+@{
+    ViewData["Title"] = "viewTrialBalance";
+    double runningBalance=0;
+    double totalDebit = 0;
+    double totalCredit = 0;
+}
+<div class="text-center margin-top-120">
+</div>
+<h1 class="text-center mb-4">Trial Balance</h1>
+<h3 class="text-center mb-4"> <span class="accent-color">@ViewBag.AccountName</span></h3>
+<h3 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h3>
+
+<div class="table-wrapper margin-top-20">
+    <table class="table  table-striped">
+        <thead class="table-top-row">
+    <thead>
+        <tr>
+            <th>
+                <td style="text-align:left;">
+                @Html.DisplayNameFor(model => model.accountname)
+            </th>
+            <th>
+            <td style="text-align:right; padding-right: 40px;">
+                @Html.DisplayNameFor(model => model.debit)
+            </th>
+            <th>
+            <td style="text-align:right; padding-right: 40px;">
+                @Html.DisplayNameFor(model => model.credit)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <th>
+                <td style="text-align:left;">
+                @Html.DisplayFor(modelItem => item.accountname)
+            </th>
+            <td>
+                <td style="text-align:right; padding-right: 40px;">
+
+                        @FormatNegativeDouble(item.debit)
+                        @{
+                            if (item.debit != 0){
+                                runningBalance += item.debit.GetValueOrDefault();
+                                totalDebit += item.debit.GetValueOrDefault();
+                            }
+                        }
+            </td>
+            <td>
+                <td style="text-align:right; padding-right: 40px;">
+                            @FormatNegativeDouble(item.credit)
+                            @{
+                                if (item.credit != 0)
+                                {
+                                    runningBalance -= item.credit.GetValueOrDefault();
+                                    totalCredit += item.credit.GetValueOrDefault();
+                                }
+                            }
+            </td>
+        </tr>
+}
+        <tr>
+            <th><td style="text-align:right; padding-right: 40px;"><strong>Totals</strong></th>
+            <th><td style="text-align:right; padding-right: 40px;text-decoration-line:underline;text-decoration-style:double"><strong> <span class="doubleUnderline">@FormatNegativeDouble((double?)totalDebit)</strong></span></th>
+            <th><td style="text-align:right; padding-right: 40px;text-decoration-line:underline;text-decoration-style:double"><strong><span class="doubleUnderline"> @FormatNegativeDouble((double?)totalCredit)</strong></span></th>
+            <th><strong></strong></th>
+        </tr
+    </tbody>
+    
+</table>
+@functions {
+    public static string FormatNegativeDouble(double? value)
+    {
+        if (value.HasValue)
+        {
+            Console.WriteLine($"Formatting value: {value}");
+            if (value < 0)
+            {
+                return $"({Math.Abs(value.Value).ToString("C")})";
+            }
+            return value.Value.ToString("C");
+        }
+        return string.Empty;
+    }
+}
+@* Search and Filter *@
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let input = this.value.toLowerCase();
+        let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            let rowData = rows[i].getElementsByTagName('td');
+            let match = false;
+
+            for (let j = 0; j < rowData.length; j++) {
+                if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (match) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    });
+</script>
