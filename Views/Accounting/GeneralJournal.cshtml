@@ -1,6 +1,15 @@
 ﻿@model IEnumerable<oa.Models.TransactionModel>
 @using oa.Services
 @using oa.Models
+
+@inject UserService CurrentUser
+
+@{
+    AppUserModel currentUser = CurrentUser.GetUser();
+    var UsersEmail = currentUser.Email;
+    var UserName = currentUser.ScreenName;
+}
+
 @{
     int currentJournalNumber = 0;
     double runningBalance = 0; // Initialize running balance
@@ -299,7 +308,7 @@
                             <a class="btn btn-outline-primary btn-table-margin" asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display journal details">Details</a>
                             <a class="btn btn-outline-secondary btn-table-margin" asp-action="ApproveJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Approve to add the journal to the ledger.">Approve</a>
                             @*<a class="btn btn-outline-danger btn-table-margin" asp-action="DenyJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Deny to keep the journal of the ledger.">Deny</a>*@
-                            <button type="button" class="btn btn-outline-danger btn-table-margin" data-bs-toggle="modal" data-bs-target="#denyModal" data-bs-journalid="@item.journal_id" data-bs-journaldesc="@item.description">Deny</button>
+                            <button type="button" class="btn btn-outline-danger btn-table-margin" data-bs-toggle="modal" data-bs-target="#denyModal" data-bs-journalid="@item.journal_id" data-bs-journaldesc="@item.description" data-bs-screenname="">Deny</button>
                             }
                     </td>
                 }
@@ -471,11 +480,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const denyModal = document.getElementById('denyModal')
     if (denyModal) {
         denyModal.addEventListener('show.bs.modal', event => {
+            
+            
             // Button that triggered the modal
             const button = event.relatedTarget
             // Extract info from data-bs-* attributes
             const journalId = button.getAttribute('data-bs-journalid')
             const journalDesc = button.getAttribute('data-bs-journaldesc')
+            const screenName = @currentUser.ScreenName
             // If necessary, you could initiate an Ajax request here
             // and then do the updating in a callback.
 
