@@ -362,15 +362,16 @@ namespace OnAccount.Controllers
         }
 
         //Denial of journal with comment
+        [HttpPost]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> DenyJournalWithComment(string? id, string? comment, string? commenter)
+        public async Task<JsonResult> DenyJournalWithCommentAsync(string? id, string? commenter, string? comment)
         {
 
-            string formatted_comment = $"Journal entry denied by: {commenter}: {comment}";
+            string formatted_comment = $"Denied by: {commenter}: {comment}";
 
             _dbConnectorService.UpdateTransactionStatus(id, formatted_comment);
             // need log update here
-            return RedirectToAction(nameof(GeneralJournal));
+            return Json(true);
         }
 
         //Only the manager can approve or deny a transaction.
