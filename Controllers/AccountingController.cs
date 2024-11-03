@@ -361,6 +361,15 @@ namespace OnAccount.Controllers
             return RedirectToAction(nameof(GeneralJournal));
         }
 
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> DenyJournalWithComment(string? id, string? comment)
+        {
+
+            _dbConnectorService.UpdateTransactionStatus(id, comment);
+            // need log update here
+            return RedirectToAction(nameof(GeneralJournal));
+        }
+
         //Only the manager can approve or deny a transaction.
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> ApproveJournal(string? id)
