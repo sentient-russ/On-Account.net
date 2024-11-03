@@ -35,6 +35,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
         builder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
     }
     public virtual DbSet<oa.Models.AppUserModel> AppUserModel { get; set; } = default!;
+    public DbSet<oa.Models.TrialBalanceModel>? TrialBalanceModel { get; set; }
 }
 internal class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<AppUser>
 {
