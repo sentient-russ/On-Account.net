@@ -299,7 +299,7 @@
                             <a class="btn btn-outline-primary btn-table-margin" asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display journal details">Details</a>
                             <a class="btn btn-outline-secondary btn-table-margin" asp-action="ApproveJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Approve to add the journal to the ledger.">Approve</a>
                             @*<a class="btn btn-outline-danger btn-table-margin" asp-action="DenyJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Deny to keep the journal of the ledger.">Deny</a>*@
-                            <a class="btn btn-outline-danger btn-table-margin" data-bs-toggle="modal" data-bs-target="#denyCommentModal" role="button" data-bs-placement="bottom" data-bs-journalid="@item.journal_id" data-bs-journaldesc="@item.description">Deny</a>
+                            <button type="button" class="btn btn-outline-danger btn-table-margin" data-bs-toggle="modal" data-bs-target="#denyModal" data-bs-journalid="@item.journal_id" data-bs-journaldesc="@item.description">Deny</button>
                             }
                     </td>
                 }
@@ -443,50 +443,51 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="~/js/filter.js"></script>
 
 @*Modal for denying a journal entry*@
-<div class="modal fade" id="denyCommentModal" tabindex="-1" aria-labelledby="denyCommentModalLabel" aria-hidden="true">
+<div class="modal fade" id="denyModal" tabindex="-1" aria-labelledby="denyModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="denyCommentModalLabel">Denial of journal entry</h1>
+                <h1 class="modal-title fs-5" id="denyModalLabel">New message</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form>
                     <div class="mb-3">
-                        <label for="comment-text" class="col-form-label">Comment:</label>
-                        <textarea class="form-control" id="comment-text" rows="10"></textarea>
+                        <label for="reason-text" class="col-form-label">Reason of denial:</label>
+                        <textarea class="form-control" id="reason-text" rows="10"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary">Confirm denial (Not Functional Yet)</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Confirm denial</button>
             </div>
         </div>
     </div>
 </div>
 
-@*Script for denial-comment modal*@
+@*Script for populatig denial modal text for a certain journal entry button clicked*@
 <script>
-    const denyCommentModal = document.getElementById('denyCommentModal')
-    if (denyCommentModal) {
-        denyCommentModal.addEventListener('show.bs.modal', event => {
+    const denyModal = document.getElementById('denyModal')
+    if (denyModal) {
+        denyModal.addEventListener('show.bs.modal', event => {
             // Button that triggered the modal
             const button = event.relatedTarget
             // Extract info from data-bs-* attributes
-            const journal_id = button.getAttribute('data-bs-journalid')
-            const journal_desc = button.getAttribute('data-bs-journaldesc')
+            const journalId = button.getAttribute('data-bs-journalid')
+            const journalDesc = button.getAttribute('data-bs-journaldesc')
             // If necessary, you could initiate an Ajax request here
             // and then do the updating in a callback.
 
             // Update the modal's content.
-            const modalTitle = denyCommentModal.querySelector('.modal-title')
-            const modalBodyInput = denyCommentModal.querySelector('.modal-body input')
+            const modalTitle = denyModal.querySelector('.modal-title')
+            const modalBodyInput = denyModal.querySelector('.modal-body input')
 
-            if (journal_desc == "") {
-                modalTitle.textContent = `Denial of journal entry: ID ${journal_id}`
+
+            if (journalDesc == "") {
+                modalTitle.textContent = `Denial of jounral entry: ID ${journalId}`
             } else {
-                modalTitle.textContent = `Denial of journal entry: ID ${journal_id}: ${journal_desc}`
+                modalTitle.textContent = `Denial of jounral entry: ID ${journalId}: ${journalDesc}`
             }
         })
     }
