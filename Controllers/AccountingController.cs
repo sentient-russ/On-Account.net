@@ -361,11 +361,14 @@ namespace OnAccount.Controllers
             return RedirectToAction(nameof(GeneralJournal));
         }
 
+        //Denial of journal with comment
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> DenyJournalWithComment(string? id, string? comment)
+        public async Task<IActionResult> DenyJournalWithComment(string? id, string? comment, string? commenter)
         {
 
-            _dbConnectorService.UpdateTransactionStatus(id, comment);
+            string formatted_comment = $"Journal entry denied by: {commenter}: {comment}";
+
+            _dbConnectorService.UpdateTransactionStatus(id, formatted_comment);
             // need log update here
             return RedirectToAction(nameof(GeneralJournal));
         }
