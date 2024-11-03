@@ -580,7 +580,7 @@ namespace oa.Services
         }
 
         /*
-         * Gets a sindgle account based on its id
+         * Gets a single account based on its id
          */
         public AccountsModel GetAccount(string idIn)
         {
@@ -588,10 +588,10 @@ namespace oa.Services
             try
             {                
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "SELECT * FROM on_account.account WHERE id = @Id";
+                string command = "SELECT * FROM on_account.account WHERE number = @Id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
-                cmd1.Parameters.AddWithValue("@id", idIn);
+                cmd1.Parameters.AddWithValue("@Id", idIn);
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 while (reader1.Read())
                 {                    
@@ -822,9 +822,23 @@ namespace oa.Services
             {
                 Console.WriteLine(ex.ToString());
             }
-            
-            logModelCreator(transactionIn.created_by,"Transaction added","");
+            string logString = "Transaction added to Account: ";
+            string accountName = "";
             string? accountNumber = "";
+            AccountsModel currentAccount = new AccountsModel();
+            if (transactionIn.debit_account != 0)
+            {
+                accountNumber =transactionIn.debit_account.ToString();
+                currentAccount = GetAccount(accountNumber);
+            }
+            else if (transactionIn.credit_account != 0)
+            {
+                accountNumber = transactionIn.credit_account.ToString();
+                currentAccount = GetAccount(accountNumber);
+            }
+            logString = logString + currentAccount.name;
+            logModelCreator(transactionIn.created_by,logString,"");
+            accountNumber = "";
             if (transactionIn.credit_account != 0)
             {
                 accountNumber = transactionIn.credit_account.ToString();
@@ -868,6 +882,39 @@ namespace oa.Services
                 string command = "SELECT * FROM on_account.log";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    LogModel log = new LogModel();
+                    log.Id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    log.ChangeDate = reader1.IsDBNull(1) ? null : reader1.GetDateTime(1);
+                    log.UserId = reader1.IsDBNull(2) ? null : reader1.GetString(2);
+                    log.ChangedFrom = reader1.IsDBNull(3) ? null : reader1.GetString(3);
+                    log.ChangedTo = reader1.IsDBNull(4) ? null : reader1.GetString(4);
+                    logs.Add(log);
+
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return logs;
+        }
+
+        public List<LogModel> GetAccountLogs(string? id)
+        {
+            List<LogModel> logs = new List<LogModel>();
+            id = "%" + id + "%";
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.log where ChangedFrom like @AccountID";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@AccountID", id);
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 while (reader1.Read())
                 {
