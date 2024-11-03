@@ -308,7 +308,7 @@
                             <a class="btn btn-outline-primary btn-table-margin" asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display journal details">Details</a>
                             <a class="btn btn-outline-secondary btn-table-margin" asp-action="ApproveJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Approve to add the journal to the ledger.">Approve</a>
                             @*<a class="btn btn-outline-danger btn-table-margin" asp-action="DenyJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Deny to keep the journal of the ledger.">Deny</a>*@
-                            <button type="button" class="btn btn-outline-danger btn-table-margin" data-bs-toggle="modal" data-bs-target="#denyModal" data-bs-journalid="@item.journal_id" data-bs-journaldesc="@item.description" data-bs-screenname="">Deny</button>
+                            <button type="button" class="btn btn-outline-danger btn-table-margin" data-bs-toggle="modal" data-bs-target="#denyModal" data-bs-journalid="@item.journal_id" data-bs-journaldesc="@item.description">Deny</button>
                             }
                     </td>
                 }
@@ -469,7 +469,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Confirm denial</button>
+                <button type="button" class="btn btn-primary" onclick="confirmDenyAction()">Confirm denial</button>
             </div>
         </div>
     </div>
@@ -477,30 +477,50 @@ document.addEventListener('DOMContentLoaded', function () {
 
 @*Script for populatig denial modal text for a certain journal entry button clicked*@
 <script>
+
+    var screenName = "@currentUser.ScreenName";
+    var journalId;
+    var journalDesc;
+
     const denyModal = document.getElementById('denyModal')
     if (denyModal) {
         denyModal.addEventListener('show.bs.modal', event => {
             
-            
             // Button that triggered the modal
-            const button = event.relatedTarget
+            var button = event.relatedTarget;
             // Extract info from data-bs-* attributes
-            const journalId = button.getAttribute('data-bs-journalid')
-            const journalDesc = button.getAttribute('data-bs-journaldesc')
-            const screenName = @currentUser.ScreenName
+            journalId = button.getAttribute('data-bs-journalid');
+            journalDesc = button.getAttribute('data-bs-journaldesc');
             // If necessary, you could initiate an Ajax request here
             // and then do the updating in a callback.
 
             // Update the modal's content.
-            const modalTitle = denyModal.querySelector('.modal-title')
-            const modalBodyInput = denyModal.querySelector('.modal-body input')
+            var modalTitle = denyModal.querySelector('.modal-title');
+            var modalBodyInput = denyModal.querySelector('.modal-body input');
 
 
             if (journalDesc == "") {
-                modalTitle.textContent = `Denial of jounral entry: ID ${journalId}`
+                modalTitle.textContent = `Denial of jounral entry: ID ${journalId}`;
             } else {
-                modalTitle.textContent = `Denial of jounral entry: ID ${journalId}: ${journalDesc}`
+                modalTitle.textContent = `Denial of jounral entry: ID ${journalId}: ${journalDesc}`;
             }
         })
+    }
+
+    function confirmDenyAction() {
+        var comment_string = document.getElementById('reason-text').value;
+        $.ajax({
+            type: "POST",
+            url: "/Accounting/DenyJournalWithComment",
+            data: { id: journalId, commenter: screenName, comment: comment_string },
+            dataType: "json",
+            success: function (response) {
+                if (response == true)
+                {
+                    alert(`Journal entry ID ${journalId} has been denied. You will now be redirected.`);
+                    window.location.href = '@Url.Action("GeneralJournal", "Accounting")';
+                }
+            }
+        });
     }
 </script>
