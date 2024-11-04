@@ -72,8 +72,7 @@
                             @FormatNegativeDouble(item.debit_amount)
                         }
 
-                    }
-                    
+                    }                    
                 </td>
                 <td style="text-align:right;">@{
                         if(item.credit_amount != 0)
@@ -102,8 +101,7 @@
                         } else if (normalSide == "Credit")
                         {
                             runningBalance += item.credit_amount.GetValueOrDefault() - item.debit_amount.GetValueOrDefault();
-                        }
-                        
+                        }                        
                         @FormatNegativeDouble(runningBalance)
                     }
                 </td>
@@ -111,15 +109,13 @@
         }
         <tr>
             <th ><strong>Totals</strong></th>
-                <th><strong> <span class="accent-color">@FormatNegativeDouble((double?)ViewBag.TotalDebitAmount)</strong></span></th>
-                <th><strong><span class="accent-color">@FormatNegativeDouble((double?)ViewBag.TotalCreditAmount)</strong></span></th>
-            <th><strong></strong></th>
-
+            <th><strong> <span class="accent-color">@FormatNegativeDouble((double?)ViewBag.TotalDebitAmount)</strong></span></th>
+            <th><strong><span class="accent-color">@FormatNegativeDouble((double?)ViewBag.TotalCreditAmount)</strong></span></th>
             <th><strong></strong></th>
             <th><strong></strong></th>
             <th><strong></strong></th>
-                <th style ="text-align:right; padding-right:20px;"><strong><span class=" accent-color" ">@FormatNegativeDouble(runningBalance)</strong></span></th>
-            
+            <th><strong></strong></th>
+            <th style ="text-align:right; padding-right:20px;"><strong><span class=" accent-color" ">@FormatNegativeDouble(runningBalance)</strong></span></th>            
         </tr>
 
     </tbody>
