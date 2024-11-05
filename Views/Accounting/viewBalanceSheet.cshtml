@@ -1,0 +1,153 @@
+﻿@model IEnumerable<oa.Models.AccountsModel>
+
+@{
+    ViewData["Title"] = "viewBalanceSheet";
+    double assetsTotal = 0;
+    double equityTotal = 0;
+    double liabilityTotal = 0;
+    double netIncomeTotal = 0;
+    int numberOfAssetAccounts = ViewBag.numberOfAssetAccounts;
+    int numberOfEquityAccounts = ViewBag.numberOfEquityAccounts;
+    int numberOfLiabilityAccounts = ViewBag.numberOfLiabilityAccounts;
+    double totalLiabilityAndEquity = 0;
+    int count = 0;
+}
+
+<div class="text-center margin-top-120">
+</div>
+<h1 class="text-center mb-4">Balance Sheet</h1>
+<h2 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h2>
+
+<div class="table-wrapper margin-top-20">
+    <table class="table  table-striped">
+        <thead class="table-top-row">
+        <thead>
+            <tr>
+                <th style="text-align:left">
+                        @Html.DisplayNameFor(model => model.name)
+
+                <th style="text-align:right;padding-right:40px">
+                    Total Amount
+                </th>
+
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+        <td style="text-align:left;padding-left: 40px;">Assets</td>
+        <td></td>
+                @foreach (var item in Model)
+                {
+                    @if (item.type.Equals("Asset"))
+                    {
+                <tr>
+                    <td style="text-align:left;padding-left: 80px;">
+                                @Html.DisplayFor(modelItem => item.name)
+                    </td>
+
+                    <td style="text-align:right;padding-right: 120px;">
+                                @FormatNegativeDouble(((double)item.current_balance))
+
+                    </td>
+                            @{
+                                assetsTotal += (double)item.current_balance;
+                                count++;
+                            }
+
+                </tr>
+                <tr>
+                            @if (count == numberOfAssetAccounts)
+                            {
+                        <td style="text-align:left;padding-left: 35px;">Asset Total:</td>
+                        <td style="text-align:right;padding-right:40px"><strong>@FormatNegativeDouble(assetsTotal)</td>
+                                count = 0;
+                            }
+                </tr>
+
+                    }
+
+                }
+
+        <td style="text-align:left;padding-left: 40px;">Equity</td>
+        <td></td>
+                @foreach (var item in Model)
+                {
+                    @if (item.type.Equals("Equity"))
+                    {
+                <tr>
+                    <td style="text-align:left;padding-left: 80px;">
+                                @Html.DisplayFor(modelItem => item.name)
+                    </td>
+
+                    <td style="text-align:right;padding-right: 120px;">
+                                @FormatNegativeDouble(((double)item.current_balance))
+                    </td>
+                            @{
+                                equityTotal += (double)item.current_balance;
+                                count++;
+                            }
+                </tr>
+                <tr>
+                            @if (count == (numberOfEquityAccounts))
+                            {
+                        <td style="text-align:left;padding-left: 35px;">Equity Total:</td>
+                        <td style="text-align:right;padding-right:40px"><strong>@FormatNegativeDouble(equityTotal)</td>
+                                count = 0;
+                            }
+                </tr>
+
+                    }
+                }
+        <td style="text-align:left;padding-left: 40px;">Liabilities</td>
+        <td></td>
+                @foreach (var item in Model)
+                {
+                    @if (item.type.Equals("Liability"))
+                    {
+                <tr>
+                    <td style="text-align:left;padding-left: 80px;">
+                                @Html.DisplayFor(modelItem => item.name)
+                    </td>
+
+                    <td style="text-align:right;padding-right: 120px;">
+                                @FormatNegativeDouble(((double)item.current_balance))
+                    </td>
+                            @{
+                                liabilityTotal += (double)item.current_balance;
+                                count++;
+                            }
+                </tr>
+                <tr>
+                            @if (count == (numberOfLiabilityAccounts))
+                            {
+                        <td style="text-align:left;padding-left: 35px;">Liabilities Total:</td>
+                        <td style="text-align:right;padding-right:40px"><strong>@FormatNegativeDouble(liabilityTotal)</td>
+                                count = 0;
+                                totalLiabilityAndEquity=liabilityTotal+equityTotal;
+                            }
+                </tr>
+
+                    }
+                }
+        <td style="text-align:left;padding-left: 40px;">Total Liabilities and Equity</td>
+        <td style="text-align:right;padding-right:40px"><strong>@FormatNegativeDouble(totalLiabilityAndEquity)</td>
+        </tbody>
+
+    </table>
+    @functions {
+        public static string FormatNegativeDouble(double? value)
+        {
+            if (value.HasValue)
+            {
+                Console.WriteLine($"Formatting value: {value}");
+                if (value < 0)
+                {
+                    return $"({Math.Abs(value.Value).ToString("C")})";
+                }
+                return value.Value.ToString("C");
+            }
+            return string.Empty;
+        }
+    }
+
