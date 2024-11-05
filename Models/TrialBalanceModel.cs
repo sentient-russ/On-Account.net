@@ -9,6 +9,7 @@ namespace oa.Models
     public class TrialBalanceModel
     {
         [Key]
+        [DisplayName("Account:")]
         public string? accountname{ get; set; }
 
         [ModelBinder(BinderType = typeof(CurrencyModelBinder))]
