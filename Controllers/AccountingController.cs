@@ -444,7 +444,7 @@ namespace OnAccount.Controllers
         }
 
 
-
+        //creates the trial balance view
         [Authorize(Roles = "Manager, Accountant, Administrator")]
  
         public async Task<IActionResult> viewTrialBalance()
@@ -472,5 +472,23 @@ namespace OnAccount.Controllers
             ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
             return View(trialBalanceModels);
         }
+        [Authorize(Roles = "Manager, Accountant, Administrator")]
+        public async Task<IActionResult> viewIncomeStatement()
+        {
+            List <AccountsModel> accounts = new List<AccountsModel>();
+            accounts = _dbConnectorService.GetAccountsOnType("Revenue");
+            ViewBag.numberOfRevenueAccounts=accounts.Count;
+            List<AccountsModel> tempAccounts = new List<AccountsModel>();
+            tempAccounts = _dbConnectorService.GetAccountsOnType("Expense");
+            for(int i = 0; i < tempAccounts.Count(); i++)
+            {
+                accounts.Add(tempAccounts[i]);
+            }
+            ViewBag.numberOfExpenseAccounts=tempAccounts.Count;
+            DateTime currentDate = DateTime.Now;
+            ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
+            return View(accounts);
+        }
+        
     }
 }
