@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using oa.Areas.Identity.Data;
 using oa.Areas.Identity.Services;
+using System.Net;
 
 namespace OnAccount.Controllers
 {
@@ -472,6 +473,10 @@ namespace OnAccount.Controllers
             ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
             return View(trialBalanceModels);
         }
+
+
+
+        //view for the income statement
         [Authorize(Roles = "Manager, Accountant, Administrator")]
         public async Task<IActionResult> viewIncomeStatement()
         {
@@ -489,6 +494,33 @@ namespace OnAccount.Controllers
             ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
             return View(accounts);
         }
-        
+
+
+
+        //view for the balance sheet
+        [Authorize(Roles = "Manager, Accountant, Administrator")]
+        public async Task<IActionResult> viewBalanceSheet()
+        {
+            List<AccountsModel> accounts = new List<AccountsModel>();
+            accounts = _dbConnectorService.GetAccountsOnType("Asset");
+            ViewBag.numberOfAssetAccounts = accounts.Count;
+            List<AccountsModel> tempAccounts1 = new List<AccountsModel>();
+            tempAccounts1 = _dbConnectorService.GetAccountsOnType("Equity");
+            for (int i = 0; i < tempAccounts1.Count(); i++)
+            {
+                accounts.Add(tempAccounts1[i]);
+            }
+            ViewBag.numberOfEquityAccounts=tempAccounts1.Count;
+            List<AccountsModel> tempAccounts2 = new List<AccountsModel>();
+            tempAccounts2 = _dbConnectorService.GetAccountsOnType("Liability");
+            for (int i = 0; i < tempAccounts2.Count(); i++)
+            {
+                accounts.Add(tempAccounts2[i]);
+            }
+            ViewBag.numberOfLiabilityAccounts = tempAccounts2.Count;
+            DateTime currentDate = DateTime.Now;
+            ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
+            return View(accounts);
+        }
     }
 }
