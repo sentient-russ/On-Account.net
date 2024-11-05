@@ -1,0 +1,124 @@
+﻿@model IEnumerable<oa.Models.AccountsModel>
+
+@{
+    ViewData["Title"] = "viewIncomeStatement";
+    double revenueTotal=0;
+    double expenseTotal = 0;
+    double netIncomeTotal = 0;
+    int numberOfRevenueAccounts = ViewBag.numberOfRevenueAccounts;
+    int numberOfExpenseAccounts = ViewBag.numberOfExpenseAccounts;
+    int count = 0;
+}
+
+<div class="text-center margin-top-120">
+</div>
+<h1 class="text-center mb-4">Income Statement</h1>
+<h2 class="text-center mb-4">For the period ending: <span class="accent-color">@ViewBag.Date</span></h2>
+
+<div class="table-wrapper margin-top-20">
+    <table class="table  table-striped">
+        <thead class="table-top-row">
+    <thead>
+        <tr>
+            <th style="text-align:left">
+                @Html.DisplayNameFor(model => model.name)
+
+            <th style="text-align:right;padding-right:40px">
+                Total Amount
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+        
+    <tbody>
+                <td style="text-align:left;padding-left: 40px;">Revenues</td>
+                <td></td>
+        @foreach (var item in Model) {
+            @if (item.type.Equals("Revenue"))
+            {
+                <tr>
+                     <td style="text-align:left;padding-left: 80px;">
+                        @Html.DisplayFor(modelItem => item.name)
+                    </td>
+
+                      <td style="text-align:right;padding-right: 120px;">
+                                @FormatNegativeDouble(((double)item.current_balance))
+                        
+                    </td>
+                        @{
+                             revenueTotal+=(double)item.current_balance;
+                             count++;
+                         }
+                                
+                 </tr>
+                 <tr>
+                                @if (count == numberOfRevenueAccounts)
+                                {
+                                <td style="text-align:left;padding-left: 35px;">Revenue Total:</td>
+                                <td style="text-align:right;padding-right:40px"><strong>@FormatNegativeDouble(revenueTotal)</td>
+                                    count = 0;
+                                }
+                 </tr>
+                            
+             }
+                       
+}
+
+                <td style="text-align:left;padding-left: 40px;">Expenses</td>
+                <td></td>
+        @foreach (var item in Model)
+        {
+            @if (item.type.Equals("Expense"))
+            {
+                <tr>
+                    <td style="text-align:left;padding-left: 80px;">
+                        @Html.DisplayFor(modelItem => item.name)
+                    </td>
+
+                    <td style="text-align:right;padding-right: 120px;">
+                                    @FormatNegativeDouble(((double)item.current_balance))
+                </td>
+                                @{
+                                    expenseTotal += (double)item.current_balance;
+                                    count++;
+                                }
+            </tr>
+                        <tr>
+                                @if (count == (numberOfExpenseAccounts))
+                                {
+                                <td style ="text-align:left;padding-left: 35px;">Expense Total:</td>
+                                <td style="text-align:right;padding-right:40px"><strong>@FormatNegativeDouble(expenseTotal)</td>
+                                    count = 0;
+                                }
+                        </tr>
+                            
+                        }
+        }
+        @{
+            netIncomeTotal=revenueTotal-expenseTotal;
+        }
+        <tr>
+                    <td style="text-align:left;padding-left: 40px;">Net Income Total:</td>
+                    <td style="text-align:right;text-decoration-line:underline;text-decoration-style:double;padding-right:40px;"><strong><span class="doubleUnderline">@FormatNegativeDouble(netIncomeTotal)</td>
+        </tr>
+        
+    </tbody>
+        
+</table>
+            @functions {
+                public static string FormatNegativeDouble(double? value)
+                {
+                    if (value.HasValue)
+                    {
+                        Console.WriteLine($"Formatting value: {value}");
+                        if (value < 0)
+                        {
+                            return $"({Math.Abs(value.Value).ToString("C")})";
+                        }
+                        return value.Value.ToString("C");
+                    }
+                    return string.Empty;
+                }
+            }
+    
