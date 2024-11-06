@@ -571,5 +571,45 @@ namespace OnAccount.Controllers
             ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
             return View(accounts);
         }
+
+
+        //view for the Owner's equity
+        [Authorize(Roles = "Manager, Accountant, Administrator")]
+        public async Task<IActionResult> viewOwnersEquity()
+        {
+            List<AccountsModel> accounts = new List<AccountsModel>();
+            accounts = _dbConnectorService.GetAccountsOnType("Asset");
+            ViewBag.numberOfAssetAccounts = accounts.Count;
+            List<AccountsModel> tempAccounts1 = new List<AccountsModel>();
+            tempAccounts1 = _dbConnectorService.GetAccountsOnType("Equity");
+            for (int i = 0; i < tempAccounts1.Count(); i++)
+            {
+                accounts.Add(tempAccounts1[i]);
+            }
+            ViewBag.numberOfEquityAccounts = tempAccounts1.Count;
+            List<AccountsModel> tempAccounts2 = new List<AccountsModel>();
+            tempAccounts2 = _dbConnectorService.GetAccountsOnType("Liability");
+            for (int i = 0; i < tempAccounts2.Count(); i++)
+            {
+                accounts.Add(tempAccounts2[i]);
+            }
+            AccountsModel tempAccounts3 = new AccountsModel();
+            tempAccounts3 = _dbConnectorService.GetAccount("290");
+            AccountsModel tempAccounts4 = new AccountsModel();
+            tempAccounts4 = _dbConnectorService.GetAccount("295");
+            ViewBag.numberOfLiabilityAccounts = tempAccounts2.Count;
+            ViewBag.retainedEarningsStartingBalance=tempAccounts3.current_balance;
+            ViewBag.dividendsBalance = tempAccounts3.current_balance;
+            DateTime startingPeriod = (DateTime)tempAccounts3.account_creation_date;
+            ViewBag.startingPeriod = startingPeriod.ToString("MM-dd-yyyy");
+            DateTime currentDate = DateTime.Now;
+            ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
+
+            return View(accounts);
+        }
+
+
+
+
     }
 }

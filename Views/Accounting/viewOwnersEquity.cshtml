@@ -1,0 +1,119 @@
+﻿@model IEnumerable<oa.Models.AccountsModel>
+
+@{
+    ViewData["Title"] = "viewOwnersEquity";
+}
+
+<h1>viewOwnersEquity</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.sort_priority)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.normal_side)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.term)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.statement_type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.account_creation_date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.opening_transaction_num)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.current_balance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.created_by)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.account_status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.starting_balance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.comments)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.sort_priority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.normal_side)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.term)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.statement_type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.account_creation_date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.opening_transaction_num)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.current_balance)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.created_by)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.account_status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.starting_balance)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.comments)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
