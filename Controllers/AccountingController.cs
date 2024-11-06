@@ -298,6 +298,52 @@ namespace OnAccount.Controllers
             }
             return View(currentTransactions);
         }
+        public async Task<IActionResult> GeneralJournalTransactionFocus(int Id)
+        {
+            List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
+            List<TransactionModel> currentTransactions = _dbConnectorService.GetAllTransactions();
+            for (var i = 0; i < currentTransactions.Count; i++)
+            {
+                if (currentTransactions[i].debit_amount == 0)
+                {
+                    currentTransactions[i].debit_amount = null;
+                }
+                else if (currentTransactions[i].credit_amount == 0)
+                {
+                    currentTransactions[i].credit_amount = null;
+                }
+            }
+            for (int i = 0; i < currentTransactions.Count; i++)
+            {
+                currentTransactions[i].cr_description = currentAccounts
+                    .Where(account => account.number == currentTransactions[i].credit_account)
+                    .Select(account => account.name)
+                    .FirstOrDefault();
+                if (currentTransactions[i].credit_account != 0)
+                {
+                    currentTransactions[i].cr_description = currentTransactions[i].credit_account + " - " + currentTransactions[i].cr_description;
+                }
+                else
+                {
+                    currentTransactions[i].cr_description = null;
+                }
+                currentTransactions[i].dr_description = currentAccounts
+                    .Where(account => account.number == currentTransactions[i].debit_account)
+                    .Select(account => account.name)
+                    .FirstOrDefault();
+                if (currentTransactions[i].debit_account != 0)
+                {
+                    currentTransactions[i].dr_description = currentTransactions[i].debit_account + " - " + currentTransactions[i].dr_description;
+                }
+                else
+                {
+                    currentTransactions[i].dr_description = null;
+                }
+            }
+            //the magic happens here.
+            ViewBag.JournalFocusId = Id;
+            return View(currentTransactions);
+        }
 
         //All users can view journal details
         [Authorize(Roles = "Administrator, Manager, Accountant")]
@@ -310,6 +356,7 @@ namespace OnAccount.Controllers
             infoBundle.created_by = infoBundle.transactions_list[0].created_by;
             infoBundle.status = infoBundle.transactions_list[0].status;
             infoBundle.journal_date = infoBundle.transactions_list[0].journal_date;
+            infoBundle.journal_description = infoBundle.transactions_list[0].journal_description;
 
             for (int i = 0; i < infoBundle.transactions_list.Count; i++)
             {
@@ -320,11 +367,12 @@ namespace OnAccount.Controllers
                 if (infoBundle.transactions_list[i].credit_account != 0)
                 {
                     infoBundle.transactions_list[i].cr_description = infoBundle.transactions_list[i].credit_account + " - " + infoBundle.transactions_list[i].cr_description;
-                } else
+                }
+                else
                 {
                     infoBundle.transactions_list[i].cr_description = null;
                 }
-                
+
                 infoBundle.transactions_list[i].dr_description = currentAccounts
                     .Where(account => account.number == infoBundle.transactions_list[i].debit_account)
                     .Select(account => account.name)
@@ -339,7 +387,7 @@ namespace OnAccount.Controllers
                     infoBundle.transactions_list[i].dr_description = null;
                 }
             }
-            double balance = 0;            
+            double balance = 0;
             //Just add one side of the T account for the total journal amount
             for (int i = 0; i < infoBundle.transactions_list.Count; i++)
             {
@@ -351,16 +399,16 @@ namespace OnAccount.Controllers
             infoBundle.total_adjustment = balance;
             return View(infoBundle);
         }
-
         //Only the manager can approve or deny a transaction.
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DenyJournal(string? id)
         {
-            
+
             _dbConnectorService.UpdateTransactionStatus(id, "Denied");
             // need log update here
             return RedirectToAction(nameof(GeneralJournal));
         }
+
 
         //Denial of journal with comment
         [HttpPost]
@@ -370,10 +418,11 @@ namespace OnAccount.Controllers
 
             string formatted_comment = $"Denied by: {commenter}: {comment}";
 
-            _dbConnectorService.UpdateTransactionStatusAndDescription(id, "Denied", formatted_comment);
+            _dbConnectorService.UpdateJournalNotes(id, formatted_comment);
             // need log update here
             return Json(true);
         }
+
 
         //Only the manager can approve or deny a transaction.
         [Authorize(Roles = "Manager")]
@@ -432,7 +481,7 @@ namespace OnAccount.Controllers
 
 
         //grabs all logs that are relative to a specific account in the chart of accounts for the view
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Administrator")]
 
         public async Task<IActionResult> viewAccountLogs(string? id)
         {

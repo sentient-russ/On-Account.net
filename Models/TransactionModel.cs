@@ -144,8 +144,8 @@ namespace oa.Models
             sb.Append(description ?? "");
             sb.Append(" | ");
             sb.Append(transaction_number.HasValue ? transaction_number.Value.ToString() : "");
-            sb.Append(" | ");
-            sb.Append(journal_description ?? "");
+           /* sb.Append(" | "); //must stay removed to avoid general journal sorting issue.
+            sb.Append(journal_description ?? "");*/
             sb.Append(" | ");
             sb.Append(journal_date.HasValue ? journal_date.Value.ToString("MM-dd-yyyy") : "");
             sb.Append(" | ");

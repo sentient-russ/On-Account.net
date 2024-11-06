@@ -1541,6 +1541,62 @@ namespace oa.Services
             }
             return transactionId;
         }
+        /*
+         * Gets current journal description
+         * 
+         */
+        public string GetJournalNotes(string? journalNumIn)
+        {
+            string currentJournalDescription = "";
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT journal_description FROM on_account.transaction WHERE journal_id = @journal_id";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@journal_id", Int32.Parse(journalNumIn));
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    currentJournalDescription = reader1.IsDBNull(0) ? null : reader1.GetString(0);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return currentJournalDescription;
+        }
+
+        /*
+         * Updates journal transaction description
+         * 
+         */
+        public void UpdateJournalNotes(string? journalNumIn, string? appendStrIn)
+        {
+
+            string currentNotes = GetJournalNotes(journalNumIn);
+            string nextNotes = currentNotes + " (" + appendStrIn + ") ";
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "UPDATE on_account.transaction SET journal_description = @journal_description WHERE journal_id = @journal_id";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@journal_description", nextNotes);
+                cmd1.Parameters.AddWithValue("@journal_id", Int32.Parse(journalNumIn));
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            UpdateTransactionStatus(journalNumIn, "Denied");
+        }
 
         /*
          * Updates journal transaction status
@@ -1555,37 +1611,6 @@ namespace oa.Services
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@status", newStatusIn);
-                cmd1.Parameters.AddWithValue("@journal_id", Int32.Parse(journalNumIn));
-                MySqlDataReader reader1 = cmd1.ExecuteReader();
-                reader1.Close();
-                conn1.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            if (newStatusIn == "Approved")
-            {
-                string transactionId = GetTransactionNum(journalNumIn);
-                // add transaction id to journal entry post ref field where journalNumIn == JournalNum
-                UpdatePostRef(journalNumIn, transactionId);
-            }
-        }
-
-        /*
-         * Updates journal transaction status as well as description
-         * 
-         */
-        public void UpdateTransactionStatusAndDescription(string? journalNumIn, string? newStatusIn, string? description)
-        {
-            try
-            {
-                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "UPDATE on_account.transaction SET status = @status, description = @description WHERE journal_id = @journal_id";
-                conn1.Open();
-                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
-                cmd1.Parameters.AddWithValue("@status", newStatusIn);
-                cmd1.Parameters.AddWithValue("@description", description);
                 cmd1.Parameters.AddWithValue("@journal_id", Int32.Parse(journalNumIn));
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();

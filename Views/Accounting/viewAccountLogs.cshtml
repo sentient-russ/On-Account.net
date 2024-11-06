@@ -8,14 +8,13 @@
 <div class="search-row">
     <div class="search-colum-1" style="margin-left: 60px;">
     </div>
-    <div class="search-colum-2">
-        <img src="~/img/search.svg" class="search-img" text-align:right;" />
-    </div>
     <div class="search-colum-3">
         <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
+        <img src="~/img/search.svg" class="mng-acct-search-img" />
     </div>
 </div>
-<table class="table table-striped">
+<div class="table-wrapper margin-top-20">
+    <table class="table table-striped">
     <thead>
         <tr>
             <th>
@@ -30,7 +29,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.ChangedTo)
             </th>
-            <th></th>
+
         </tr>
     </thead>
     <tbody id="tableBody">
@@ -49,11 +48,11 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.ChangedTo)
                 </td>
-
             </tr>
         }
     </tbody>
 </table>
+</div>
 @* Search and Filter *@
 <script>
     document.getElementById('searchInput').addEventListener('keyup', function () {
