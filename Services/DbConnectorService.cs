@@ -1573,6 +1573,37 @@ namespace oa.Services
         }
 
         /*
+         * Updates journal transaction status as well as description
+         * 
+         */
+        public void UpdateTransactionStatusAndDescription(string? journalNumIn, string? newStatusIn, string? description)
+        {
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "UPDATE on_account.transaction SET status = @status, description = @description WHERE journal_id = @journal_id";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@status", newStatusIn);
+                cmd1.Parameters.AddWithValue("@description", description);
+                cmd1.Parameters.AddWithValue("@journal_id", Int32.Parse(journalNumIn));
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            if (newStatusIn == "Approved")
+            {
+                string transactionId = GetTransactionNum(journalNumIn);
+                // add transaction id to journal entry post ref field where journalNumIn == JournalNum
+                UpdatePostRef(journalNumIn, transactionId);
+            }
+        }
+
+        /*
          * Updates the post ref for a journal after it has been approved
          */
         public void UpdatePostRef(string? journalIdIn, string? newRefId)
