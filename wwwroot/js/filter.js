@@ -102,56 +102,31 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function currencyToFloat(currencyString) {
-    // Remove any non-numeric characters except for the decimal point
     let floatString = currencyString.replace(/[^0-9.]/g, '');
     return parseFloat(floatString);
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('resetTableButton').addEventListener('click', function () {
-        const rows = document.querySelectorAll('#tableBody tr');
-        rows.forEach(row => {
-            row.style.display = '';
-        });
-    });
+//This handles filtering for journal detail pos ref links
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById('searchInput');
+    const tableBody = document.getElementById('tableBody');
+    const tableRows = document.querySelectorAll('table tbody tr');
+    const rows = tableBody.getElementsByTagName('tr');
+    const inputText = searchInput.value.trim() + "||";
+    function filterRows(searchInput) {
+        setTimeout(() => {
+            tableRows.forEach(row => {
+                const hiddenText = row.querySelector('td.text-center[hidden]').innerText.trim();
+                const regex = new RegExp(`\\b${searchInput}\\b`);
+                if (regex.test(hiddenText)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }, 200);
+    }
+    if (searchInput.value.trim() !== "") {
+        filterRows(searchInput.value.trim().toUpperCase());
+    }
 });
 
-function addCurrencyFieldListeners() {
-    document.querySelectorAll('.currencyField').forEach(function (input) {
-        input.addEventListener('fousout', function (e) {
-            let input = e.target;
-            let value = input.value.trim();
-            value = value.replace(/[^0-9.]/g, '');
-            let parts = value.split('.');
-            let integerPart = parts[0];
-            let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
-            var flt = parseInt(integerPart, 10);
-            if (isNaN(flt)) {
-                flt = 0;
-            }
-            integerPart = flt.toString();
-            integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            let formattedValue = integerPart;
-            if (formattedValue.length >= 1) {
-                formattedValue = '$' + formattedValue;
-            } else {
-                formattedValue = '$0';
-            }
-            let newTail = "";
-            if (decimalPart === "") {
-                newTail = ".00";
-            } else if (decimalPart.length == 1) {
-                newTail = "." + decimalPart + "0";
-            } else if (decimalPart.length == 2) {
-                newTail = "." + decimalPart;
-            } else if (decimalPart.length > 2) {
-                newTail = "." + decimalPart.substring(0, 2);
-            }
-            formattedValue = formattedValue + newTail;
-            input.value = formattedValue;
-        });
-    });
-}
-function currencyToFloat(currencyString) {
-    return parseFloat(currencyString.replace(/[$,]/g, ''));
-}
