@@ -370,7 +370,7 @@ namespace OnAccount.Controllers
 
             string formatted_comment = $"Denied by: {commenter}: {comment}";
 
-            _dbConnectorService.UpdateTransactionStatus(id, formatted_comment);
+            _dbConnectorService.UpdateTransactionStatusAndDescription(id, "Denied", formatted_comment);
             // need log update here
             return Json(true);
         }
