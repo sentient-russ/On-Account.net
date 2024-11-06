@@ -103,6 +103,12 @@ namespace oa.Models
         [ValidateNever]
         public string? concatenatedDataString { get; set; }
 
+        [NotMapped]
+        [ValidateNever]
+        public List<string> supporting_documents { get; set; }
+
+        
+
         public string ConcatenateValues()
         {
             StringBuilder sb = new StringBuilder();

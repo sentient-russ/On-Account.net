@@ -1019,7 +1019,11 @@ input:-webkit-autofill:focus {
     color: rgb(0, 0, 0, 0.00) !important;
     pointer-events: none;
 }
-
+.disabled {
+    pointer-events: none;
+    opacity: 0.6; 
+    cursor: default; 
+}
 .faux-upload-container {
     display: flex;
     flex-direction: row;
