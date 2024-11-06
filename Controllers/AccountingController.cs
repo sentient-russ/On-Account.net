@@ -578,28 +578,21 @@ namespace OnAccount.Controllers
         public async Task<IActionResult> viewOwnersEquity()
         {
             List<AccountsModel> accounts = new List<AccountsModel>();
-            accounts = _dbConnectorService.GetAccountsOnType("Asset");
-            ViewBag.numberOfAssetAccounts = accounts.Count;
-            List<AccountsModel> tempAccounts1 = new List<AccountsModel>();
-            tempAccounts1 = _dbConnectorService.GetAccountsOnType("Equity");
-            for (int i = 0; i < tempAccounts1.Count(); i++)
+            accounts = _dbConnectorService.GetAccountsOnType("Revenue");
+            ViewBag.numberOfRevenueAccounts = accounts.Count;
+            List<AccountsModel> tempAccounts = new List<AccountsModel>();
+            tempAccounts = _dbConnectorService.GetAccountsOnType("Expense");
+            for (int i = 0; i < tempAccounts.Count(); i++)
             {
-                accounts.Add(tempAccounts1[i]);
+                accounts.Add(tempAccounts[i]);
             }
-            ViewBag.numberOfEquityAccounts = tempAccounts1.Count;
-            List<AccountsModel> tempAccounts2 = new List<AccountsModel>();
-            tempAccounts2 = _dbConnectorService.GetAccountsOnType("Liability");
-            for (int i = 0; i < tempAccounts2.Count(); i++)
-            {
-                accounts.Add(tempAccounts2[i]);
-            }
+            ViewBag.numberOfExpenseAccounts = tempAccounts.Count;
             AccountsModel tempAccounts3 = new AccountsModel();
             tempAccounts3 = _dbConnectorService.GetAccount("290");
             AccountsModel tempAccounts4 = new AccountsModel();
             tempAccounts4 = _dbConnectorService.GetAccount("295");
-            ViewBag.numberOfLiabilityAccounts = tempAccounts2.Count;
             ViewBag.retainedEarningsStartingBalance=tempAccounts3.current_balance;
-            ViewBag.dividendsBalance = tempAccounts3.current_balance;
+            ViewBag.dividendsBalance = tempAccounts4.current_balance;
             DateTime startingPeriod = (DateTime)tempAccounts3.account_creation_date;
             ViewBag.startingPeriod = startingPeriod.ToString("MM-dd-yyyy");
             DateTime currentDate = DateTime.Now;
