@@ -184,8 +184,10 @@
                                 <span>Post Ref:</span>
                                 @if (@Model.transactions_list[0].id != 0)
                                 {
+                                    string JournalString = "JID" + Model.transactions_list[0].journal_id;
+                   
                                     <div class="journal-post-ref-text">
-                                        <a asp-action="GeneralJournalTransactionFocus" asp-route-id="@Model.transactions_list[0].journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
+                                        <a asp-action="GeneralJournalTransactionFocus" asp-route-id="@JournalString" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
                                             <input type="number" class="form-control muted" style="color: blue; text-align: center;" value="@Model.transactions_list[0].id" data-transaction="1" data-line="1" id="post-ref" readonly>
                                         </a>
                                     </div>
@@ -243,8 +245,11 @@
                             <div class="col-md-1">
                                 @if (@Model.transactions_list[1].id != 0)
                                 {
+                                    
+                                    string JournalString2 = "JID" + Model.transactions_list[1].journal_id;
+                                    
                                     <div class="journal-post-ref-text">
-                                        <a asp-action="GeneralJournalTransactionFocus" asp-route-id="@Model.transactions_list[1].journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
+                                        <a asp-action="GeneralJournalTransactionFocus" asp-route-id="@JournalString2" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
                                             <input type="number" class="form-control muted" style="color: blue; text-align: center;" value="@Model.transactions_list[1].id" data-transaction="1" data-line="2" id="post-ref" readonly>
                                         </a>
                                     </div>
@@ -318,8 +323,11 @@
                                     <div class="col-md-1">
                                         @if (@Model.transactions_list[i].id != 0)
                                         {
-                                            <div class="journal-post-ref-text">
-                                                <a asp-action="GeneralJournalTransactionFocus" asp-route-id="@Model.transactions_list[i].journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
+                                        
+                                            string JournalString3 = "JID" + Model.transactions_list[i].journal_id;
+                                        
+                                        <div class="journal-post-ref-text">
+                                        <a asp-action="GeneralJournalTransactionFocus" asp-route-id="@JournalString3" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
                                                     <input type="number" class="form-control muted" style="color: blue; text-align: center;" value="@Model.transactions_list[i].id" id="post-ref" readonly>
                                                 </a>
                                             </div>

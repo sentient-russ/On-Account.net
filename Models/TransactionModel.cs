@@ -106,10 +106,11 @@ namespace oa.Models
         public string ConcatenateValues()
         {
             StringBuilder sb = new StringBuilder();
-
             sb.Append(id.HasValue ? id.Value.ToString() : "");
             sb.Append(" | ");
             sb.Append(journal_id.HasValue ? journal_id.Value.ToString() : "");
+            sb.Append(" | ");
+            sb.Append(journal_id.HasValue ? "JID"+journal_id.Value.ToString() : "");
             sb.Append(" | ");
             sb.Append(debit_account.HasValue ? debit_account.Value.ToString() : "");
             sb.Append(" | ");
@@ -144,8 +145,6 @@ namespace oa.Models
             sb.Append(description ?? "");
             sb.Append(" | ");
             sb.Append(transaction_number.HasValue ? transaction_number.Value.ToString() : "");
-           /* sb.Append(" | "); //must stay removed to avoid general journal sorting issue.
-            sb.Append(journal_description ?? "");*/
             sb.Append(" | ");
             sb.Append(journal_date.HasValue ? journal_date.Value.ToString("MM-dd-yyyy") : "");
             sb.Append(" | ");
