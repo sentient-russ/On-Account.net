@@ -8,6 +8,7 @@
     AppUserModel currentUser = CurrentUser.GetUser();
     var UsersEmail = currentUser.Email;
     var UserName = currentUser.ScreenName;
+    var journalFocus = ViewBag.JournalFocusId;
 }
 
 @{
@@ -62,11 +63,11 @@
     <div class="search-colum-1">
     </div>
     <div class="search-colum-3">
-        <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px; height: 35px;" placeholder="Search...">
+        <input type="text" id="searchInput" value="@(journalFocus ?? "")" class="form-control mb-3" style="max-width:200px; height: 35px;" placeholder="Search...">
         <img src="~/img/search.svg" class="mng-acct-search-img" />
         <div class="btn-group">
             <button class="btn btn-outline-primary dropdown-toggle search-row-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-placement="bottom" data-bs-title="Select the status that your would like to view.">
-                <img style="max-height:25px; padding-right: 5px; padding-bottom: 3px; " src="~/img/filter-right.svg" />By Status
+                <img style="max-height:25px; padding-right: 5px; padding-bottom: 3px; " src="~/img/filter-right.svg" />Status
             </button>
             <ul class="dropdown-menu dropdown-menu-end text-center">
                 <li><a class="dropdown-item" href="#">Show All</a></li>
@@ -116,8 +117,8 @@
 </div>
 <div class="table-wrapper">
     <table class="table-striped">
-        <thead>
-            <tr style="background-color: #fcb14f15;">
+        <thead class="table-top-row">
+            <tr>
                 <th hidden>
                     This row is in place to allow data gathering for multi-row search.
                 </th>
@@ -397,27 +398,27 @@
 }
 @* Search and Filter *@
 <script>
-    document.getElementById('searchInput').addEventListener('keyup', function () {
-        let input = this.value.toLowerCase();
-        let rows = document.getElementById('tableBody').getElementsByTagName('tr');
+        document.getElementById('searchInput').addEventListener('keyup', function () {
+            let input = this.value.toLowerCase();
+            let rows = document.getElementById('tableBody').getElementsByTagName('tr');
 
-        for (let i = 0; i < rows.length; i++) {
-            let rowData = rows[i].getElementsByTagName('td');
-            let match = false;
+            for (let i = 0; i < rows.length; i++) {
+                let rowData = rows[i].getElementsByTagName('td');
+                let match = false;
 
-            for (let j = 0; j < rowData.length; j++) {
-                if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
-                    match = true;
-                    break;
+                for (let j = 0; j < rowData.length; j++) {
+                    if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
+                        match = true;
+                        break;
+                    }
+                }
+                if (match) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
                 }
             }
-            if (match) {
-                rows[i].style.display = '';
-            } else {
-                rows[i].style.display = 'none';
-            }
-        }
-    });
+        });
 
     // Wait for the document to be fully loaded before executing the script
     document.addEventListener('DOMContentLoaded', function () {
@@ -519,9 +520,10 @@
             data: { id: journalId, commenter: screenName, comment: comment_string },
             dataType: "json",
             success: function (response) {
-                if (response == true) {
+                if (response == true)
+                {
                     alert(`Journal entry ID ${journalId} has been denied. You will now be redirected.`);
-                    window.location.href = '@Url.Action("DenyJournal", "Accounting")';
+                    window.location.href = '@Url.Action("GeneralJournal", "Accounting")';
                 }
             }
         });
