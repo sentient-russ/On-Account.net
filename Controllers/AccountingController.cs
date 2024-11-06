@@ -72,7 +72,10 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> EditAccount(string? Id)
         {
-            AccountsModel account = _dbConnectorService.GetAccount(Id);
+            int id = Int32.Parse(Id);
+
+            string accountNumber = _dbConnectorService.GetAccoutNumber(id);
+            AccountsModel account = _dbConnectorService.GetAccount(accountNumber);
             AccountsModelEdit editAccount = new AccountsModelEdit();
             editAccount.id = account.id;
             editAccount.number = account.number;

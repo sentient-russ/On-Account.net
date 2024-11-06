@@ -1474,7 +1474,7 @@ namespace oa.Services
 
                 if (reader.Read())
                 {
-                    foundNum = reader.GetInt32(2).ToString();
+                    foundNum = reader.GetInt32(0).ToString();
                 }
 
             }
