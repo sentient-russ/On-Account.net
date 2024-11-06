@@ -400,7 +400,7 @@ namespace OnAccount.Controllers
             return View(infoBundle);
         }
         //Only the manager can approve or deny a transaction.
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")] 
         public async Task<IActionResult> DenyJournal(string? id)
         {
 

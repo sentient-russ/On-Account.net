@@ -51,8 +51,7 @@
     <tbody id="tableBody">
 @foreach (var item in Model) {
         <tr>
-            <td>
-                
+            <td>                
                 <a asp-action="ViewAccountDetails" asp-route-id="@item.number" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the Account details of this account with transactions">
                     @Html.DisplayFor(modelItem => item.number)
                 </a>
