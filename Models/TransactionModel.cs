@@ -110,8 +110,9 @@ namespace oa.Models
             sb.Append(" | ");
             sb.Append(journal_id.HasValue ? journal_id.Value.ToString() : "");
             sb.Append(" | ");
-            sb.Append(journal_id.HasValue ? "JID"+journal_id.Value.ToString() : "");
-            sb.Append(" | ");
+            /*The next line allows the journal entry to be found from the transaction id link in the journal details view.*/
+            sb.Append(journal_id.HasValue ? "JID"+journal_id.Value.ToString() + "||" : "");
+            /*Do not change JID formatting*/
             sb.Append(debit_account.HasValue ? debit_account.Value.ToString() : "");
             sb.Append(" | ");
             sb.Append(debit_amount.HasValue ? debit_amount.Value.ToString() : "");

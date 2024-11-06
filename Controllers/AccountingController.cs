@@ -298,7 +298,7 @@ namespace OnAccount.Controllers
             }
             return View(currentTransactions);
         }
-        public async Task<IActionResult> GeneralJournalTransactionFocus(int Id)
+        public async Task<IActionResult> GeneralJournalTransactionFocus(string? Id)
         {
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             List<TransactionModel> currentTransactions = _dbConnectorService.GetAllTransactions();
@@ -341,7 +341,7 @@ namespace OnAccount.Controllers
                 }
             }
             //the magic happens here.
-            ViewBag.JournalFocusId = Id;
+            ViewBag.JournalFocusId = Id + " ";
             return View(currentTransactions);
         }
 
