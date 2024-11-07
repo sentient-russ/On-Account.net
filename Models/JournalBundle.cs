@@ -59,5 +59,10 @@ namespace oa.Models
         public List<TransactionModel>? transactions_list { get; set; }
 
 
+        [NotMapped]
+        [ValidateNever]
+        public List<string>? supporting_docs_list { get; set; }
+
+
     }
 }

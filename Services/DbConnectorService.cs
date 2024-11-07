@@ -7,6 +7,7 @@ using oa.Areas.Identity.Services;
 using oa.Migrations;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Google.Protobuf.WellKnownTypes;
+using MimeKit;
 
 namespace oa.Services
 {
@@ -909,6 +910,7 @@ namespace oa.Services
             {
                 Console.WriteLine(ex.ToString());
             }
+
             string logString = "Transaction added to Account: ";
             string accountName = "";
             string? accountNumber = "";
@@ -938,6 +940,58 @@ namespace oa.Services
             UpdateAccountBalance(accountNumber, newBal);
         }
 
+        /*
+         * Adds a single transaction
+         */
+        public void AddSupportingDocs(int? idIn, string? filenameIn)
+        {
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "INSERT INTO on_account.supporting_docs (journal_id, file_name) VALUES (@journal_id, @file_name)";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@journal_id", idIn);
+                cmd1.Parameters.AddWithValue("@file_name", filenameIn);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        /*
+        * Gets the list of documents associated with a journal entry
+        */
+        public List<string> GetSupportingDocuments(int id)
+        {
+            List<string> foundNames = new List<string>();
+            try
+            {
+                var connection = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                connection.Open();
+                var cmd = new MySqlCommand();
+                cmd.Connection = connection;
+                cmd.CommandText = "Select * from on_account.supporting_docs WHERE journal_id = @id";
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.ExecuteNonQuery();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    string foundName = reader.GetString(2);
+                    foundNames.Add(foundName);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return foundNames;
+        }
 
         /*
          * creates the log model to add to the database
@@ -1484,6 +1538,7 @@ namespace oa.Services
             }
             return foundNum;
         }
+
         /*
          * Gets the next journal id
          */

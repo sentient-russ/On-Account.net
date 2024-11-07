@@ -148,12 +148,11 @@ namespace OnAccount.Controllers
             journalAccount.accounts_list = currentAccounts;
             return View(journalAccount);
         }
-        
+
         [HttpPost]
         [Route("api/journal")]
         public async Task<IActionResult> PostJournalEntry()
         {
-            var uploadFileName = "";
             var formData = await Request.ReadFormAsync();
             var journalData = formData["journalData"].FirstOrDefault();
 
@@ -178,23 +177,33 @@ namespace OnAccount.Controllers
                 Directory.CreateDirectory(uploadDirectory);
             }
 
+            var transactionFileUploads = new Dictionary<int, List<string>>();
+            int indeX = 0;
             foreach (var file in formData.Files)
             {
                 var fileName = file.FileName;
                 var fileExtension = Path.GetExtension(fileName);
-                var newFileName = $"{DateTime.Now:yyyyMMddHHmmssfff}{fileExtension}";
+                var newFileName = $"{indeX}_{journalEntry.JournalId}_{DateTime.Now:yyyyMMddHHmmssfff}{fileExtension}";
                 var filePath = Path.Combine(uploadDirectory, newFileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
-                uploadFileName = newFileName;
+                _dbConnectorService.AddSupportingDocs(journalEntry.JournalId, newFileName);
+                indeX = indeX + 1;
             }
 
+            //orriginally build for each journal entry to handle multipe transactions.  Leaving for that as a potential future upgrade
             for (int j = 0; j < journalEntry.Transactions.Count; j++)
             {
+
                 for (int i = 0; i < journalEntry.Transactions[j].LineItems.Count; i++)
                 {
+                    string supportingDocFound = "false";
+                    if (indeX > 0)
+                    {
+                        supportingDocFound = "true";
+                    }
                     var transactionIn = new TransactionModel
                     {
                         created_by = journalEntry.UserName,
@@ -209,25 +218,26 @@ namespace OnAccount.Controllers
                         debit_account = journalEntry.Transactions[j].LineItems[i].DrAccount == "unselected" ? 0 : int.Parse(journalEntry.Transactions[j].LineItems[i].DrAccount),
                         debit_amount = (double)journalEntry.Transactions[j].LineItems[i].DrAmount,
                         description = journalEntry.Transactions[j].TransactionDescription,
-                        supporting_document = uploadFileName
-                    };
+                        supporting_document = supportingDocFound
+                    }; 
 
                     _dbConnectorService.AddTransaction(transactionIn);
                 }
             }
+
             List<string> managerEmails = _dbConnectorService.GetManagerEmails();
             for (int i = 0; i < managerEmails.Count; i++)
             {
                 string subject = $"On-Account notification: JID: {journalEntry.JournalId}";
                 string message = $"A new journal entry has been submitted. JID: {journalEntry.JournalId}";
-                await _emailSender.SendEmailAsync(managerEmails[i],subject,"");
+                await _emailSender.SendEmailAsync(managerEmails[i], subject, "");
             }
-            
+
             return Ok(new { message = "Journal data received successfully", journalData = journalData });
         }
-    
-    //All users can view accounts details pages
-    [Authorize(Roles = "Administrator, Manager, Accountant")]
+
+        //All users can view accounts details pages
+        [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> ViewAccountDetails(string? id)
         {
             List<TransactionModel> currentTransactions = _dbConnectorService.GetAccountTransactions(id);
@@ -360,6 +370,7 @@ namespace OnAccount.Controllers
             infoBundle.status = infoBundle.transactions_list[0].status;
             infoBundle.journal_date = infoBundle.transactions_list[0].journal_date;
             infoBundle.journal_description = infoBundle.transactions_list[0].journal_description;
+            infoBundle.supporting_docs_list = _dbConnectorService.GetSupportingDocuments(Int32.Parse(id));
 
             for (int i = 0; i < infoBundle.transactions_list.Count; i++)
             {

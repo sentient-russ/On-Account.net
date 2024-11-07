@@ -139,9 +139,18 @@
                                         </div>
                                         <div class="faux-upload-file-container">
                                             <div class="faux-upload-file-row">
-                                                @if (!string.IsNullOrEmpty(Model.transactions_list[0].supporting_document))
+                                                @if (Model.supporting_docs_list.Count > 0)
                                                 {
-                                                    <a href="~/uploaded_docs/@Model.transactions_list[0].supporting_document" download>Supporting Document</a>
+                                                    int docNum = 1;
+
+                                                    foreach(var file in Model.supporting_docs_list)
+                                                    {
+                                                        string nextName = "Doc" + docNum.ToString();
+                                                        <a href="~/uploaded_docs/@file" download>@nextName</a>
+
+                                                        <span>&nbsp;&nbsp;</span>
+                                                        docNum = docNum + 1;
+                                                    }
                                                 }
                                                 else
                                                 {
