@@ -8,9 +8,13 @@
     AppUserModel currentUser = CurrentUser.GetUser();
     var UsersEmail = currentUser.Email;
     var UserName = currentUser.ScreenName;
-}
+    var currentPage = ViewBag.currentPage;
+    var previousPage = ViewBag.previousPage;
+    var nextPage = ViewBag.nextPage;
+    var totalPages = ViewBag.totalPages;
+    var recordCount = ViewBag.recordCount;
+    var lastStatus = ViewBag.lastStatus;
 
-@{
     int currentJournalNumber = 0;
     double runningBalance = 0; // Initialize running balance
     DbConnectorService db = new DbConnectorService();
@@ -69,10 +73,11 @@
                 <img style="max-height:25px; padding-right: 5px; padding-bottom: 3px; " src="~/img/filter-right.svg" />By Status
             </button>
             <ul class="dropdown-menu dropdown-menu-end text-center">
-                <li><a class="dropdown-item" href="#">Show All</a></li>
-                <li><a class="dropdown-item" href="#">Pending</a></li>
-                <li><a class="dropdown-item" href="#">Approved</a></li>
-                <li><a class="dropdown-item" href="#">Denied</a></li>
+                
+                <li><a href="@Url.Action("GeneralJournal", "Accounting", new { Id = "1", status = "All" })" class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Show all entries from page 1.">Show All</a></li>
+                <li><a href="@Url.Action("GeneralJournal", "Accounting", new { Id = "1", status = "Pending" })" class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Show all pending entries from page 1.">Pending</a></li>
+                <li><a href="@Url.Action("GeneralJournal", "Accounting", new { Id = "1", status = "Approved" })" class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Show all approved entries from page 1.">Approved</a></li>
+                <li><a href="@Url.Action("GeneralJournal", "Accounting", new { Id = "1", status = "Denied" })" class="dropdown-item" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Show all denied entries from page 1.">Denied</a></li>
             </ul>
         </div>
         <div class="dropdown">
@@ -108,7 +113,8 @@
             </form>
         </div>
         <div class="btn-group">
-            <a asp-controller="Accounting" asp-action="GeneralJournal" class="btn btn-primary search-row-btn" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
+            
+                <a href="@Url.Action("GeneralJournal", "Accounting", new { Id = "1", status = "All" })" class="btn btn-primary search-row-btn" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Show all entries from page 1.">
                 <img style="max-height:25px; padding-right: 5px; padding-bottom: 3px; " src="~/img/filter-off.svg" />Reset
             </a>
         </div>
@@ -359,25 +365,38 @@
                         <td></td>
                         <td></td>
                         <td></td>
-
                         <td style="text-align:right;  font-weight:600; ">Total: </td>
                         <td id="transaction-amount" style="text-align:right; padding-right: 90px;">
                             @{
                                 var totalAmount = journalsWithTotals.FirstOrDefault(j => j.journal_id == currentJournalId);
-
                             }
                             @if (totalAmount != null)
                             {
                                 @totalAmount.total_adjustment?.ToString("C")
                             }
                         </td>
-
-
                     </tr>
                 }
             }
         </tbody>
     </table>
+</div>
+<div class="page-nav-row">
+    @if(previousPage > 0)
+    {
+        <div class="previous-container">
+            <a href="@Url.Action("GeneralJournal", "Accounting", new { Id = @previousPage, status = @lastStatus })" class="btn btn-primary btn-table-margin" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="View the last set of results.">Previouse Page</a>
+        </div>        
+    }
+    <div class="page-number-container">
+       Page @currentPage of @totalPages.
+    </div>
+    @if(@nextPage > @currentPage)
+    {
+        <div class="next-container">
+            <a href="@Url.Action("GeneralJournal", "Accounting", new { Id = @nextPage, status = @lastStatus })" class="btn btn-primary btn-table-margin" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="View the next set of results.">Next Page</a>
+        </div>
+    }
 </div>
 @* format currency *@
 @functions {
@@ -400,11 +419,9 @@
     document.getElementById('searchInput').addEventListener('keyup', function () {
         let input = this.value.toLowerCase();
         let rows = document.getElementById('tableBody').getElementsByTagName('tr');
-
         for (let i = 0; i < rows.length; i++) {
             let rowData = rows[i].getElementsByTagName('td');
             let match = false;
-
             for (let j = 0; j < rowData.length; j++) {
                 if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
                     match = true;
@@ -418,35 +435,23 @@
             }
         }
     });
-
-    // Wait for the document to be fully loaded before executing the script
     document.addEventListener('DOMContentLoaded', function () {
         const getDateRangeButton = document.getElementById('getDateRangeButton');
         const startDateInput = document.getElementById('startDateDropdownForm');
         const endDateInput = document.getElementById('endDateDropdownForm');
-
-        // Add event listener to the "Get Date Range" button
         getDateRangeButton.addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent form submission
-
-            // Get start and end dates from inputs
+            event.preventDefault();
             const startDate = new Date(startDateInput.value);
             const endDate = new Date(endDateInput.value);
-
-            // Get all table rows except the header row
             const rows = document.querySelectorAll('#tableBody tr');
-
             rows.forEach((row) => {
-                // Assuming transaction date is in the first td element
                 const transactionDateCell = row.getElementsByTagName('td')[1];
                 if (transactionDateCell) {
                     const transactionDate = new Date(transactionDateCell.textContent);
-
-                    // Check if the transaction date falls within the range
                     if (startDate <= transactionDate && transactionDate <= endDate) {
-                        row.style.display = ''; // Show row
+                        row.style.display = '';
                     } else {
-                        row.style.display = 'none'; // Hide row
+                        row.style.display = 'none';
                     }
                 }
             });
@@ -485,24 +490,14 @@
     var screenName = "@currentUser.ScreenName";
     var journalId;
     var journalDesc;
-
     const denyModal = document.getElementById('denyModal')
     if (denyModal) {
         denyModal.addEventListener('show.bs.modal', event => {
-
-            // Button that triggered the modal
             var button = event.relatedTarget;
-            // Extract info from data-bs-* attributes
             journalId = button.getAttribute('data-bs-journalid');
             journalDesc = button.getAttribute('data-bs-journaldesc');
-            // If necessary, you could initiate an Ajax request here
-            // and then do the updating in a callback.
-
-            // Update the modal's content.
             var modalTitle = denyModal.querySelector('.modal-title');
             var modalBodyInput = denyModal.querySelector('.modal-body input');
-
-
             if (journalDesc == "") {
                 modalTitle.textContent = `Denial of jounral entry: ID ${journalId}`;
             } else {
@@ -510,7 +505,6 @@
             }
         })
     }
-
     function confirmDenyAction() {
         var comment_string = document.getElementById('reason-text').value;
         $.ajax({

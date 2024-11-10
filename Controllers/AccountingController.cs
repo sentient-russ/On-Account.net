@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using oa.Areas.Identity.Data;
 using oa.Areas.Identity.Services;
 using System.Net;
+using System.Collections.Generic;
 
 namespace OnAccount.Controllers
 {
@@ -264,13 +265,52 @@ namespace OnAccount.Controllers
             ViewBag.AccountBalance = accountBalance;
             return View(currentTransactions);
         }
-
         //All users can view accounts details pages
         [Authorize(Roles = "Administrator, Manager, Accountant")]
-        public async Task<IActionResult> GeneralJournal()
+        public async Task<IActionResult> GeneralJournal(string? Id = "1", string status = "All")
         {
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
-            List<TransactionModel> currentTransactions = _dbConnectorService.GetAllTransactions();
+            List<TransactionModel> currentTransactions = new List<TransactionModel>();
+            var journalsPerPage = 10;
+            double totalPages = 0.0;
+            if (status == "All")
+            {
+                //trim list to current pages transactions                
+                totalPages = _dbConnectorService.GetNextJournalId() / journalsPerPage;
+                if (totalPages % 1 != 0)
+                {
+                    totalPages = totalPages + 1;
+                }
+                // determine first and last journal number to send to the view
+                var endingJournalNumber = Int32.Parse(Id) * journalsPerPage;
+                var startingJournalNumber = endingJournalNumber - journalsPerPage;
+                currentTransactions = _dbConnectorService.GetAllTransactionsByJournalRange(startingJournalNumber, endingJournalNumber);
+            } else
+            {
+                //trim list to current pages transactions
+                var numberJournalsWithSatus = _dbConnectorService.GetNumJournalsStatus(status);
+                totalPages = (double)numberJournalsWithSatus / (double)journalsPerPage;
+                if (totalPages % 1 != 0)
+                {
+                    totalPages = totalPages + 1;
+                } else if (totalPages % 1 == 0)
+                {
+                    totalPages = totalPages;
+                }
+                else if (totalPages <= 0)
+                {
+                    totalPages = 1;
+                } else
+                {
+                    totalPages = numberJournalsWithSatus / journalsPerPage + 1;
+                }
+                // determine first and last journal number to send to the view
+                var endingRecordNumber = Int32.Parse(Id) * journalsPerPage;
+                var startingRecordNumber = endingRecordNumber - journalsPerPage;
+                currentTransactions = _dbConnectorService.GetAllTransactionsByJournalStatus(startingRecordNumber, endingRecordNumber, status);
+            }
+
+
             for(var i = 0; i < currentTransactions.Count; i++)
             {
                 if (currentTransactions[i].debit_amount == 0)
@@ -309,8 +349,21 @@ namespace OnAccount.Controllers
                     currentTransactions[i].dr_description = null;
                 }
             }
+            ViewBag.currentPage = Int32.Parse(Id);
+            ViewBag.totalPages = (int)totalPages;
+            ViewBag.previousPage = Int32.Parse(Id) - 1;
+            if((int)totalPages > Int32.Parse(Id))
+            {
+                ViewBag.nextPage = Int32.Parse(Id) + 1;
+            } else
+            {
+                ViewBag.nextPage = 0;
+            }            
+            ViewBag.recordCount = currentTransactions.Count();
+            ViewBag.lastStatus = status;
             return View(currentTransactions);
         }
+   
         public async Task<IActionResult> GeneralJournalTransactionFocus(string? Id)
         {
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();

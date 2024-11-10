@@ -107,7 +107,9 @@ namespace oa.Models
         [ValidateNever]
         public List<string> supporting_documents { get; set; }
 
-        
+        [NotMapped]
+        [ValidateNever]
+        public int?current_page_number { get; set; }
 
         public string ConcatenateValues()
         {
