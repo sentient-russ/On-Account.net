@@ -1,3 +1,4 @@
+/*No use or licensing of any kind is authorized with this software. By receiving it, you agree that it will not be used without the express written consent of each of its contributors. This notification supersedes any past agreement, whether written or implied.*/
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using oa.Areas.Identity.Data;
