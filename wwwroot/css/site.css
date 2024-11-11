@@ -1116,6 +1116,11 @@ table {
 .hidden {
     display: none;
 }
+thead th{
+    background-color: #fcb14f75 !important;
+    font-weight:600;
+    font-size:16px;
+}
 th, td {
     padding: 10px;
     text-align: center;
