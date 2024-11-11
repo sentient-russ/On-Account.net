@@ -199,7 +199,7 @@
                     <!-- begin entry 1.2 row this is the section to reproduce in js -->
                     <div class="row g-1 journal-item-row" data-transaction="1" data-line="2">
                         <div class="col-md-3">
-                            <select class="form-select form-control-sm grey-select-background" data-transaction="1" data-line="2" id="dr-account">
+                                <select class="form-select form-control-sm " style="background-color: #6c757d0b;" data-transaction="1" data-line="2" id="dr-account">
                                 <option value="unselected">Select a debit account</option>
                                 @{
                                     if (Model.accounts_list != null)
@@ -266,7 +266,6 @@
                             <div class="col-md-1">
                                 <div class="journal-totals">
                                     <span class="totals"></span>
-
                                 </div>
                             </div>
                             <div class="col-md-2" style="margin-left: 5px;">
@@ -333,6 +332,7 @@
     </form>
     </div>
 </div>
+    <script src="~/js/journals.js" asp-append-version="true"></script>
     <script src="~/js/journal.js" asp-append-version="true"></script>
     @section Scripts {
         @{
