@@ -31,7 +31,7 @@
             <div class="form-floating mb-3" style="margin-top: 20px;">
                 @*Backup -> temp -> <input asp-for="Email" class="form-control" autocomplete="Gregory" aria-required="true" placeholder="Email" />*@
                 <select class="form-select form-control" asp-for="Email" aria-required="true" placeholder="Email">
-                    <option value="unselected">Select an administrative email</option>
+                    <option value="unselected">Select address</option>
                     @{
                         if (Model.AdminManagerEmails != null)
                         {
@@ -55,13 +55,15 @@
                 <label asp-for="Message" class="control-label"></label>
                 <span asp-validation-for="Message" class="text-danger"></span>
             </div>
-            <div class="form-floating mb-3" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Saves the email file and sends it to the user">
+            <div class="form-floating mb-3" asp-action="Index"  data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Cancel the email and return to the home screen.">
                 <input type="submit" value="Send email" class="btn btn-primary" />
+                <a asp-action="Index" id="journal_back_href">
+                    <div class="btn btn-outline-primary" id="journal_back_btn">
+                        <span class="">Back home</span>
+                    </div>
+                </a>
             </div>
         </form>
-        <div>
-            <a asp-controller="Home" asp-action="Index" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Return to user home page">Back to Home</a>
-        </div>
     </div>
 </div>
 @section Scripts {

@@ -4,18 +4,12 @@ using MySql.Data.MySqlClient;
 using oa.Areas.Identity.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
-using oa.Areas.Identity.Services;
-using oa.Migrations;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Google.Protobuf.WellKnownTypes;
-using MimeKit;
 
 namespace oa.Services
 {
     public class DbConnectorService
     {
         public DbConnectorService() { }
-
         /*
         * Gets a user's date of birth based on their email
         */
@@ -1537,7 +1531,7 @@ namespace oa.Services
                 connection.Open();
                 var cmd = new MySqlCommand();
                 cmd.Connection = connection;
-                cmd.CommandText = "Select name from on_account.account WHERE number = @number";
+                cmd.CommandText = "SELECT name from on_account.account WHERE number = @number";
                 cmd.Parameters.AddWithValue("@number", number);
                 cmd.ExecuteNonQuery();
                 var reader = cmd.ExecuteReader();
@@ -1832,7 +1826,72 @@ namespace oa.Services
 
         }
 
+        public SettingsModel GetSystemSettings()
+        {
 
+            SettingsModel settings = new SettingsModel();
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.system_settings";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    
+                    settings.Id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    settings.business_name = reader1.IsDBNull(1) ? null : reader1.GetString(1);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return settings;
+        }
+
+        public SettingsModel UpdateSystemSettings(SettingsModel settingsIn)
+        {
+            SettingsModel settings = new SettingsModel();
+            if (settingsIn.Id == null) {
+                try
+                {
+                    using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                    string command = "INSERT INTO on_account.system_settings (business_name) VALUES (@business_name)";
+                    conn1.Open();
+                    MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                    cmd1.Parameters.AddWithValue("@Id", settingsIn.Id);
+                    cmd1.Parameters.AddWithValue("@business_name", settingsIn.business_name);
+                    MySqlDataReader reader1 = cmd1.ExecuteReader();
+                    reader1.Close();
+                    conn1.Close();
+                }
+                catch (Exception ex) {
+                    Console.WriteLine(ex.ToString());
+                }
+            } 
+            else {
+                try {
+                    using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                    string command = "UPDATE on_account.system_settings SET business_name = @business_name WHERE Id=@Id";
+                    conn1.Open();
+                    MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                    cmd1.Parameters.AddWithValue("@Id", settingsIn.Id);
+                    cmd1.Parameters.AddWithValue("@business_name", settingsIn.business_name);
+                    MySqlDataReader reader1 = cmd1.ExecuteReader();
+                    reader1.Close();
+                    conn1.Close();
+                }
+                catch (Exception ex) {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+            settings = GetSystemSettings();
+            return settings;
+        }
     }
 }
 

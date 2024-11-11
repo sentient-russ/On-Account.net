@@ -1,25 +1,18 @@
 ﻿@model IEnumerable<oa.Models.AccountsModel>
-
 @{
     ViewData["Title"] = "viewIncomeStatement";
-
     double revenueTotal = 0;
-
     double expenseTotal = 0;
-
     double netIncomeTotal = 0;
-
     int numberOfRevenueAccounts = ViewBag.numberOfRevenueAccounts;
-
     int numberOfExpenseAccounts = ViewBag.numberOfExpenseAccounts;
-
     int count = 0;
 }
-
 <div class="text-center margin-top-120">
+    <h1 class="text-center mb-2"><span class="accent-color">@ViewBag.businessName</span></h1>
+    <h2 class="text-center mb-2">Income Statement</h2>
+    <h3 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h3>
 </div>
-<h1 class="text-center mb-4">Income Statement</h1>
-<h2 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h2>
 <div class="date-container">
     <form class="row g-3" asp-controller="Accounting" asp-action="BalanceAsOfDate" method="post">
         <div class="col-auto">
@@ -53,7 +46,6 @@
             @foreach (var item in Model)
             {
                 @if (item.type.Equals("Revenue"))
-
                 {
                     <tr>
                         <td style="text-align:left; padding-left: 80px;">
@@ -69,7 +61,6 @@
                         }
                     </tr>
                     @if (count == numberOfRevenueAccounts)
-
                     {
                         <tr>
                             <td style="text-align:left; padding-left: 35px; font-weight: bold;">Revenue Total:</td>
@@ -81,7 +72,6 @@
                     }
                 }
             }
-
             <tr>
                 <td style="text-align:left; padding-left: 40px;">Expenses</td>
                 <td></td>
@@ -89,7 +79,6 @@
             @foreach (var item in Model)
             {
                 @if (item.type.Equals("Expense"))
-
                 {
                     <tr>
                         <td style="text-align:left; padding-left: 80px;">
@@ -100,12 +89,10 @@
                         </td>
                         @{
                             expenseTotal += (double)item.current_balance;
-
                             count++;
                         }
                     </tr>
                     @if (count == numberOfExpenseAccounts)
-
                     {
                         <tr>
                             <td style="text-align:left; padding-left: 35px; font-weight: bold;">Expense Total:</td>
@@ -130,28 +117,16 @@
 
 @functions {
     public static string FormatNegativeDouble(double? value)
-
     {
-
         if (value.HasValue)
-
         {
-
             Console.WriteLine($"Formatting value: {value}");
-
             if (value < 0)
-
             {
-
                 return $"({Math.Abs(value.Value).ToString("C")})";
-
             }
-
             return value.Value.ToString("C");
-
         }
-
         return string.Empty;
-
     }
 }

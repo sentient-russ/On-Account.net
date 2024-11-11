@@ -208,5 +208,26 @@ namespace OnAccount.Controllers
             return View(logs);
         }
 
+
+        [Authorize(Roles = "Administrator")]
+        [HttpGet]
+
+        public async Task<IActionResult> SystemSettings()
+        {
+            SettingsModel settings = new SettingsModel();
+            settings = _dbConnectorService.GetSystemSettings();
+            //UpdateSystemSettings
+            return View(settings);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPost]
+        public async Task<IActionResult> PostSystemSettings([Bind("Id, business_name")] SettingsModel settingsIn)
+        {
+            SettingsModel updatedSettings = new SettingsModel();
+            updatedSettings = _dbConnectorService.UpdateSystemSettings(settingsIn);
+
+            return RedirectToAction(nameof(SystemSettings));
+        }
     }
 }

@@ -39,14 +39,21 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> ChartOfAccounts()
         {
-            List<AccountsModel> accountsModels = currentAccounts;
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
 
+            List<AccountsModel> accountsModels = currentAccounts;
             return View(accountsModels);
         }
         //Only administrators can add accounts
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> AddAccount()
         {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
+
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             AccountsModel accountModel = new AccountsModel();
             accountModel.accounts_list = currentAccounts;
@@ -73,8 +80,11 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> EditAccount(string? Id)
         {
-            int id = Int32.Parse(Id);
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
 
+            int id = Int32.Parse(Id);
             string accountNumber = _dbConnectorService.GetAccoutNumber(id);
             AccountsModel account = _dbConnectorService.GetAccount(accountNumber);
             AccountsModelEdit editAccount = new AccountsModelEdit();
@@ -241,8 +251,11 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> ViewAccountDetails(string? id)
         {
-            List<TransactionModel> currentTransactions = _dbConnectorService.GetAccountTransactions(id);
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
 
+            List<TransactionModel> currentTransactions = _dbConnectorService.GetAccountTransactions(id);
             for(var i = currentTransactions.Count -1; 0 < i; i--)
             {
                 if (currentTransactions[i].status == "Pending")
@@ -269,6 +282,10 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> GeneralJournal(string? Id = "1", string status = "All")
         {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
+
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             List<TransactionModel> currentTransactions = new List<TransactionModel>();
             var journalsPerPage = 10;
@@ -366,6 +383,10 @@ namespace OnAccount.Controllers
    
         public async Task<IActionResult> GeneralJournalTransactionFocus(string? Id)
         {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
+
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             List<TransactionModel> currentTransactions = _dbConnectorService.GetAllTransactions();
             for (var i = 0; i < currentTransactions.Count; i++)
@@ -415,6 +436,10 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> ViewJournalDetails(string? id)
         {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
+
             List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
             JournalBundle infoBundle = new JournalBundle();
             infoBundle.transactions_list = _dbConnectorService.GetAccountTransactionsByJournalNumber(id);
@@ -495,7 +520,10 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> ApproveJournal(string? id)
         {
-            
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
+
             _dbConnectorService.UpdateTransactionStatus(id, "Approved");
             List<TransactionModel> listOfTransactions = _dbConnectorService.GetAccountTransactionsByJournalNumber(id);
             List<int?> listOfAccount=new List<int?>();
@@ -523,6 +551,10 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager, Accountant, Administrator")]
         public async Task<IActionResult> EmailAdmin(string? id)
         {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
+
             List<String> administrativeEmails = _dbConnectorService.GetAdministrativeEmails();
 
             AppUser emailBundle = new AppUser();
@@ -535,8 +567,11 @@ namespace OnAccount.Controllers
         [HttpPost]
         public async Task<IActionResult> SendEmailAdmin([Bind("Id, Email, Subject, Message")] AppUserModel detailsIn)
         {
-            AppUserModel appUserMessage = new AppUserModel();
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
 
+            AppUserModel appUserMessage = new AppUserModel();
             appUserMessage = detailsIn;
 
             // Task runs in a standalone discard while the redirection takes place. (No more await)
@@ -552,6 +587,10 @@ namespace OnAccount.Controllers
 
         public async Task<IActionResult> viewAccountLogs(string? id)
         {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
+
             AccountsModel currentAccount = _dbConnectorService.GetAccount(id);
             ViewBag.Accountname=currentAccount.name;
             string accountName = currentAccount.name;
@@ -566,6 +605,10 @@ namespace OnAccount.Controllers
  
         public async Task<IActionResult> viewTrialBalance()
         {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
+
             List<AccountsModel> listOfAccounts=new List<AccountsModel>();
             listOfAccounts = _dbConnectorService.GetNonZeroAccounts();
             
@@ -596,6 +639,9 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager, Accountant, Administrator")]
         public async Task<IActionResult> viewIncomeStatement()
         {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
             List <AccountsModel> accounts = new List<AccountsModel>();
             accounts = _dbConnectorService.GetAccountsOnType("Revenue");
             ViewBag.numberOfRevenueAccounts=accounts.Count;
@@ -617,6 +663,10 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager, Accountant, Administrator")]
         public async Task<IActionResult> viewBalanceSheet()
         {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
+
             List<AccountsModel> accounts = new List<AccountsModel>();
             accounts = _dbConnectorService.GetAccountsOnType("Asset");
             ViewBag.numberOfAssetAccounts = accounts.Count;
@@ -644,6 +694,10 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager, Accountant, Administrator")]
         public async Task<IActionResult> viewOwnersEquity()
         {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
+
             List<AccountsModel> accounts = new List<AccountsModel>();
             accounts = _dbConnectorService.GetAccountsOnType("Revenue");
             ViewBag.numberOfRevenueAccounts = accounts.Count;

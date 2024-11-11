@@ -11,6 +11,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : base(options)
     {
+
     }
     public virtual DbSet<oa.Models.AccountsModel> account { get; set; } = default!;
     public virtual DbSet<oa.Models.AccountTypeModel> account_type_options { get; set; } = default!;
@@ -20,6 +21,8 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     public virtual DbSet<oa.Models.LogModel> log { get; set; } = default!;
     public virtual DbSet<oa.Models.ErrorModel> error { get; set; } = default!;
     public virtual DbSet<oa.Models.SupportingDocumentsModel> supporting_docs { get; set; } = default!;
+    public virtual DbSet<oa.Models.SettingsModel> system_settings { get; set; } = default!;
+
 
     //the next section overrides the default db naming
     protected override void OnModelCreating(ModelBuilder builder)

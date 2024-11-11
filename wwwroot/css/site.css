@@ -72,6 +72,9 @@ input:-webkit-autofill:focus {
 thead {
     background-color: #fcb14f75 !important;
 }
+.table {
+    margin-bottom: 0px;
+}
 html {
     font-size: 14px;
 }

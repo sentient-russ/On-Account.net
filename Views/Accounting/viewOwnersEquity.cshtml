@@ -1,25 +1,20 @@
 ﻿@model IEnumerable<oa.Models.AccountsModel>
 @{
     ViewData["Title"] = "viewOwnersEquity";
-
     double revenueTotal = 0;
-
     double expenseTotal = 0;
-
     double netIncomeTotal = 0;
-
     int numberOfRevenueAccounts = ViewBag.numberOfRevenueAccounts;
-
     int numberOfExpenseAccounts = ViewBag.numberOfExpenseAccounts;
     double startingBalance = (double)ViewBag.retainedEarningsStartingBalance;
     double dividends = (double)ViewBag.dividendsBalance;
-
     int count = 0;
 }
 <div class="text-center margin-top-120">
 </div>
-<h1 class="text-center mb-4">Owner's Equity</h1>
-<h2 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h2>
+<h1 class="text-center mb-2"><span class="accent-color">@ViewBag.businessName</span></h1>
+<h2 class="text-center mb-2">Owner's Equity</h2>
+<h3 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h3>
 <div class="date-container">
     <form class="row g-3" asp-controller="Accounting" asp-action="BalanceAsOfDate" method="post">
         <div class="col-auto">
@@ -40,7 +35,7 @@
                 <th style="text-align:left">
                 </th>
                 <th style="text-align:right; padding-right:40px">
-                    Total Amount
+                    Total:
                 </th>
             </tr>
         </thead>
@@ -50,43 +45,27 @@
             @foreach (var item in Model)
             {
                 @if (item.type.Equals("Revenue"))
-
                 {
-                        {
-                            revenueTotal += (double)item.current_balance;
-
-                            count++;
-                        }
-                    if (count == numberOfRevenueAccounts)
-
-                    {
-                        {
-                        count = 0;
-                    }
-                    }
+                    revenueTotal += (double)item.current_balance;
+                    count++;
+                }
+                if (count == numberOfRevenueAccounts)
+                {                        
+                    count = 0;                    
                 }
             }
             @foreach (var item in Model)
             {
                 @if (item.type.Equals("Expense"))
-
                 {
-
-                        {
-                            expenseTotal += (double)item.current_balance;
-
-                            count++;
-                        }
-                    if (count == numberOfExpenseAccounts)
-
-                    {
-                        {
-                        count = 0;
-                    }
+                    expenseTotal += (double)item.current_balance;
+                    count++;
                 }
-
-                    }
+                if (count == numberOfExpenseAccounts)
+                {                           
+                    count = 0;
                 }
+            }
             <tr></tr>
         <td style="text-align:left; padding-left: 40px;">Beginning Balance</td>
         <td style="text-align:right; padding-right:40px;">@FormatNegativeDouble(startingBalance)</td>

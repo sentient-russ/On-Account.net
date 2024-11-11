@@ -1,6 +1,5 @@
 ﻿@using oa.Models;
 @model IEnumerable<oa.Models.TrialBalanceModel>
-
 @{
     ViewData["Title"] = "viewTrialBalance";
     double runningBalance = 0;
@@ -8,10 +7,10 @@
     double totalCredit = 0;
 }
 <div class="text-center margin-top-120">
+    <h1 class="text-center mb-2"><span class="accent-color">@ViewBag.businessName</span></h1>
+    <h2 class="text-center mb-2">Trial Balance</h2>
+    <h3 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h3>
 </div>
-<h1 class="text-center mb-4">Trial Balance</h1>
-<h3 class="text-center mb-4"> <span class="accent-color">@ViewBag.AccountName</span></h3>
-<h3 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h3>
 <div class="date-container">
     <form class="row g-3" asp-controller="Accounting" asp-action="BalanceAsOfDate" method="post">
         <div class="col-auto">

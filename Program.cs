@@ -13,8 +13,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using oa.Areas.Identity.Services;
-using System.Collections;
-using NuGet.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 Environment.SetEnvironmentVariable("ASPNETCORE_FORWARDEDHEADERS_ENABLED", "true");
@@ -43,10 +41,10 @@ builder.WebHost.ConfigureKestrel((context, serverOptions) =>
         listenOptions.ClientCertificateMode = ClientCertificateMode.AllowCertificate;//requires certificate from client
     });
 });
-//configure connection string from environment variables
+
 var connectionString = "";
 var emailPass = "";
-
+var serverVersion = new MySqlServerVersion(new Version(8, 8, 39));
 if (builder.Configuration["ASPNETCORE_ENVIRONMENT"] == "Production")
 {
     connectionString = Environment.GetEnvironmentVariable("OA_Local");
@@ -55,33 +53,34 @@ if (builder.Configuration["ASPNETCORE_ENVIRONMENT"] == "Production")
     {
         throw new Exception("ProgramCS: The connection string was null!");
     }
+
+    //db context that auto retries but does not allow migrations with mysql
+    builder.Services.AddDbContext<ApplicationDbContext>(
+    dbContextOptions => dbContextOptions
+        .UseMySql(connectionString, serverVersion, options => options.EnableRetryOnFailure())
+        .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
+        .EnableSensitiveDataLogging()
+        .EnableDetailedErrors()
+    );
 }
 else
 {
     //pulls connection string from development local version of secrets.json
     connectionString = builder.Configuration.GetConnectionString("OA_Remote");
     emailPass = builder.Configuration["GC_Email_Pass"];
-}
-Environment.SetEnvironmentVariable("DbConnectionString", connectionString);//this is used in services to access the string
-Environment.SetEnvironmentVariable("GC_Email_Pass", emailPass);//this is used in services to access the string
 
-var serverVersion = new MySqlServerVersion(new Version(8, 8, 39));
-
-//leave for production verses migrations use.
-builder.Services.AddDbContext<ApplicationDbContext>(
-    dbContextOptions => dbContextOptions
-        .UseMySql(connectionString, serverVersion, options => options.EnableRetryOnFailure())
-        .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
-        .EnableSensitiveDataLogging()
-        .EnableDetailedErrors()
-);
-/*builder.Services.AddDbContext<ApplicationDbContext>(
+    //db context which allows migrations but does not auto retry with mysql
+    builder.Services.AddDbContext<ApplicationDbContext>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion, options => options.SchemaBehavior(Pomelo.EntityFrameworkCore.MySql.Infrastructure.MySqlSchemaBehavior.Ignore))
         .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
-);*/
+    );
+}
+Environment.SetEnvironmentVariable("DbConnectionString", connectionString);//this is used in services to access the string
+Environment.SetEnvironmentVariable("GC_Email_Pass", emailPass);//this is used in services to access the string
+
 builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddDefaultTokenProviders()
     .AddRoles<IdentityRole>()
@@ -141,7 +140,6 @@ else
 
 //app.UseResponseCompression();
 app.UseCookiePolicy();
-
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
@@ -202,7 +200,6 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "GetGeneralJournalPage",
     pattern: "{controller=AccountingController}/{action=GetGeneralJournalPage}/{id?}");
-
 
 app.MapRazorPages();
 app.Run();

@@ -187,7 +187,7 @@
                 @if (item.journal_id != currentJournalId && currentJournalId != 9999999999999999)
                 {
                     <tr class="general-journal-total-row" style="border-top: .5px solid #bdbdbd; width:100%;" data-journal-id="@currentJournalId">
-                        <td class="text-center" hidden>
+                        <td class="text-center" data-row-id="data-row" hidden>
                             @lastHiddenStr
                         </td>
                         <td id="transaction-date" hidden>
@@ -225,7 +225,7 @@
                 }
                 @* this makes sure that the first row of any new transaction is formated with a heavy top border *@
                 <tr class="@currentColorClass" style="@(item.journal_id != currentJournalId ? divider1 : divider2)" data-journal-id="@item.journal_id">
-                    <td class="text-center" hidden>
+                    <td class="text-center" data-row-id="data-row" hidden>
                         @combinedJournalStrings.FirstOrDefault(js => js.JournalId == item.journal_id)?.concatenatedString
                         @{
                             lastHiddenStr = combinedJournalStrings.FirstOrDefault(js => js.JournalId == item.journal_id)?.concatenatedString;
@@ -414,13 +414,13 @@
         return string.Empty;
     }
 }
-@* Search and Filter *@
+@*Bootstraps Search and Filter modified for razor inserted data test string.*@
 <script>
     document.getElementById('searchInput').addEventListener('keyup', function () {
         let input = this.value.toLowerCase();
         let rows = document.getElementById('tableBody').getElementsByTagName('tr');
         for (let i = 0; i < rows.length; i++) {
-            let rowData = rows[i].getElementsByTagName('td');
+            let rowData = rows[i].querySelectorAll('td[data-row-id="data-row"]');
             let match = false;
             for (let j = 0; j < rowData.length; j++) {
                 if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
@@ -458,7 +458,6 @@
         });
     });
 </script>
-<script src="~/js/filter.js"></script>
 
 @*Modal for denying a journal entry*@
 <div class="modal fade" id="denyModal" tabindex="-1" aria-labelledby="denyModalLabel" aria-hidden="true">
@@ -483,10 +482,8 @@
         </div>
     </div>
 </div>
-
-@*Script for populatig denial modal text for a certain journal entry button clicked*@
+@*Script for populating a denial modals text when a specific journal entry button has been clicked.*@
 <script>
-
     var screenName = "@currentUser.ScreenName";
     var journalId;
     var journalDesc;
@@ -521,3 +518,5 @@
         });
     }
 </script>
+<script src="~/js/filter.js"></script>
+<script src="~/js/filters.js"></script>

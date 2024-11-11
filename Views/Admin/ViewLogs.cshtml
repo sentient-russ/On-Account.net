@@ -5,17 +5,13 @@
 </div>
 <h1 class="text-center mb-4">Security Log</h1>
 @* code here to remove button if the user is not admin or manager *@
-<div class="search-row">
-    <div class="search-colum-1" style="margin-left: 60px;">
-        
-    </div>
-    <div class="search-colum-2">
-        <img src="~/img/search.svg" class="search-img" text-align:right;" />
-    </div>
+<div class="search-row-secondary">
     <div class="search-colum-3">
         <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
+        <img src="~/img/search.svg" class="mng-acct-search-img" />
     </div>
 </div>
+<div class="table-wrapper margin-top-20">
 <table class="table table-striped">
     <thead>
         <tr>
@@ -31,22 +27,21 @@
             <th>
                 @Html.DisplayNameFor(model => model.ChangedTo)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody id="tableBody">
 @foreach (var item in Model) {
         <tr>
-            <td>
+            <td style="text-align:left; padding-left:20px;">
                 @Html.DisplayFor(modelItem => item.ChangeDate)
             </td>
-            <td>
+            <td style="text-align:left;">
                 @Html.DisplayFor(modelItem => item.UserId)
             </td>
-            <td>
+            <td style="text-align:left;">
                 @Html.DisplayFor(modelItem => item.ChangedFrom)
             </td>
-            <td>
+            <td style="text-align:left;">
                 @Html.DisplayFor(modelItem => item.ChangedTo)
             </td>
 
@@ -54,23 +49,21 @@
 }
     </tbody>
 </table>
+</div>
 @* Search and Filter *@
 <script>
     document.getElementById('searchInput').addEventListener('keyup', function () {
         let input = this.value.toLowerCase();
         let rows = document.getElementById('tableBody').getElementsByTagName('tr');
-
         for (let i = 0; i < rows.length; i++) {
             let rowData = rows[i].getElementsByTagName('td');
             let match = false;
-
             for (let j = 0; j < rowData.length; j++) {
                 if (rowData[j].innerText.toLowerCase().indexOf(input) > -1) {
                     match = true;
                     break;
                 }
             }
-
             if (match) {
                 rows[i].style.display = '';
             } else {
