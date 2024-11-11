@@ -1125,9 +1125,16 @@ th, td {
     padding: 10px;
     text-align: center;
 }
-
+.date-container {
+    display: inline-flex;
+    justify-content: end;
+    width: 98%;
+}
+.padding-top-3{
+    padding-top:3px;
+}
 .accent-color {
-    color:#cf8520 !important;
+    color: #cf8520 !important;
 }
 .journal-wrapper {
     display: flex;

@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<oa.Models.AccountsModel>
-
 @{
     ViewData["Title"] = "viewOwnersEquity";
 
@@ -17,13 +16,24 @@
 
     int count = 0;
 }
-
 <div class="text-center margin-top-120">
 </div>
-<h1 class="text-center mb-4">Statement of retained earnings</h1>
-<h2 class="text-center mb-4">For the period ending: <span class="accent-color">@ViewBag.Date</span></h2>
-
-<div class="table-wrapper margin-top-20">
+<h1 class="text-center mb-4">Owner's Equity</h1>
+<h2 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h2>
+<div class="date-container">
+    <form class="row g-3" asp-controller="Accounting" asp-action="BalanceAsOfDate" method="post">
+        <div class="col-auto">
+            <label for="date" class="mr-1 padding-top-3">As of Date:</label>
+        </div>
+        <div class="col-auto">
+            <input type="date" class="form-control mr-1" id="date" name="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-primary mb-2">Update Report</button>
+        </div>
+    </form>
+</div>
+<div class="table-wrapper">
     <table class="table table-striped">
         <thead class="table-top-row">
             <tr>

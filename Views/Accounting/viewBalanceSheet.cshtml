@@ -17,8 +17,20 @@
 </div>
 <h1 class="text-center mb-4">Balance Sheet</h1>
 <h2 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h2>
-
-<div class="table-wrapper margin-top-20">
+<div class="date-container">
+    <form class="row g-3" asp-controller="Accounting" asp-action="BalanceAsOfDate" method="post">
+        <div class="col-auto">
+            <label for="date" class="mr-1 padding-top-3">As of Date:</label>
+        </div>
+        <div class="col-auto">
+            <input type="date" class="form-control mr-1" id="date" name="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-primary mb-2">Update Report</button>
+        </div>
+    </form>
+</div>
+<div class="table-wrapper">
     <table class="table table-striped">
         <thead class="table-top-row">
             <tr>
@@ -26,7 +38,7 @@
                     @Html.DisplayNameFor(model => model.name)
                 </th>
                 <th style="text-align:right;padding-right:40px">
-                    Totals:
+                    Total:
                 </th>
             </tr>
         </thead>
