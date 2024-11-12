@@ -311,8 +311,24 @@
                             @if (item.journal_id != currentJournalId)
                             {
                                 <a class="btn btn-outline-primary btn-table-margin" asp-action="ViewJournalDetails" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Display journal details">Details</a>
-                                <a class="btn btn-outline-secondary btn-table-margin" asp-action="ApproveJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Approve to add the journal to the ledger.">Approve</a>
-                                <button type="button" class="btn btn-outline-danger btn-table-margin" data-bs-toggle="modal" data-bs-target="#denyModal" data-bs-journalid="@item.journal_id" data-bs-journaldesc="@item.description">Deny</button>
+
+                                @if (item.status == "Approved" || item.status == "Denied")
+                                {
+                                    <a class="btn btn-outline-secondary btn-table-marginn disabled-link" asp-action="ApproveJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Approve to add the journal to the ledger.">Approve</a>
+                                }
+                                else if (item.status == "Pending")
+                                {
+                                    <a class="btn btn-outline-secondary btn-table-margi" asp-action="ApproveJournal" asp-route-id="@item.journal_id" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Approve to add the journal to the ledger.">Approve</a>
+                                }
+
+                                @if (item.status == "Approved" || item.status == "Denied")
+                                {
+                                    <button type="button" class="btn btn-outline-danger btn-table-margin" data-bs-toggle="modal" data-bs-target="#denyModal" data-bs-journalid="@item.journal_id" data-bs-journaldesc="@item.description" disabled>Deny</button>
+                                }
+                                else if (item.status == "Pending")
+                                {
+                                    <button type="button" class="btn btn-outline-danger btn-table-margin" data-bs-toggle="modal" data-bs-target="#denyModal" data-bs-journalid="@item.journal_id" data-bs-journaldesc="@item.description">Deny</button>
+                                }
                             }
                         </td>
                     }

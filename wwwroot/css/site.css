@@ -1029,6 +1029,11 @@ input:-webkit-autofill:focus {
     opacity: 0.6; 
     cursor: default; 
 }
+.disabled-link {
+    pointer-events: none;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 .faux-upload-container {
     display: flex;
     flex-direction: row;
