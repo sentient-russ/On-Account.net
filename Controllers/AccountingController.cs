@@ -5,9 +5,12 @@ using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using oa.Areas.Identity.Data;
+using System;
 using oa.Areas.Identity.Services;
 using System.Net;
 using System.Collections.Generic;
+using Org.BouncyCastle.Asn1.Cmp;
+using System.Runtime.CompilerServices;
 
 namespace OnAccount.Controllers
 {
@@ -19,6 +22,8 @@ namespace OnAccount.Controllers
         List<AccountsModel> currentAccounts;
         AccountsModel accountModel;
         private readonly IEmailSender _emailSender;
+        public DateTime today = DateTime.Today;
+        public string? todayStr = "";
 
         public AccountingController(DbConnectorService connectorService,
             UserService userService, IEmailSender emailSender)
@@ -28,6 +33,8 @@ namespace OnAccount.Controllers
             currentAccounts = _dbConnectorService.GetChartOfAccounts().OrderBy(a => a.number).ToList();
             accountModel = new AccountsModel();
             this._emailSender = emailSender;
+            todayStr = today.ToString("MM-dd-yyyy");
+
         }
         //All users can view the accounting home landing page
         [Authorize(Roles = "Administrator,Manager,Accountant")]
@@ -280,7 +287,7 @@ namespace OnAccount.Controllers
         }
         //All users can view accounts details pages
         [Authorize(Roles = "Administrator, Manager, Accountant")]
-        public async Task<IActionResult> GeneralJournal(string? Id = "1", string status = "All")
+        public async Task<IActionResult> GeneralJournal(string? Id = "1", string status = "All", string? messageIn = "", string? JID = "")
         {
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
@@ -290,7 +297,13 @@ namespace OnAccount.Controllers
             List<TransactionModel> currentTransactions = new List<TransactionModel>();
             var journalsPerPage = 10;
             double totalPages = 0.0;
-            if (status == "All")
+
+            if (JID != "")
+            {
+                totalPages = 1;
+                currentTransactions = _dbConnectorService.GetAccountTransactionsByJournalNumber(JID);
+            }
+            else if (status == "All")
             {
                 //trim list to current pages transactions                
                 totalPages = _dbConnectorService.GetNextJournalId() / journalsPerPage;
@@ -378,57 +391,7 @@ namespace OnAccount.Controllers
             }            
             ViewBag.recordCount = currentTransactions.Count();
             ViewBag.lastStatus = status;
-            return View(currentTransactions);
-        }
-   
-        public async Task<IActionResult> GeneralJournalTransactionFocus(string? Id)
-        {
-            SettingsModel systemSettings = new SettingsModel();
-            systemSettings = _dbConnectorService.GetSystemSettings();
-            ViewBag.businessName = systemSettings.business_name;
-
-            List<AccountsModel> currentAccounts = _dbConnectorService.GetChartOfAccounts();
-            List<TransactionModel> currentTransactions = _dbConnectorService.GetAllTransactions();
-            for (var i = 0; i < currentTransactions.Count; i++)
-            {
-                if (currentTransactions[i].debit_amount == 0)
-                {
-                    currentTransactions[i].debit_amount = null;
-                }
-                else if (currentTransactions[i].credit_amount == 0)
-                {
-                    currentTransactions[i].credit_amount = null;
-                }
-            }
-            for (int i = 0; i < currentTransactions.Count; i++)
-            {
-                currentTransactions[i].cr_description = currentAccounts
-                    .Where(account => account.number == currentTransactions[i].credit_account)
-                    .Select(account => account.name)
-                    .FirstOrDefault();
-                if (currentTransactions[i].credit_account != 0)
-                {
-                    currentTransactions[i].cr_description = currentTransactions[i].credit_account + " - " + currentTransactions[i].cr_description;
-                }
-                else
-                {
-                    currentTransactions[i].cr_description = null;
-                }
-                currentTransactions[i].dr_description = currentAccounts
-                    .Where(account => account.number == currentTransactions[i].debit_account)
-                    .Select(account => account.name)
-                    .FirstOrDefault();
-                if (currentTransactions[i].debit_account != 0)
-                {
-                    currentTransactions[i].dr_description = currentTransactions[i].debit_account + " - " + currentTransactions[i].dr_description;
-                }
-                else
-                {
-                    currentTransactions[i].dr_description = null;
-                }
-            }
-            //the magic happens here.
-            ViewBag.JournalFocusId = Id + " ";
+            ViewBag.JournalFocusMessage = messageIn;
             return View(currentTransactions);
         }
 
@@ -599,41 +562,78 @@ namespace OnAccount.Controllers
             return View(logs);
         }
 
-
         //creates the trial balance view
         [Authorize(Roles = "Manager, Accountant, Administrator")]
- 
-        public async Task<IActionResult> viewTrialBalance()
+
+        public async Task<IActionResult> viewTrialBalance(string? dateIn = "", string? includeAdjusting = "false")
         {
+            SettingsModel settings = _dbConnectorService.GetSystemSettings();
+            DateTime currentDate = DateTime.Now;
+
+            var message = "";
+            string formattedDate = "";
+            string viewInputDate = "";
+            if (string.IsNullOrEmpty(dateIn))
+            {
+                formattedDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
+                viewInputDate = settings.open_close_date.Value.ToString("yyyy-MM-dd");
+                message = $"Please select a valid date after {settings.open_close_date.Value.ToString("MM-dd-yyyy")} and before {currentDate.ToString("MM-dd-yyyy")}. Note: All pending transactions must be 'Denied' or 'Approved' for the selected range.";
+            }
+            else
+            {
+                formattedDate = DateTime.Parse(dateIn).ToString("MM-dd-yyyy");
+                viewInputDate = DateTime.Parse(dateIn).ToString("yyyy-MM-dd");
+            }
+
+            //check for pending transactions in the period
+            //if failed present notification and send to general journal pending accounts
+            bool pendingTransactionsFound = _dbConnectorService.CheckForPendingByDateRange(formattedDate);
+            if (pendingTransactionsFound)
+            {
+                return RedirectToAction(nameof(GeneralJournal), new
+                {
+                    status = "Pending",
+                    messageIn = "Pending transactions were found in the requested date range which must be Approved or Denied before a trial balance can be created."
+                });
+            }
+
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
-
-            List<AccountsModel> listOfAccounts=new List<AccountsModel>();
+            //startDate
+            bool includeAdjustingBool = bool.Parse(includeAdjusting);
+            List<AccountsModel> listOfAccounts = new List<AccountsModel>();
             listOfAccounts = _dbConnectorService.GetNonZeroAccounts();
-            
+            //itterate over the non zero accounts to update balances based on date range
+            foreach (AccountsModel account in listOfAccounts)
+            {
+                account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, formattedDate, includeAdjustingBool);
+            }
             List<TrialBalanceModel> trialBalanceModels = new List<TrialBalanceModel>();
             for (int i = 0; i < listOfAccounts.Count(); i++)
             {
                 TrialBalanceModel trialBalanceTemp = new TrialBalanceModel();
-                if (listOfAccounts[i].normal_side.Equals("Debit"))
+                if(listOfAccounts[i].current_balance != 0)
                 {
-                    trialBalanceTemp.accountname = listOfAccounts[i].number+" - "+listOfAccounts[i].name;
-                    trialBalanceTemp.debit = (double)listOfAccounts[i].current_balance;
+                    if (listOfAccounts[i].normal_side.Equals("Debit"))
+                    {
+                        trialBalanceTemp.accountname = listOfAccounts[i].number + " - " + listOfAccounts[i].name;
+                        trialBalanceTemp.debit = (double)listOfAccounts[i].current_balance;
+                    }
+                    if (listOfAccounts[i].normal_side.Equals("Credit"))
+                    {
+                        trialBalanceTemp.accountname = listOfAccounts[i].number + " - " + listOfAccounts[i].name;
+                        trialBalanceTemp.credit = (double)listOfAccounts[i].current_balance;
+                    }
+                    trialBalanceModels.Add(trialBalanceTemp);
                 }
-                if (listOfAccounts[i].normal_side.Equals("Credit"))
-                {
-                    trialBalanceTemp.accountname = listOfAccounts[i].number + " - " + listOfAccounts[i].name;
-                    trialBalanceTemp.credit = (double)listOfAccounts[i].current_balance;
-                }
-                trialBalanceModels.Add(trialBalanceTemp);
             }
-            DateTime currentDate = DateTime.Now;
-            ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
+            ViewBag.InputDate = viewInputDate;
+            ViewBag.AsOfDate = formattedDate;
+            ViewBag.RecentOpeningClosingDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
+            ViewBag.Message = message;
             return View(trialBalanceModels);
         }
-
-
 
         //view for the income statement
         [Authorize(Roles = "Manager, Accountant, Administrator")]

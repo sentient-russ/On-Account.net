@@ -870,6 +870,157 @@ namespace oa.Services
             UpdateAccountBalance(accountNumberIn,balance);
             return balance;
         }
+
+        /*
+         * Caculate an accounts balance fromt the begining of the accounting calandar year to a secified date. 
+         */
+        public bool CheckForPendingByDateRange(string? dateIn)
+        {
+            bool rangeHasPending = true;
+            //get the beginning date.
+            SettingsModel settings = GetSystemSettings();
+            DateTime? fromDate = settings.open_close_date;
+            DateTime? toDate = DateTime.Parse(dateIn);
+            List<TransactionModel> accountTransactions = new List<TransactionModel>();
+            try
+            {
+                string command = "";
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                command = "SELECT * FROM on_account.transaction WHERE transaction_date BETWEEN @fromDate AND @toDateIn AND status = 'Pending'";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@fromDate", fromDate);
+                cmd1.Parameters.AddWithValue("@toDateIn", toDate);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    TransactionModel nextTransaction = new TransactionModel();
+                    nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
+                    nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    nextTransaction.is_opening = reader1.IsDBNull(7) ? null : reader1.GetBoolean(7);
+                    nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    nextTransaction.description = reader1.IsDBNull(9) ? null : reader1.GetString(9);
+                    nextTransaction.journal_id = reader1.IsDBNull(10) ? null : reader1.GetInt32(10);
+                    nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
+                    nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+                    nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    accountTransactions.Add(nextTransaction);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            if (accountTransactions.Count > 0)
+            {
+                rangeHasPending = true;
+            } else
+            {
+                rangeHasPending = false;
+            }
+
+            return rangeHasPending;
+        }
+
+
+        /*
+         * Caculate an accounts balance fromt the begining of the accounting calandar year to a secified date. 
+         */
+        public decimal GetAccountBalanceForApprovedByDateRange(int? accountNumberIn, string? dateIn, bool includeAdjusting = false)
+        {
+            //get the beginning date.
+            SettingsModel settings = GetSystemSettings();
+            DateTime? fromDate = settings.open_close_date;
+            DateTime? toDate = DateTime.Parse(dateIn);
+
+            List<TransactionModel> accountTransactions = new List<TransactionModel>();
+            try
+            {
+                string command = "";
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                if (!includeAdjusting)
+                {
+                    command = "SELECT * FROM on_account.transaction WHERE (debit_account=@accountNumberIn OR credit_account=@accountNumberIn) AND transaction_date BETWEEN @fromDate AND @toDateIn AND status = 'Approved' AND is_adjusting='false'";
+                }
+                else
+                {
+                    command = "SELECT * FROM on_account.transaction WHERE (debit_account=@accountNumberIn OR credit_account=@accountNumberIn) AND transaction_date BETWEEN @fromDate AND @toDateIn AND status = 'Approved'";
+                }                
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@accountNumberIn", accountNumberIn);
+                cmd1.Parameters.AddWithValue("@fromDate", fromDate);
+                cmd1.Parameters.AddWithValue("@toDateIn", toDate);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    TransactionModel nextTransaction = new TransactionModel();
+                    nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    //only return transaction data related to the requested account
+                    if (reader1.GetInt32(1) == accountNumberIn)
+                    {
+                        nextTransaction.debit_account = reader1.IsDBNull(1) ? null : reader1.GetInt32(1);
+                        nextTransaction.debit_amount = reader1.IsDBNull(2) ? null : reader1.GetDouble(2);
+                    }
+                    if (reader1.GetInt32(3) == accountNumberIn)
+                    {
+                        nextTransaction.credit_account = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+                        nextTransaction.credit_amount = reader1.IsDBNull(4) ? null : reader1.GetInt32(4);
+                    }
+                    nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
+                    nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    nextTransaction.is_opening = reader1.IsDBNull(7) ? null : reader1.GetBoolean(7);
+                    nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    nextTransaction.description = reader1.IsDBNull(9) ? null : reader1.GetString(9);
+                    nextTransaction.journal_id = reader1.IsDBNull(10) ? null : reader1.GetInt32(10);
+                    nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
+                    nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+                    nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    accountTransactions.Add(nextTransaction);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            //get normal side
+            string? normal_side = GetAccountNormalSideByNumber(accountNumberIn.ToString());
+            //calc bal
+            decimal dr = 0;
+            decimal cr = 0;
+            decimal balance = 0;
+            for (int i = 0; i < accountTransactions.Count; i++)
+            {
+                if (accountTransactions[i].credit_amount != null)
+                {
+                    cr += (decimal)accountTransactions[i].credit_amount;
+                }
+                if (accountTransactions[i].debit_amount != null)
+                {
+                    dr += (decimal)accountTransactions[i].debit_amount;
+                }
+            }
+            // calc balance based on normal side.
+            if (normal_side == "Debit")
+            {
+                balance = dr - cr;
+            }
+            else if (normal_side == "Credit")
+            {
+                balance = cr - dr;
+            }
+
+            return balance;
+        }
         /*
          * Adds a single transaction 
          */
@@ -1842,6 +1993,9 @@ namespace oa.Services
                     
                     settings.Id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
                     settings.business_name = reader1.IsDBNull(1) ? null : reader1.GetString(1);
+                    settings.closing_user = reader1.IsDBNull(2) ? null : reader1.GetString(2);
+                    settings.open_close_date = reader1.IsDBNull(3) ? null : reader1.GetDateTime(3);
+                    settings.open_close_on_date = reader1.IsDBNull(4) ? null : reader1.GetDateTime(4);
                 }
                 reader1.Close();
                 conn1.Close();

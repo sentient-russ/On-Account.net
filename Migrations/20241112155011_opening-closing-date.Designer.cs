@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using oa.Areas.Identity.Data;
 
@@ -10,9 +11,10 @@ using oa.Areas.Identity.Data;
 namespace oa.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241112155011_opening-closing-date")]
+    partial class openingclosingdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -542,8 +544,8 @@ namespace oa.Migrations
                     b.Property<string>("business_name")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("closing_user")
-                        .HasColumnType("longtext");
+                    b.Property<DateTime?>("closing_user")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("open_close_date")
                         .HasColumnType("datetime(6)");
@@ -604,9 +606,6 @@ namespace oa.Migrations
                     b.Property<string>("description")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<string>("is_adjusting")
-                        .HasColumnType("longtext");
 
                     b.Property<bool?>("is_opening")
                         .HasColumnType("tinyint(1)");

@@ -13,6 +13,7 @@
     var UserName = currentUser.ScreenName;
     DateTime today = System.DateTime.Today;
     var numNewLines = Model.transactions_list.Count - 2;
+
 }
 <div class="text-center" style="margin-top: -90px;">
     <img src="~/img/journal.jpg" style="max-height: 150px; transform:translateY(225px);" />
@@ -192,10 +193,9 @@
                                 <span>Post Ref:</span>
                                 @if (@Model.transactions_list[0].id != 0)
                                 {
-                                    string JournalString = "JID" + Model.transactions_list[0].journal_id;
-                   
+                                    string JID = Model.transactions_list[0].journal_id.ToString();
                                     <div class="journal-post-ref-text">
-                                        <a asp-action="GeneralJournalTransactionFocus" asp-route-id="@JournalString" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
+                                        <a asp-action="GeneralJournal" asp-route-id="1" asp-route-JID="@JID" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
                                             <input type="number" class="form-control muted" style="color: blue; text-align: center;" value="@Model.transactions_list[0].id" data-transaction="1" data-line="1" id="post-ref" readonly>
                                         </a>
                                     </div>
@@ -253,12 +253,10 @@
                             <div class="col-md-1">
                                 @if (@Model.transactions_list[1].id != 0)
                                 {
-                                    
-                                    string JournalString2 = "JID" + Model.transactions_list[1].journal_id;
-                                    
+                                    string JID = Model.transactions_list[0].journal_id.ToString();
                                     <div class="journal-post-ref-text">
-                                        <a asp-action="GeneralJournalTransactionFocus" asp-route-id="@JournalString2" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
-                                            <input type="number" class="form-control muted" style="color: blue; text-align: center;" value="@Model.transactions_list[1].id" data-transaction="1" data-line="2" id="post-ref" readonly>
+                                        <a asp-action="GeneralJournal" asp-route-id="1" asp-route-JID="@JID" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
+                                            <input type="number" class="form-control muted" style="color: blue; text-align: center;" value="@Model.transactions_list[0].id" data-transaction="1" data-line="1" id="post-ref" readonly>
                                         </a>
                                     </div>
                                 }
@@ -331,12 +329,10 @@
                                     <div class="col-md-1">
                                         @if (@Model.transactions_list[i].id != 0)
                                         {
-                                        
-                                            string JournalString3 = "JID" + Model.transactions_list[i].journal_id;
-                                        
-                                        <div class="journal-post-ref-text">
-                                        <a asp-action="GeneralJournalTransactionFocus" asp-route-id="@JournalString3" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
-                                                    <input type="number" class="form-control muted" style="color: blue; text-align: center;" value="@Model.transactions_list[i].id" id="post-ref" readonly>
+                                            string JID = Model.transactions_list[0].journal_id.ToString();
+                                            <div class="journal-post-ref-text">
+                                                <a asp-action="GeneralJournal" asp-route-id="1" asp-route-JID="@JID" role="button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Redirects to the General Journal transactions.">
+                                                    <input type="number" class="form-control muted" style="color: blue; text-align: center;" value="@Model.transactions_list[0].id" data-transaction="1" data-line="1" id="post-ref" readonly>
                                                 </a>
                                             </div>
                                         }

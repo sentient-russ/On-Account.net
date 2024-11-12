@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using oa.Areas.Identity.Services;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 Environment.SetEnvironmentVariable("ASPNETCORE_FORWARDEDHEADERS_ENABLED", "true");
@@ -200,6 +201,9 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "GetGeneralJournalPage",
     pattern: "{controller=AccountingController}/{action=GetGeneralJournalPage}/{id?}");
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=AccountingController}/{action=GeneralJournal}/{id?}/{status?}/{JID?}");
 
 app.MapRazorPages();
 app.Run();

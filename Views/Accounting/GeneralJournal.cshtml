@@ -14,6 +14,8 @@
     var totalPages = ViewBag.totalPages;
     var recordCount = ViewBag.recordCount;
     var lastStatus = ViewBag.lastStatus;
+    string statusIn = ViewBag.JournalFocusStatus;
+    string messageIn = ViewBag.JournalFocusMessage;
 
     int currentJournalNumber = 0;
     double runningBalance = 0; // Initialize running balance
@@ -50,6 +52,17 @@
     <img src="~/img/general_journal.png" style="max-height: 150px;" />
 </div>
 <h1 class="text-center mb-4">General Journal</h1>
+
+@if (messageIn != "")
+{
+    <div class="warning-row-focus margin-bottom-20">
+        <div class="text-danger text-right">
+            <span class="text-center">@messageIn</span>
+
+        </div>
+    </div>
+}
+
 <div class="search-row">
     <div class="search-colum-1">
         @if (User.IsInRole("Accountant") || User.IsInRole("Manager"))

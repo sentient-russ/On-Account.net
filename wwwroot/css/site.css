@@ -693,7 +693,13 @@ input.currency {
     justify-content: right;
     margin-right: 100px;
 }
-
+.warning-row-focus {
+    display: flex;
+    flex-direction: row;
+    min-height: 30px;
+    justify-content: center;
+    font-size:18px;
+}
 .search-row {
     display: flex;
     flex-direction: row;
