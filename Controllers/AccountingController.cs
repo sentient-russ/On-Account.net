@@ -300,24 +300,35 @@ namespace OnAccount.Controllers
             }
             else if (status == "All")
             {
+                var numberJournalsWithSatus = _dbConnectorService.GetNumJournalsStatus(status);
                 //trim list to current pages transactions                
-                totalPages = _dbConnectorService.GetNextJournalId() / journalsPerPage;
+                totalPages = (double)numberJournalsWithSatus / (double)journalsPerPage;
+                //add a page if a partial trailing page is required
                 if (totalPages % 1 != 0)
                 {
-                    totalPages = totalPages + 1;
+                    totalPages = (int)totalPages + 1;
                 }
                 // determine first and last journal number to send to the view
-                var endingJournalNumber = Int32.Parse(Id) * journalsPerPage;
-                var startingJournalNumber = endingJournalNumber - journalsPerPage;
+                var endingJournalNumber = (Int32.Parse(Id) * journalsPerPage);
+                var startingJournalNumber = (endingJournalNumber - journalsPerPage) -1;
                 currentTransactions = _dbConnectorService.GetAllTransactionsByJournalRange(startingJournalNumber, endingJournalNumber);
             } else
             {
                 //trim list to current pages transactions
                 var numberJournalsWithSatus = _dbConnectorService.GetNumJournalsStatus(status);
-                totalPages = (double)numberJournalsWithSatus / (double)journalsPerPage;
+                if(numberJournalsWithSatus == 0)
+                {
+                    //This is needed for when no transactions exist with a specified status to avoid devide by 0 error.
+                    //An error woud be appropriate.
+                    return RedirectToAction(nameof(GeneralJournal), new { messageIn = "No transactions exist with that status." });
+                } else
+                {
+                    totalPages = (double)numberJournalsWithSatus / (double)journalsPerPage;
+                }
+                //calc number of pages
                 if (totalPages % 1 != 0)
                 {
-                    totalPages = totalPages + 1;
+                    totalPages = (int)totalPages + 1;
                 } else if (totalPages % 1 == 0)
                 {
                     totalPages = totalPages;
@@ -327,16 +338,12 @@ namespace OnAccount.Controllers
                     totalPages = 1;
                 } else
                 {
-                    totalPages = numberJournalsWithSatus / journalsPerPage + 1;
+                    totalPages = (numberJournalsWithSatus / journalsPerPage) + 1;
                 }
-                // determine first and last journal number to send to the view
-                var endingRecordNumber = Int32.Parse(Id) * journalsPerPage;
-                if(numberJournalsWithSatus + 1 > endingRecordNumber)
-                {
-                    endingRecordNumber = numberJournalsWithSatus;
-                }
-                var startingRecordNumber = endingRecordNumber - journalsPerPage;
-                currentTransactions = _dbConnectorService.GetAllTransactionsByJournalStatus(startingRecordNumber, endingRecordNumber, status);
+                var endingJournalNumber = (Int32.Parse(Id) * journalsPerPage);
+                var startingJournalNumber = (endingJournalNumber - journalsPerPage);
+
+                currentTransactions = _dbConnectorService.GetAllTransactionsByJournalStatus(startingJournalNumber, endingJournalNumber -1, status);
             }
 
             for(var i = 0; i < currentTransactions.Count; i++)

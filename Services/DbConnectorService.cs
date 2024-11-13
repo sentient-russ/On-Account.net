@@ -929,7 +929,7 @@ namespace oa.Services
 
 
         /*
-         * Caculate an accounts balance fromt the begining of the accounting calandar year to a secified date. 
+         * Caculate an accounts balance from the begining of the accounting calandar year to a secified date. 
          */
         public decimal GetAccountBalanceForApprovedByDateRange(int? accountNumberIn, string? dateIn, bool includeAdjusting = false)
         {
@@ -1908,15 +1908,26 @@ namespace oa.Services
         public int GetNumJournalsStatus(string? statusIn)
         {
             using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-            string command = "SELECT COUNT(DISTINCT journal_id) FROM on_account.transaction WHERE status=@status";
-            conn1.Open();
-            MySqlCommand cmd1 = new MySqlCommand(command, conn1);
-            cmd1.Parameters.AddWithValue("@status", statusIn);
-            int numberOfPendingJournals = Convert.ToInt32(cmd1.ExecuteScalar());
+            string command = "";
+            int numberOfPendingJournals = 0;
+            if (statusIn == "All")
+            {    
+                command = "SELECT COUNT(DISTINCT journal_id) FROM on_account.transaction";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                numberOfPendingJournals = Convert.ToInt32(cmd1.ExecuteScalar());
+            } else
+            {
+                command = "SELECT COUNT(DISTINCT journal_id) FROM on_account.transaction WHERE status=@status";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@status", statusIn);
+                numberOfPendingJournals = Convert.ToInt32(cmd1.ExecuteScalar());
+            }
             return numberOfPendingJournals;
         }
-
-        public List<TransactionModel> GetAllTransactionsByJournalStatus(int startingRecordNumber,int endingRecordNumber, string statusIn){
+        public List<TransactionModel> GetAllTransactionsByJournalStatus(int startingRecordNumber, int endingRecordNumber, string statusIn)
+        {
             List<TransactionModel> transactionsList = new List<TransactionModel>();
             try
             {
@@ -1963,18 +1974,18 @@ namespace oa.Services
             uniqueJournalIdList.Sort();
             List<int> returnIds = new List<int>();
             // adjust the ending record number if on the last page.
-            if(endingRecordNumber > uniqueJournalIdList.Count() -1)
+            if (endingRecordNumber > uniqueJournalIdList.Count() - 1)
             {
                 endingRecordNumber = uniqueJournalIdList.Count() - 1;
             }
-            
-            for(int i = startingRecordNumber; i <= endingRecordNumber; i++)
+
+            for (int i = startingRecordNumber; i <= endingRecordNumber; i++)
             {
                 returnIds.Add(uniqueJournalIdList[i]);
             }
             // generate list of transactions to return.
             List<TransactionModel> returnTransactionsList = new List<TransactionModel>();
-            foreach(var transaction in transactionsList)
+            foreach (var transaction in transactionsList)
             {
                 if (returnIds.Contains((int)transaction.journal_id))
                 {
@@ -1983,6 +1994,49 @@ namespace oa.Services
             }
             return returnTransactionsList;
         }
+
+        //public List<TransactionModel> GetAllTransactionsByJournalStatus(int startingJournalNumber, int endingJournalNumber, string statusIn){
+        //    List<TransactionModel> transactionsList = new List<TransactionModel>();
+        //    try
+        //    {
+        //        using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+        //        string command = "SELECT * FROM on_account.transaction WHERE (journal_id BETWEEN @startingJournalNumber AND @endingJournalNumber) AND status = @status";
+        //        conn1.Open();
+        //        MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+        //        cmd1.Parameters.AddWithValue("@status", statusIn);
+        //        cmd1.Parameters.AddWithValue("@startingJournalNumber", startingJournalNumber);
+        //        cmd1.Parameters.AddWithValue("@endingJournalNumber", endingJournalNumber);
+        //        MySqlDataReader reader1 = cmd1.ExecuteReader();
+        //        while (reader1.Read())
+        //        {
+        //            TransactionModel nextTransaction = new TransactionModel();
+        //            nextTransaction.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+        //            nextTransaction.debit_account = reader1.IsDBNull(1) ? null : reader1.GetInt32(1);
+        //            nextTransaction.debit_amount = reader1.IsDBNull(2) ? null : reader1.GetDouble(2);
+        //            nextTransaction.credit_account = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+        //            nextTransaction.credit_amount = reader1.IsDBNull(4) ? null : reader1.GetInt32(4);
+        //            nextTransaction.transaction_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
+        //            nextTransaction.created_by = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+        //            nextTransaction.is_opening = reader1.IsDBNull(7) ? null : reader1.GetBoolean(7);
+        //            nextTransaction.status = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+        //            nextTransaction.description = reader1.IsDBNull(9) ? null : reader1.GetString(9);
+        //            nextTransaction.journal_id = reader1.IsDBNull(10) ? null : reader1.GetInt32(10);
+        //            nextTransaction.transaction_number = reader1.IsDBNull(11) ? null : reader1.GetInt32(11);
+        //            nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+        //            nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
+        //            nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+        //            transactionsList.Add(nextTransaction);
+        //        }
+        //        reader1.Close();
+        //        conn1.Close();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.ToString());
+        //    }
+
+        //    return transactionsList;
+        //}
 
         public SettingsModel GetSystemSettings()
         {
