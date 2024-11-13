@@ -1,5 +1,4 @@
 ﻿@model oa.Models.SettingsModel
-
 @{
     ViewData["Title"] = "System Settings";
 }
@@ -14,6 +13,21 @@
                 <label asp-for="business_name" class="control-label"></label>
                 <span asp-validation-for="business_name" class="text-danger"></span>
             </div>
+            <div class="form-floating mb-3">
+                <input type="date" asp-for="open_close_date" class="form-control" autocomplete="user-name" placeholder="" id="open_close_date" />
+                <label asp-for="open_close_date" class="control-label"></label>
+                <span asp-validation-for="open_close_date" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="closing_user" class="form-control" autocomplete="user-name" placeholder="" id="closing_user" readonly />
+                <label asp-for="closing_user" class="control-label"></label>
+                <span asp-validation-for="closing_user" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="date" asp-for="open_close_on_date" class="form-control" autocomplete="user-name" placeholder="" id="open_close_on_date" readonly />
+                <label asp-for="open_close_on_date" class="control-label"></label>
+                <span asp-validation-for="open_close_on_date" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <a asp-action="Index" id="journal_back_href">
@@ -22,7 +36,6 @@
                     </div>
                 </a>
             </div>
-
         </form>
     </div>
 </div>

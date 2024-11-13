@@ -111,7 +111,7 @@ namespace oa.Models
         [ValidateNever]
         public int?current_page_number { get; set; }
 
-
+        [Required]
         [ValidateNever]
         public string? is_adjusting { get; set; }
 

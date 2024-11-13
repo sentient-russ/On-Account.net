@@ -1029,8 +1029,8 @@ namespace oa.Services
             try
             {
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                string command = "INSERT INTO on_account.transaction (debit_account, debit_amount, credit_account, credit_amount, transaction_date, created_by, status, is_opening, description, journal_id, transaction_number, journal_description, journal_date, supporting_document) " + 
-                    "VALUES (@debit_account, @debit_amount, @credit_account, @credit_amount, @transaction_date, @created_by, @status, @is_opening, @description, @journal_id, @transaction_number, @journal_description, @journal_date, @supporting_document)";
+                string command = "INSERT INTO on_account.transaction (debit_account, debit_amount, credit_account, credit_amount, transaction_date, created_by, status, is_opening, description, journal_id, transaction_number, journal_description, journal_date, supporting_document, is_adjusting) " + 
+                    "VALUES (@debit_account, @debit_amount, @credit_account, @credit_amount, @transaction_date, @created_by, @status, @is_opening, @description, @journal_id, @transaction_number, @journal_description, @journal_date, @supporting_document, @is_adjusting)";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@debit_account", transactionIn.debit_account);
@@ -1047,6 +1047,7 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@journal_description", transactionIn.journal_description);
                 cmd1.Parameters.AddWithValue("@journal_date", transactionIn.journal_date);
                 cmd1.Parameters.AddWithValue("@supporting_document", transactionIn.supporting_document);
+                cmd1.Parameters.AddWithValue("@is_adjusting", transactionIn.is_adjusting);
 
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();
@@ -1307,6 +1308,7 @@ namespace oa.Services
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    nextTransaction.is_adjusting = reader1.IsDBNull(15) ? null : reader1.GetString(15);
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();
@@ -1351,6 +1353,7 @@ namespace oa.Services
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    nextTransaction.is_adjusting = reader1.IsDBNull(15) ? null : reader1.GetString(15);
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();
@@ -1394,6 +1397,7 @@ namespace oa.Services
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    nextTransaction.is_adjusting = reader1.IsDBNull(15) ? null : reader1.GetString(15);
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();
@@ -1462,6 +1466,7 @@ namespace oa.Services
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    nextTransaction.is_adjusting = reader1.IsDBNull(15) ? null : reader1.GetString(15);
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();
@@ -1513,6 +1518,7 @@ namespace oa.Services
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    nextTransaction.is_adjusting = reader1.IsDBNull(15) ? null : reader1.GetString(15);
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();
@@ -1562,6 +1568,7 @@ namespace oa.Services
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    nextTransaction.is_adjusting = reader1.IsDBNull(15) ? null : reader1.GetString(15);
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();
@@ -1615,6 +1622,7 @@ namespace oa.Services
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    nextTransaction.is_adjusting = reader1.IsDBNull(15) ? null : reader1.GetString(15);
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();
@@ -1659,6 +1667,7 @@ namespace oa.Services
                     nextTransaction.journal_description = reader1.IsDBNull(12) ? null : reader1.GetString(12);
                     nextTransaction.journal_date = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     nextTransaction.supporting_document = reader1.IsDBNull(14) ? null : reader1.GetString(14);
+                    nextTransaction.is_adjusting = reader1.IsDBNull(15) ? null : reader1.GetString(15);
                     transactionsList.Add(nextTransaction);
                 }
                 reader1.Close();
@@ -1691,7 +1700,6 @@ namespace oa.Services
                 {
                     foundName = reader.GetString(0);
                 }
-
             }
             catch (Exception ex)
             {
@@ -1728,7 +1736,6 @@ namespace oa.Services
             }
             return foundNum;
         }
-
         /*
          * Gets the next journal id
          */
@@ -1908,6 +1915,7 @@ namespace oa.Services
             int numberOfPendingJournals = Convert.ToInt32(cmd1.ExecuteScalar());
             return numberOfPendingJournals;
         }
+
         public List<TransactionModel> GetAllTransactionsByJournalStatus(int startingRecordNumber,int endingRecordNumber, string statusIn){
             List<TransactionModel> transactionsList = new List<TransactionModel>();
             try
@@ -1955,12 +1963,12 @@ namespace oa.Services
             uniqueJournalIdList.Sort();
             List<int> returnIds = new List<int>();
             // adjust the ending record number if on the last page.
-            if(endingRecordNumber > uniqueJournalIdList.Count() - 1)
+            if(endingRecordNumber > uniqueJournalIdList.Count() -1)
             {
                 endingRecordNumber = uniqueJournalIdList.Count() - 1;
             }
             
-            for(int i = startingRecordNumber; i <= endingRecordNumber - 1; i++)
+            for(int i = startingRecordNumber; i <= endingRecordNumber; i++)
             {
                 returnIds.Add(uniqueJournalIdList[i]);
             }
@@ -1974,7 +1982,6 @@ namespace oa.Services
                 }
             }
             return returnTransactionsList;
-
         }
 
         public SettingsModel GetSystemSettings()
@@ -1989,8 +1996,7 @@ namespace oa.Services
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 while (reader1.Read())
-                {
-                    
+                {                    
                     settings.Id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
                     settings.business_name = reader1.IsDBNull(1) ? null : reader1.GetString(1);
                     settings.closing_user = reader1.IsDBNull(2) ? null : reader1.GetString(2);
@@ -2014,11 +2020,14 @@ namespace oa.Services
                 try
                 {
                     using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                    string command = "INSERT INTO on_account.system_settings (business_name) VALUES (@business_name)";
+                    string command = "INSERT INTO on_account.system_settings (business_name, open_close_date, closing_user, open_close_on_date) VALUES (@business_name, @open_close_date, @closing_user, @open_close_on_date)";
                     conn1.Open();
                     MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                     cmd1.Parameters.AddWithValue("@Id", settingsIn.Id);
                     cmd1.Parameters.AddWithValue("@business_name", settingsIn.business_name);
+                    cmd1.Parameters.AddWithValue("@open_close_date", settingsIn.open_close_date);
+                    cmd1.Parameters.AddWithValue("@closing_user", settingsIn.closing_user);
+                    cmd1.Parameters.AddWithValue("@open_close_on_date", settingsIn.open_close_on_date);
                     MySqlDataReader reader1 = cmd1.ExecuteReader();
                     reader1.Close();
                     conn1.Close();
@@ -2030,11 +2039,14 @@ namespace oa.Services
             else {
                 try {
                     using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                    string command = "UPDATE on_account.system_settings SET business_name = @business_name WHERE Id=@Id";
+                    string command = "UPDATE on_account.system_settings SET business_name = @business_name, open_close_date = @open_close_date, closing_user = @closing_user, open_close_on_date = @open_close_on_date WHERE Id=@Id";
                     conn1.Open();
                     MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                     cmd1.Parameters.AddWithValue("@Id", settingsIn.Id);
                     cmd1.Parameters.AddWithValue("@business_name", settingsIn.business_name);
+                    cmd1.Parameters.AddWithValue("@open_close_date", settingsIn.open_close_date);
+                    cmd1.Parameters.AddWithValue("@closing_user", settingsIn.closing_user);
+                    cmd1.Parameters.AddWithValue("@open_close_on_date", settingsIn.open_close_on_date);
                     MySqlDataReader reader1 = cmd1.ExecuteReader();
                     reader1.Close();
                     conn1.Close();

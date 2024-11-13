@@ -63,6 +63,9 @@ namespace oa.Models
         [ValidateNever]
         public List<string>? supporting_docs_list { get; set; }
 
+        [NotMapped]
+        [ValidateNever]
 
+        public string? is_adjusting { get; set; }
     }
 }

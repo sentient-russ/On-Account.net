@@ -5,12 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using oa.Areas.Identity.Data;
-using System;
-using oa.Areas.Identity.Services;
-using System.Net;
-using System.Collections.Generic;
-using Org.BouncyCastle.Asn1.Cmp;
-using System.Runtime.CompilerServices;
 
 namespace OnAccount.Controllers
 {
@@ -34,7 +28,6 @@ namespace OnAccount.Controllers
             accountModel = new AccountsModel();
             this._emailSender = emailSender;
             todayStr = today.ToString("MM-dd-yyyy");
-
         }
         //All users can view the accounting home landing page
         [Authorize(Roles = "Administrator,Manager,Accountant")]
@@ -211,7 +204,7 @@ namespace OnAccount.Controllers
                 indeX = indeX + 1;
             }
 
-            //orriginally build for each journal entry to handle multipe transactions.  Leaving for that as a potential future upgrade
+            //orriginally built for each journal entry to handle multipe transactions.  Leaving for that as a potential future upgrade
             for (int j = 0; j < journalEntry.Transactions.Count; j++)
             {
 
@@ -236,7 +229,9 @@ namespace OnAccount.Controllers
                         debit_account = journalEntry.Transactions[j].LineItems[i].DrAccount == "unselected" ? 0 : int.Parse(journalEntry.Transactions[j].LineItems[i].DrAccount),
                         debit_amount = (double)journalEntry.Transactions[j].LineItems[i].DrAmount,
                         description = journalEntry.Transactions[j].TransactionDescription,
-                        supporting_document = supportingDocFound
+                        supporting_document = supportingDocFound,
+                        is_adjusting = journalEntry.is_adjusting,
+
                     }; 
 
                     _dbConnectorService.AddTransaction(transactionIn);
@@ -336,10 +331,13 @@ namespace OnAccount.Controllers
                 }
                 // determine first and last journal number to send to the view
                 var endingRecordNumber = Int32.Parse(Id) * journalsPerPage;
+                if(numberJournalsWithSatus + 1 > endingRecordNumber)
+                {
+                    endingRecordNumber = numberJournalsWithSatus;
+                }
                 var startingRecordNumber = endingRecordNumber - journalsPerPage;
                 currentTransactions = _dbConnectorService.GetAllTransactionsByJournalStatus(startingRecordNumber, endingRecordNumber, status);
             }
-
 
             for(var i = 0; i < currentTransactions.Count; i++)
             {
@@ -412,6 +410,7 @@ namespace OnAccount.Controllers
             infoBundle.journal_date = infoBundle.transactions_list[0].journal_date;
             infoBundle.journal_description = infoBundle.transactions_list[0].journal_description;
             infoBundle.supporting_docs_list = _dbConnectorService.GetSupportingDocuments(Int32.Parse(id));
+            infoBundle.is_adjusting = infoBundle.transactions_list[0].is_adjusting;
 
             for (int i = 0; i < infoBundle.transactions_list.Count; i++)
             {
@@ -464,7 +463,6 @@ namespace OnAccount.Controllers
             return RedirectToAction(nameof(GeneralJournal));
         }
 
-
         //Denial of journal with comment
         [HttpPost]
         [Authorize(Roles = "Manager")]
@@ -472,12 +470,10 @@ namespace OnAccount.Controllers
         {
 
             string formatted_comment = $"Denied by: {commenter}: {comment}";
-
             _dbConnectorService.UpdateJournalNotes(id, formatted_comment);
             // need log update here
             return Json(true);
         }
-
 
         //Only the manager can approve or deny a transaction.
         [Authorize(Roles = "Manager")]
@@ -506,8 +502,8 @@ namespace OnAccount.Controllers
                 _dbConnectorService.CalculateAccountBalance(listOfAccount[i].ToString());
                 
             }
-           // need log update here
-            return RedirectToAction(nameof(GeneralJournal));
+            // need log update here
+            return RedirectToAction(nameof(GeneralJournal), new { status = "Pending" });
         }
 
         // Viewable and usable by ANY logged-in user/role
@@ -543,8 +539,6 @@ namespace OnAccount.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-
-
         //grabs all logs that are relative to a specific account in the chart of accounts for the view
         [Authorize(Roles = "Manager, Administrator")]
 
@@ -564,12 +558,10 @@ namespace OnAccount.Controllers
 
         //creates the trial balance view
         [Authorize(Roles = "Manager, Accountant, Administrator")]
-
         public async Task<IActionResult> viewTrialBalance(string? dateIn = "", string? includeAdjusting = "false")
         {
             SettingsModel settings = _dbConnectorService.GetSystemSettings();
             DateTime currentDate = DateTime.Now;
-
             var message = "";
             string formattedDate = "";
             string viewInputDate = "";
@@ -578,9 +570,7 @@ namespace OnAccount.Controllers
                 formattedDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
                 viewInputDate = settings.open_close_date.Value.ToString("yyyy-MM-dd");
                 message = $"Please select a valid date after {settings.open_close_date.Value.ToString("MM-dd-yyyy")} and before {currentDate.ToString("MM-dd-yyyy")}. Note: All pending transactions must be 'Denied' or 'Approved' for the selected range.";
-            }
-            else
-            {
+            } else {
                 formattedDate = DateTime.Parse(dateIn).ToString("MM-dd-yyyy");
                 viewInputDate = DateTime.Parse(dateIn).ToString("yyyy-MM-dd");
             }
@@ -628,6 +618,7 @@ namespace OnAccount.Controllers
                     trialBalanceModels.Add(trialBalanceTemp);
                 }
             }
+            ViewBag.isAdjusting = includeAdjusting;
             ViewBag.InputDate = viewInputDate;
             ViewBag.AsOfDate = formattedDate;
             ViewBag.RecentOpeningClosingDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
@@ -656,8 +647,6 @@ namespace OnAccount.Controllers
             ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
             return View(accounts);
         }
-
-
 
         //view for the balance sheet
         [Authorize(Roles = "Manager, Accountant, Administrator")]
@@ -688,7 +677,6 @@ namespace OnAccount.Controllers
             ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
             return View(accounts);
         }
-
 
         //view for the Owner's equity
         [Authorize(Roles = "Manager, Accountant, Administrator")]
@@ -721,9 +709,5 @@ namespace OnAccount.Controllers
 
             return View(accounts);
         }
-
-
-
-
     }
 }

@@ -16,7 +16,6 @@
     var lastStatus = ViewBag.lastStatus;
     string statusIn = ViewBag.JournalFocusStatus;
     string messageIn = ViewBag.JournalFocusMessage;
-
     int currentJournalNumber = 0;
     double runningBalance = 0; // Initialize running balance
     DbConnectorService db = new DbConnectorService();
@@ -547,5 +546,14 @@
         });
     }
 </script>
-<script src="~/js/filter.js"></script>
-<script src="~/js/filters.js"></script>
+@{
+    string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+    if (environment == "Production")
+    {
+        <script src="~/js/filter_production.js" asp-append-version="true"></script>
+    }
+    else
+    {
+        <script src="~/js/filter.js" asp-append-version="true"></script>
+    }
+}

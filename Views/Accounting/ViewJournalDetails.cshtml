@@ -408,23 +408,30 @@
                     </div>
                 </div>
                 @* journal description input *@
-                <div class="journal-row" style="padding-left: 6.5%;">
+                <div class="journal-row">
                     <div class="journal-final-input-row">
-                        <div class="col-md-11">
+                        <div class="col-md-8">
                             <div class="journal-description">
-                                <input class="form-control" placeholder="Journal Note" data-val="false" value="@Model.journal_description" id="journal-description" readonly />
+                                <input class="form-control" placeholder="Journal Note" data-val="false" value="@Model.journal_description" id="journal-description" readonly/>
                             </div>
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" checked=@Model.is_adjusting id="is-adjusting" disabled />
+                                <label class="form-check-label" for="is-adjusting">
+                                    Adjusting entry?
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
+            <div class="journal-save-row">
                 <div class="journal-save-row">
-                    <div class="mt-3 text-align-l">
-                        <div class="form-floating" style="padding-left: 6.5%;">
-                            <a asp-action="GeneralJournal">Back to List</a>
-                        </div>
-                    </div>
+                        <a asp-action="Index" id="journal_back_href">
+                            <div class="btn btn-outline-primary reset-btn" id="journal_back_btn">
+                                <span class="">Back</span>
+                            </div>
+                        </a>
                 </div>
                 <div>
                     <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn" hidden>
@@ -432,7 +439,17 @@
         </form>
         <div />
     </div>
-    <script src="~/js/journal.js" asp-append-version="true"></script>
+    @{
+        string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        if (environment == "Production")
+        {
+            <script src="~/js/journal_production.js" asp-append-version="true"></script>
+        }
+        else
+        {
+            <script src="~/js/journal.js" asp-append-version="true"></script>
+        }
+    }
     @section Scripts {
         @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");

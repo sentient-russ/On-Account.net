@@ -24,8 +24,13 @@ namespace oa.Models
         [JsonProperty("journal_notes")]
         public string JournalNotes { get; set; }
 
+        [JsonProperty("is_adjusting")]
+        public string is_adjusting { get; set; }
+
         [JsonProperty("transactions")]
         public List<Transaction> Transactions { get; set; }
+
+
     }
 
     public class Transaction

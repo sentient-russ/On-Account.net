@@ -222,7 +222,7 @@ namespace OnAccount.Controllers
 
         [Authorize(Roles = "Administrator")]
         [HttpPost]
-        public async Task<IActionResult> PostSystemSettings([Bind("Id, business_name")] SettingsModel settingsIn)
+        public async Task<IActionResult> PostSystemSettings([Bind("Id, business_name, open_close_date, closing_user, open_close_on_date")] SettingsModel settingsIn)
         {
             SettingsModel updatedSettings = new SettingsModel();
             updatedSettings = _dbConnectorService.UpdateSystemSettings(settingsIn);
