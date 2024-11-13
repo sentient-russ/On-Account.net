@@ -608,6 +608,10 @@ namespace oa.Services
                     account.comments = reader1.IsDBNull(15) ? null : reader1.GetString(15);
 
                     accountsModels.Add(account);
+                    if (account.normal_side.Equals("Credit") && account.type.Equals("Asset"))
+                    {
+                        account.current_balance = account.current_balance * (-1);
+                        }
                 }
                 reader1.Close();
                 conn1.Close();
@@ -866,6 +870,22 @@ namespace oa.Services
             } else if (normal_side == "Credit")
             {
                 balance = cr - dr;
+            }
+            if (accountNumberIn.Equals("290"))
+            {
+                dr = 0;
+                cr = 0;
+                List<AccountsModel> revenueAccounts = GetAccountsOnType("Revenue");
+                List<AccountsModel> expenseAccounts = GetAccountsOnType("Expense");
+                for (int i = 0; i < revenueAccounts.Count; i++)
+                {
+                    dr += (double)revenueAccounts[i].current_balance;
+                }
+                for(int i = 0; i < expenseAccounts.Count; i++)
+                {
+                    cr += (double)expenseAccounts[i].current_balance;
+                }
+                balance = dr - cr;
             }
             UpdateAccountBalance(accountNumberIn,balance);
             return balance;

@@ -661,6 +661,7 @@ namespace OnAccount.Controllers
             ViewBag.numberOfAssetAccounts = accounts.Count;
             List<AccountsModel> tempAccounts1 = new List<AccountsModel>();
             tempAccounts1 = _dbConnectorService.GetAccountsOnType("Equity");
+      
             for (int i = 0; i < tempAccounts1.Count(); i++)
             {
                 accounts.Add(tempAccounts1[i]);
@@ -668,6 +669,7 @@ namespace OnAccount.Controllers
             ViewBag.numberOfEquityAccounts=tempAccounts1.Count;
             List<AccountsModel> tempAccounts2 = new List<AccountsModel>();
             tempAccounts2 = _dbConnectorService.GetAccountsOnType("Liability");
+            
             for (int i = 0; i < tempAccounts2.Count(); i++)
             {
                 accounts.Add(tempAccounts2[i]);
@@ -697,7 +699,7 @@ namespace OnAccount.Controllers
             }
             ViewBag.numberOfExpenseAccounts = tempAccounts.Count;
             AccountsModel tempAccounts3 = new AccountsModel();
-            tempAccounts3 = _dbConnectorService.GetAccount("290");
+            tempAccounts3 = _dbConnectorService.GetAccount("291");
             AccountsModel tempAccounts4 = new AccountsModel();
             tempAccounts4 = _dbConnectorService.GetAccount("295");
             ViewBag.retainedEarningsStartingBalance=tempAccounts3.current_balance;
