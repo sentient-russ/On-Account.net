@@ -32,9 +32,10 @@
     <table class="table table-striped">
         <thead class="table-top-row">
             <tr>
-                <th style="text-align:left">
+                <th style="text-align:left; padding-left: 65px; font-weight: 600; font-size: 17px;">
+                    Account:                
                 </th>
-                <th style="text-align:right; padding-right:40px">
+                 <th style="text-align:right; padding-right:50px; font-weight: 600; font-size: 17px;">
                     Total:
                 </th>
             </tr>
@@ -67,7 +68,7 @@
                 }
             }
             <tr></tr>
-            <td style="text-align:left; padding-left: 40px;">Beginning Balance</td>
+            <td style="text-align:left; padding-left: 25px; font-weight:600; font-size:15px;">Beginning Balance</td>
             <td style="text-align:right; padding-right:40px;">@FormatNegativeDouble(startingBalance)</td>
                 @{
                     netIncomeTotal = revenueTotal - expenseTotal;
@@ -83,8 +84,8 @@
                 netIncomeTotal -= dividends;
             }
             <tr>
-                <td style="text-align:left; padding-left: 40px; font-weight: bold;">Ending Balance:</td>
-                <td style="text-align:right; text-decoration-line:underline; text-decoration-style:double; padding-right:40px; font-weight: bold;"><span class="doubleUnderline">@FormatNegativeDouble(netIncomeTotal)</span></td>
+            <td class="spanse" style="text-align:left; padding-left: 25px; font-weight:600; font-size: 15px; padding-top:10px;">Ending Balance:</td>
+            <td style="text-align:right; padding-right:40px;"><div class="top-border"><br></div><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(netIncomeTotal)</span></div></td>
             </tr>
         </tbody>
     </table>

@@ -29,18 +29,18 @@
 <div class="table-wrapper">
     <table class="table table-striped">
         <thead class="table-top-row">
-            <tr>
-                <th style="text-align:left">
-                    @Html.DisplayNameFor(model => model.name)
+            <tr style="background-color: #fcb14f15; padding-left: 20px;">
+                <th style="text-align:left; padding-left: 100px; font-weight: bold;">
+                    Account:
                 </th>
-                <th style="text-align:right; padding-right:40px">
-                    Total:
+                <th style="text-align:center; font-weight: bold;">
+                    <span style="padding: 30px;">Amount:</span><span style="margin-right:45px;">Total:</span>
                 </th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td style="text-align:left; padding-left: 40px;">Revenues</td>
+                <td style="text-align:left; padding-left: 42px; font-weight:600;font-size:15px">Revenues</td>
                 <td></td>
             </tr>
             @foreach (var item in Model)
@@ -63,8 +63,8 @@
                     @if (count == numberOfRevenueAccounts)
                     {
                         <tr>
-                            <td style="text-align:left; padding-left: 35px; font-weight: bold;">Revenue Total:</td>
-                            <td style="text-align:right; padding-right:40px; font-weight: bold;">@FormatNegativeDouble(revenueTotal)</td>
+                            <td style="text-align:left; padding-left: 25px; font-weight: 600; font-size: 15px; padding-top: 10px;">Revenue Total:</td>
+                            <td style="text-align:right; font-weight: bold;"><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(revenueTotal)</span></div></td>
                             @{
                                 count = 0;
                             }
@@ -73,7 +73,7 @@
                 }
             }
             <tr>
-                <td style="text-align:left; padding-left: 40px;">Expenses</td>
+                <td style="text-align:left; padding-left: 40px; font-weight:600;font-size:15px;padding-top:10px;">Expenses</td>
                 <td></td>
             </tr>
             @foreach (var item in Model)
@@ -95,8 +95,8 @@
                     @if (count == numberOfExpenseAccounts)
                     {
                         <tr>
-                            <td style="text-align:left; padding-left: 35px; font-weight: bold;">Expense Total:</td>
-                            <td style="text-align:right; padding-right:40px; font-weight: bold;">@FormatNegativeDouble(expenseTotal)</td>
+                            <td style="text-align:left; padding-left: 25px; font-weight: 600; font-size:15px; padding-top: 10px;">Expense Total:</td>
+                            <td style="text-align:right; font-weight: bold;"><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(expenseTotal)</span></div></td>
                             @{
                                 count = 0;
                             }
@@ -108,8 +108,8 @@
                 netIncomeTotal = revenueTotal - expenseTotal;
             }
             <tr>
-                <td style="text-align:left; padding-left: 40px; font-weight: bold;">Net Income Total:</td>
-                <td style="text-align:right; text-decoration-line:underline; text-decoration-style:double; padding-right:40px; font-weight: bold;"><span class="doubleUnderline">@FormatNegativeDouble(netIncomeTotal)</span></td>
+                <td class="spanse" style="text-align:left;padding-left: 40px; font-weight:600; font-size:15px;padding-top:10px;">Net Income Total:</td>
+                <td style="text-align:right; padding-right:40px;"><div class="top-border"><br></div><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(netIncomeTotal)</span></div></td>
             </tr>
         </tbody>
     </table>

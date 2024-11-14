@@ -1,5 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Baskervville+SC&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Baskervville+SC&family=Outfit:wght@100..900&display=swap');
+.top-border {
+    border-top: 2.5px solid;
+    line-height: 3px;
+}
+
+.total-text {
+    line-height: 20px;
+    margin-top: 5px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #cf8520 !important;
+}
+
+.spanse {
+    width: 85vw;
+}
+.span-spacer {
+    padding-right:40px;
+}
 .dark-row {
     --bs-table-bg: --var(transparent);
     background-color: #db1e1e00;
