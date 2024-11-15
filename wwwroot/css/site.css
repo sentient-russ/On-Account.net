@@ -2801,11 +2801,13 @@ th, td {
     vertical-align: central;
     max-width: fit-content;
     margin: auto;
+    text-align: center;
 }
 
 .dash-card {
     max-width: 250px;
     margin: auto;
+
     margin-top: 25px;
     margin-bottom: 25px;
 }
@@ -2815,12 +2817,14 @@ th, td {
 }
 
 .dash-container .col {
-    width: auto;
+    max-width: 180px;
 
 }
 
 .dash-container .row {
-    width: 1000px;
+    width: 100%;
     padding-top: 0px;
+    justify-items: center;
+    margin: auto;
 }
 
