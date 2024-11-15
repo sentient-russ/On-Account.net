@@ -2796,3 +2796,31 @@ th, td {
     width:100%;
     z-index:-1;
 }
+
+.dash-container {
+    vertical-align: central;
+    max-width: fit-content;
+    margin: auto;
+}
+
+.dash-card {
+    max-width: 250px;
+    margin: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.card-header {
+    background-color: aqua;
+}
+
+.dash-container .col {
+    width: auto;
+
+}
+
+.dash-container .row {
+    width: 800px;
+    padding-top: 0px;
+}
+
