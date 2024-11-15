@@ -55,7 +55,7 @@ namespace oa.Services
 
         }
         /*
-         * Caculate an accounts balance fromt the begining of the accounting calandar year to a secified date. 
+         * Caculate an accounts balance from the begining of the accounting calandar year to a secified date. 
          *//*
         public decimal GetAccountBalanceForApprovedByDateRange(string? fromDateIn, bool includeAdjusting = false)
         {
