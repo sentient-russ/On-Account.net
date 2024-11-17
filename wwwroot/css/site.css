@@ -2804,41 +2804,69 @@ th, td {
     width:100%;
     z-index:-1;
 }
-<<<<<<< HEAD
+
 .settings-modal-txt{
     padding-bottom:10px;
 }
-=======
 
 .dash-container {
-    vertical-align: central;
-    max-width: fit-content;
-    margin: auto;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    vertical-align: top;
     text-align: center;
 }
 
 .dash-card {
     max-width: 250px;
     margin: auto;
-
-    margin-top: 25px;
-    margin-bottom: 25px;
 }
 
 .card-header {
-    background-color: aqua;
+    display:flex;
+    flex-direction:column;
+    padding: 2.5%;
+    padding-right:30px;
+    padding-left:30px;
+    text-align:center;
+    height:60px;
+    border-bottom: 1px solid;
 }
-
+.card-header-text {
+    font-size: 18px;
+    font-weight: 600;
+}
+.card-body{
+    height:50px;
+    padding-top:10px;
+    padding-bottom:10px;
+    border-radius: 0px 0px 10px 10px;
+}
+.card-text{
+    font-size:18px;
+    font-weight:600;
+}
+.card-container {
+    max-width: 160px;
+    min-width:160px;
+    border: 1px solid;
+    border-radius: 10px;
+}
 .dash-container .col {
     max-width: 180px;
-
 }
-
 .dash-container .row {
     width: 100%;
     padding-top: 0px;
-    justify-items: center;
-    margin: auto;
+    justify-content: center;
+}
+.danger-subtle {
+    background-color: #fd7e1425;
+}
+.warning-subtle {
+    background-color: #dc354525;
+}
+.success-subtle {
+    background-color: #19875425;
 }
 
->>>>>>> b66c7558db394a5ab59a044a911a958a19775cd5
