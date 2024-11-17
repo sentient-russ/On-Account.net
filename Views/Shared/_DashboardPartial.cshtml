@@ -47,8 +47,35 @@
                 <div class="card-header">
                     <div class="card-header-text">Return on Assets</div>
                 </div>
-                <div class="card-body">
-                    <span class="card-text">%100</span>
+                <div class="card-body" id="retOnAssets">
+                    @{
+                        decimal? revenue0 = Model.returnOnAssetsModel.revenues_balance;
+                        decimal? expenses0 = Model.returnOnAssetsModel.expenses_balance;
+                        decimal? assets0 = Model.returnOnAssetsModel.assets_balance;
+                        double returnOnAssets = (double)(((revenue0 - expenses0) / assets0) * 100);
+                        string returnOnAssetsString = String.Format("{0:0.##}%", returnOnAssets);
+
+                        if (returnOnAssets < (1.75 * 100))
+                        {
+                            <script>
+                                document.getElementById('retOnAssets').classList.add('danger-subtle')
+                            </script>
+                        }
+                        else if (returnOnAssets >= (1.75 * 100) && returnOnAssets <= (2.25 * 100))
+                        {
+                            <script>
+                                document.getElementById('retOnAssets').classList.add('warning-subtle')
+                            </script>
+                        }
+                        else
+                        {
+                            <script>
+                                document.getElementById('retOnAssets').classList.add('success-subtle')
+                            </script>
+                        }
+                    }
+
+                    <span class="card-text">@returnOnAssetsString</span>
                 </div>
             </div>
         </div>
