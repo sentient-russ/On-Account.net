@@ -2804,6 +2804,41 @@ th, td {
     width:100%;
     z-index:-1;
 }
+<<<<<<< HEAD
 .settings-modal-txt{
     padding-bottom:10px;
 }
+=======
+
+.dash-container {
+    vertical-align: central;
+    max-width: fit-content;
+    margin: auto;
+    text-align: center;
+}
+
+.dash-card {
+    max-width: 250px;
+    margin: auto;
+
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.card-header {
+    background-color: aqua;
+}
+
+.dash-container .col {
+    max-width: 180px;
+
+}
+
+.dash-container .row {
+    width: 100%;
+    padding-top: 0px;
+    justify-items: center;
+    margin: auto;
+}
+
+>>>>>>> b66c7558db394a5ab59a044a911a958a19775cd5

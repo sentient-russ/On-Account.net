@@ -18,6 +18,17 @@
 <h1 class="text-center margin-top-120">Accounting Home</h1>
 <p class="text-center">Welcome @UserManager.GetUserName(User)!</p>
 <p class="text-center">Your current role is: @role</p>
+
+<div class="dashboard-container" id="partial-dashboard">
+    @*<partial name="_DashboardPartial" model="Model"/>*@
+</div>
+
+@section Scripts {
+    <script>
+        $("#partial-dashboard").load("/Accounting/partialViewDashboard")
+    </script>
+}
+
     
 <div class="outer-container">
     <div class="container-row">

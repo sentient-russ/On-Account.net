@@ -46,16 +46,41 @@ namespace oa.Services
             List<AccountsModel> expenseAccounts = new List<AccountsModel>();
 
 
-
-
-
-
-
-
-
         }
+
+        // Used for: Current Ratio,
+        public decimal GetAccountTypeTotalBalance(string? accountType = "")
+        {
+            List<AccountsModel> assetAccounts = _connectorService.GetAccountsOnType(accountType);
+
+            decimal? assetTotalBalance = 0;
+            foreach (AccountsModel account in assetAccounts)
+            {
+                Console.WriteLine(accountType + "Test: cur_bal: " + account.current_balance); // Debugging
+                assetTotalBalance += account.current_balance;
+                Console.WriteLine(accountType + "Test: total: " + assetTotalBalance); // Debugging
+            }
+
+            return (decimal)assetTotalBalance;
+        }
+
+        public decimal GetAccountTypeTotalBalance(string? accountType = "", string? term = "")
+        {
+            List<AccountsModel> assetAccounts = _connectorService.GetAccountsOnTypeAndTerm(accountType, term);
+
+            decimal? assetTotalBalance = 0;
+            foreach (AccountsModel account in assetAccounts)
+            {
+                Console.WriteLine(accountType + term + "Test: cur_bal: " + account.current_balance); // Debugging
+                assetTotalBalance += account.current_balance;
+                Console.WriteLine(accountType + "Test: total: " + assetTotalBalance); // Debugging
+            }
+
+            return (decimal)assetTotalBalance;
+        }
+
         /*
-         * Caculate an accounts balance fromt the begining of the accounting calandar year to a secified date. 
+         * Caculate an accounts balance from the begining of the accounting calandar year to a secified date. 
          *//*
         public decimal GetAccountBalanceForApprovedByDateRange(string? fromDateIn, bool includeAdjusting = false)
         {

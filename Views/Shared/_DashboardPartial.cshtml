@@ -1,0 +1,96 @@
+﻿@model oa.Models.DashboardBundleModel
+
+@* Chart grid layout in a partial view *@
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+
+<div class="dash-container text-center container-fluid">
+    <div class="row container-fluid">
+        <div class="col">
+            <div class="dash-card rounded border border-dark shadow">
+                <div class="card-header border-bottom border-dark">
+                    <h4>Current Ratio</h4>
+                </div>
+                <div class="card-body" id="curRatio">
+                    @{
+                        decimal? curAssets = Model.currentRaitoModel.current_assets_balance;
+                        decimal? curLiabilities = Model.currentRaitoModel.current_liabilities_balance;
+
+                        double currentRatio = (double)((curAssets / curLiabilities) * 100);
+                        string currentRatioString = String.Format("{0:0.##}%", currentRatio);
+
+                        if (currentRatio < (1.75*100))
+                        {
+                            <script>
+                                document.getElementById('curRatio').classList.add('bg-danger-subtle')
+                            </script>
+                        }
+                        else if (currentRatio >= (1.75*100) && currentRatio <= (2.25*100))
+                        {
+                            <script>
+                                document.getElementById('curRatio').classList.add('bg-warning-subtle')
+                            </script>
+                        }
+                        else
+                        {
+                            <script>
+                                document.getElementById('curRatio').classList.add('bg-success-subtle')
+                            </script>
+                        }
+                    }
+                    <h4>@currentRatioString</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="dash-card rounded border border-dark shadow">
+                <div class="card-header border-bottom border-dark">
+                    <h4>Return on Assets</h4>
+                </div>
+                <div class="card-body bg-warning-subtle">
+                    <h4>1000%</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="dash-card rounded border border-dark shadow">
+                <div class="card-header border-bottom border-dark">
+                    <h4>Return on Equity</h4>
+                </div>
+                <div class="card-body bg-danger-subtle">
+                    <h4>1000%</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="dash-card rounded border border-dark shadow">
+                <div class="card-header border-bottom border-dark">
+                    <h4>Net Profit Margin</h4>
+                </div>
+                <div class="card-body">
+                    <h4>1000%</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="dash-card rounded border border-dark shadow">
+                <div class="card-header border-bottom border-dark">
+                    <h4>Asset Turnover</h4>
+                </div>
+                <div class="card-body">
+                    <h4>1000%</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="dash-card rounded border border-dark shadow">
+                <div class="card-header border-bottom border-dark">
+                    <h4>Quick Ratio</h4>
+                </div>
+                <div class="card-body">
+                    <h4>1000%</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
