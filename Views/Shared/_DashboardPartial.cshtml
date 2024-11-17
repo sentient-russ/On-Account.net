@@ -1,5 +1,4 @@
-﻿@using oa.Models;
-@model IEnumerable<oa.Models.AccountsModel>
+﻿@model oa.Models.DashboardBundleModel
 
 @* Chart grid layout in a partial view *@
 
@@ -12,8 +11,34 @@
                 <div class="card-header border-bottom border-dark">
                     <h4>Current Ratio</h4>
                 </div>
-                <div class="card-body bg-success-subtle">
-                    <h4>1000%</h4>
+                <div class="card-body" id="curRatio">
+                    @{
+                        decimal? curAssets = Model.currentRaitoModel.current_assets_balance;
+                        decimal? curLiabilities = Model.currentRaitoModel.current_liabilities_balance;
+
+                        double currentRatio = (double)((curAssets / curLiabilities) * 100);
+                        string currentRatioString = String.Format("{0:0.##}%", currentRatio);
+
+                        if (currentRatio < (1.75*100))
+                        {
+                            <script>
+                                document.getElementById('curRatio').classList.add('bg-danger-subtle')
+                            </script>
+                        }
+                        else if (currentRatio >= (1.75*100) && currentRatio <= (2.25*100))
+                        {
+                            <script>
+                                document.getElementById('curRatio').classList.add('bg-warning-subtle')
+                            </script>
+                        }
+                        else
+                        {
+                            <script>
+                                document.getElementById('curRatio').classList.add('bg-success-subtle')
+                            </script>
+                        }
+                    }
+                    <h4>@currentRatioString</h4>
                 </div>
             </div>
         </div>
