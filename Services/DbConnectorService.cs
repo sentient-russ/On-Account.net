@@ -575,7 +575,9 @@ namespace oa.Services
             }
             return accountsModels;
         }
-        // gets a list of all accounts that have the type inputed
+        /*
+        * Gets list of accounts based on type
+        */
         public List<AccountsModel> GetAccountsOnType(string? type)
         {
             List<AccountsModel> accountsModels = new List<AccountsModel>();
@@ -612,6 +614,56 @@ namespace oa.Services
                     {
                         account.current_balance = account.current_balance * (-1);
                         }
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return accountsModels;
+        }
+        /*
+         * Gets list of accounts based on type and term
+         */
+        public List<AccountsModel> GetAccountsOnTypeAndTerm(string? type, string? term)
+        {
+            List<AccountsModel> accountsModels = new List<AccountsModel>();
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT * FROM on_account.account where type = @AccountType and term = @Term and current_balance <> 0";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                cmd1.Parameters.AddWithValue("@AccountType", type);
+                cmd1.Parameters.AddWithValue("@Term", term);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    AccountsModel account = new AccountsModel();
+                    account.id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                    account.name = reader1.IsDBNull(1) ? null : reader1.GetString(1);
+                    account.number = reader1.IsDBNull(2) ? null : reader1.GetInt32(2);
+                    account.sort_priority = reader1.IsDBNull(3) ? null : reader1.GetInt32(3);
+                    account.normal_side = reader1.IsDBNull(4) ? null : reader1.GetString(4);
+                    account.description = reader1.IsDBNull(5) ? null : reader1.GetString(5);
+                    account.type = reader1.IsDBNull(6) ? null : reader1.GetString(6);
+                    account.term = reader1.IsDBNull(7) ? null : reader1.GetString(7);
+                    account.statement_type = reader1.IsDBNull(8) ? null : reader1.GetString(8);
+                    account.account_creation_date = reader1.IsDBNull(9) ? null : reader1.GetDateTime(9);
+                    account.opening_transaction_num = reader1.IsDBNull(10) ? null : reader1.GetString(10);
+                    account.current_balance = reader1.IsDBNull(11) ? null : reader1.GetDecimal(11);
+                    account.created_by = reader1.IsDBNull(12) ? null : reader1.GetString(12);
+                    account.account_status = reader1.IsDBNull(13) ? null : reader1.GetString(13);
+                    account.starting_balance = reader1.IsDBNull(14) ? null : reader1.GetDecimal(14);
+                    account.comments = reader1.IsDBNull(15) ? null : reader1.GetString(15);
+
+                    accountsModels.Add(account);
+                    if (account.normal_side.Equals("Credit") && account.type.Equals("Asset"))
+                    {
+                        account.current_balance = account.current_balance * (-1);
+                    }
                 }
                 reader1.Close();
                 conn1.Close();
