@@ -38,12 +38,18 @@ namespace OnAccount.Controllers
 
             DashboardBundleModel dashboardBundleModel;
             CurrentRaitoModel currentRaitoModel;
+            ReturnOnAssetsModel returnOnAssetsModel;
 
             currentRaitoModel = new CurrentRaitoModel();
             currentRaitoModel.current_assets_balance = chartingService.GetAccountTypeTotalBalance("Asset", "Short");
             currentRaitoModel.current_liabilities_balance = chartingService.GetAccountTypeTotalBalance("Liability", "Short");
 
-            dashboardBundleModel = new DashboardBundleModel(currentRaitoModel);
+            returnOnAssetsModel = new ReturnOnAssetsModel();
+            returnOnAssetsModel.revenues_balance = chartingService.GetAccountTypeTotalBalance("Revenue");
+            returnOnAssetsModel.expenses_balance = chartingService.GetAccountTypeTotalBalance("Expense");
+            returnOnAssetsModel.assets_balance = chartingService.GetAccountTypeTotalBalance("Asset");
+
+            dashboardBundleModel = new DashboardBundleModel(currentRaitoModel, returnOnAssetsModel);
 
             return View(dashboardBundleModel);
         }
