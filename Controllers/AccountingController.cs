@@ -807,23 +807,5 @@ namespace OnAccount.Controllers
                 Id = nextJournalId
             });
         }
-
-        //[Authorize(Roles = "Manager, Accountant, Administrator")]
-        //public async Task<IActionResult> partialViewDashboard()
-        //{
-        //    ChartingDataService chartingService = new ChartingDataService();
-
-        //    DashboardBundleModel dashboardBundleModel;
-        //    CurrentRaitoModel currentRaitoModel;
-
-        //    currentRaitoModel = new CurrentRaitoModel();
-        //    currentRaitoModel.current_assets_balance = chartingService.GetAccountTypeTotalBalance("Asset", "Short");
-        //    currentRaitoModel.current_liabilities_balance = chartingService.GetAccountTypeTotalBalance("Liability", "Short");
-
-        //    dashboardBundleModel = new DashboardBundleModel(currentRaitoModel);
-
-        //    return PartialView("_DashboardPartial", dashboardBundleModel);
-        //}
-
     }
 }

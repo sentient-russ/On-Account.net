@@ -3,8 +3,10 @@
     ViewData["Title"] = "System Settings";
 }
 <h1 class="text-center mb-5  margin-top-120">System Settings</h1>
-<div class="row">
-    <div class="col-md-4 mx-auto">
+
+<div class="settings-row">
+    <div class="settings-form-container">
+    <div class="mx-auto">
         <form asp-action="PostSystemSettings">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -48,6 +50,8 @@
         </form>
     </div>
 </div>
+</div>
+
 <!-- Close Accounting Period Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -109,7 +113,6 @@
 
 <style>
     .closing-btn{
-        width: 410px;
         height: 50px;
         font-weight:600;
         font-size:16px;
@@ -124,7 +127,24 @@
         display:flex;
         position:absolute;
         bottom: 50px;
-        width: 100%;
+        width: 97.5%;
+        justify-content:center;
+    }
+    .settings-form-container{
+        min-width: 400px;
+        padding: 20px;
+        border: 1px solid;
+        border-radius: 10px;
+        box-shadow: 3px 3px 3px;
+    }
+    .settings-row{
+        --bs-gutter-x: 1.5rem;
+        --bs-gutter-y: 0;
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: calc(-1 * var(--bs-gutter-y));
+        margin-right: calc(-.5 * var(--bs-gutter-x));
+        margin-left: calc(-.5 * var(--bs-gutter-x));
         justify-content:center;
     }
 </style>

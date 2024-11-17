@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using oa.Areas.Identity.Services;
 namespace OnAccount.Controllers
 {
-    [Authorize(Roles = "Administrator")]  //[Authorize(Roles = "Administrator,Accountant")] for multiple role assignment
+    [Authorize(Roles = "Administrator")]
     [BindProperties(SupportsGet = true)]
     public class AdminController : Controller
     {
