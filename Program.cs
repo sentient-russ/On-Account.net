@@ -150,6 +150,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -159,6 +160,12 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "Admin",
     pattern: "{controller=AdminController}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "Admin",
+    pattern: "{controller=AdminController}/{action=ResetTransactions}/{id?}");
+app.MapControllerRoute(
+    name: "Admin",
+    pattern: "{controller=AdminController}/{action=ResetAllData}/{id?}");
 app.MapControllerRoute(
     name: "Roles",
     pattern: "{controller=AdminController}/{action=CreateRole}/{id?}");

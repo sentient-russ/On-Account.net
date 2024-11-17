@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using oa.Areas.Identity.Data;
+using oa.Migrations;
 
 namespace OnAccount.Controllers
 {
@@ -160,6 +161,8 @@ namespace OnAccount.Controllers
             return View(journalAccount);
         }
 
+        //All users can view jounal entries
+        [Authorize(Roles = "Manager, Accountant")]
         [HttpPost]
         [Route("api/journal")]
         public async Task<IActionResult> PostJournalEntry()
@@ -282,7 +285,7 @@ namespace OnAccount.Controllers
         }
         //All users can view accounts details pages
         [Authorize(Roles = "Administrator, Manager, Accountant")]
-        public async Task<IActionResult> GeneralJournal(string? Id = "1", string status = "All", string? messageIn = "", string? JID = "")
+        public async Task<IActionResult> GeneralJournal(string? Id = "1", string status = "All", string? messageIn = "", string? JID = "", List<string>? JIDListIn = null)
         {
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
@@ -297,6 +300,23 @@ namespace OnAccount.Controllers
             {
                 totalPages = 1;
                 currentTransactions = _dbConnectorService.GetAccountTransactionsByJournalNumber(JID);
+            } 
+            // handles the event where a list of journal entries need to be closed to close out the accounting year
+            else if (JIDListIn.Count != 0)
+            {
+                for(int i = 0; i < JIDListIn.Count; i++)
+                {
+                    List<TransactionModel> nextJournalTransactionsList = _dbConnectorService.GetAccountTransactionsByJournalNumber(JIDListIn[i]);
+                    for(int j = 0; j < nextJournalTransactionsList.Count; j++)
+                    {
+                        currentTransactions.Add(nextJournalTransactionsList[j]);
+                    }
+                }
+                totalPages = (double)currentTransactions.Count / (double)journalsPerPage;
+                if (totalPages % 1 != 0)
+                {
+                    totalPages = (int)totalPages + 1;
+                }
             }
             else if (status == "All")
             {
@@ -563,7 +583,6 @@ namespace OnAccount.Controllers
             return View(logs);
         }
 
-        //creates the trial balance view
         [Authorize(Roles = "Manager, Accountant, Administrator")]
         public async Task<IActionResult> viewTrialBalance(string? dateIn = "", string? includeAdjusting = "false")
         {
@@ -577,13 +596,14 @@ namespace OnAccount.Controllers
                 formattedDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
                 viewInputDate = settings.open_close_date.Value.ToString("yyyy-MM-dd");
                 message = $"Please select a valid date after {settings.open_close_date.Value.ToString("MM-dd-yyyy")} and before {currentDate.ToString("MM-dd-yyyy")}. Note: All pending transactions must be 'Denied' or 'Approved' for the selected range.";
-            } else {
+            }
+            else
+            {
                 formattedDate = DateTime.Parse(dateIn).ToString("MM-dd-yyyy");
                 viewInputDate = DateTime.Parse(dateIn).ToString("yyyy-MM-dd");
             }
 
-            //check for pending transactions in the period
-            //if failed present notification and send to general journal pending accounts
+            // Check for pending transactions in the period
             bool pendingTransactionsFound = _dbConnectorService.CheckForPendingByDateRange(formattedDate);
             if (pendingTransactionsFound)
             {
@@ -597,11 +617,11 @@ namespace OnAccount.Controllers
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
-            //startDate
+            // Start date
             bool includeAdjustingBool = bool.Parse(includeAdjusting);
             List<AccountsModel> listOfAccounts = new List<AccountsModel>();
             listOfAccounts = _dbConnectorService.GetNonZeroAccounts();
-            //itterate over the non zero accounts to update balances based on date range
+            // Iterate over the non-zero accounts to update balances based on date range
             foreach (AccountsModel account in listOfAccounts)
             {
                 account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, formattedDate, includeAdjustingBool);
@@ -610,7 +630,7 @@ namespace OnAccount.Controllers
             for (int i = 0; i < listOfAccounts.Count(); i++)
             {
                 TrialBalanceModel trialBalanceTemp = new TrialBalanceModel();
-                if(listOfAccounts[i].current_balance != 0)
+                if (listOfAccounts[i].current_balance != 0)
                 {
                     if (listOfAccounts[i].normal_side.Equals("Debit"))
                     {
@@ -718,5 +738,63 @@ namespace OnAccount.Controllers
 
             return View(accounts);
         }
+
+        //end point to process the closing entry and return the journalId.
+        [Authorize(Roles = "Manager, Accountant, Administrator")]
+        public async Task<IActionResult> CreateClosingEntry(string newClosingDateIn)
+        {
+            DateTime newClosingDate = DateTime.Parse(newClosingDateIn);
+            //check for and handle pending in range condition
+            List<string> pendingIds = _dbConnectorService.GetPeriodPendingJournalIds(newClosingDate);
+            if (pendingIds.Count > 0)
+            {
+                return RedirectToAction(nameof(GeneralJournal), new
+                {
+                    status = "Pending",
+                    messageIn = "Pending transactions were found in the requested date range which must be Approved or Denied before a the selected period can be closed can be created.",
+                    JIDListIn = pendingIds
+                });
+            }
+            //get revenue and expense transactions in the closing year date range 
+            List<TransactionModel> transactions = new List<TransactionModel>();
+            transactions = _dbConnectorService.GetCurrentYearClosingTransactions(newClosingDate);
+            int nextJournalId = _dbConnectorService.GetNextJournalId();
+            //reverse amounts
+            foreach (TransactionModel transaction in transactions)
+            {
+                if (transaction.credit_account != 0)
+                {
+                    transaction.debit_account = transaction.credit_account;
+                    transaction.debit_amount = transaction.credit_amount;
+                    transaction.credit_account = 0;
+                    transaction.credit_amount = 0;
+                    transaction.is_adjusting = "true";
+                    transaction.status = "Pending";
+                    transaction.journal_id = nextJournalId;
+                    transaction.journal_date = DateTime.Now;
+                    transaction.transaction_date = DateTime.Parse(newClosingDateIn);
+                    _dbConnectorService.AddTransaction(transaction);
+                }
+                else if (transaction.credit_account != 0)
+                {
+                    transaction.credit_account = transaction.debit_account;
+                    transaction.credit_amount = transaction.debit_amount;
+                    transaction.debit_account = 0;
+                    transaction.debit_amount = 0;
+                    transaction.is_adjusting = "true";
+                    transaction.status = "Pending";
+                    transaction.journal_id = nextJournalId;
+                    transaction.journal_date = DateTime.Now;
+                    transaction.transaction_date = DateTime.Parse(newClosingDateIn);
+                    _dbConnectorService.AddTransaction(transaction);
+                }
+            }
+
+            return RedirectToAction(nameof(ViewJournalDetails), new
+            {
+                Id = nextJournalId
+            });
+        }
+
     }
 }
