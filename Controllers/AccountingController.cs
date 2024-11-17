@@ -34,7 +34,18 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator,Manager,Accountant")]
         public IActionResult Index()
         {
-            return View();
+            ChartingDataService chartingService = new ChartingDataService();
+
+            DashboardBundleModel dashboardBundleModel;
+            CurrentRaitoModel currentRaitoModel;
+
+            currentRaitoModel = new CurrentRaitoModel();
+            currentRaitoModel.current_assets_balance = chartingService.GetAccountTypeTotalBalance("Asset", "Short");
+            currentRaitoModel.current_liabilities_balance = chartingService.GetAccountTypeTotalBalance("Liability", "Short");
+
+            dashboardBundleModel = new DashboardBundleModel(currentRaitoModel);
+
+            return View(dashboardBundleModel);
         }
         //All users can view the chart of accounts
         [Authorize(Roles = "Administrator, Manager, Accountant")]
@@ -741,16 +752,17 @@ namespace OnAccount.Controllers
 
         //end point to process the closing entry and return the journalId.
         [Authorize(Roles = "Manager, Accountant, Administrator")]
-        public async Task<IActionResult> CreateClosingEntry(string newClosingDateIn)
+        [HttpPost]
+        public async Task<IActionResult> CreateClosingEntry()
         {
-            DateTime newClosingDate = DateTime.Parse(newClosingDateIn);
+            var openCloseDate = Request.Form["open_close_date"].ToString();
+            DateTime newClosingDate = DateTime.Parse(openCloseDate);
             //check for and handle pending in range condition
             List<string> pendingIds = _dbConnectorService.GetPeriodPendingJournalIds(newClosingDate);
             if (pendingIds.Count > 0)
             {
                 return RedirectToAction(nameof(GeneralJournal), new
                 {
-                    status = "Pending",
                     messageIn = "Pending transactions were found in the requested date range which must be Approved or Denied before a the selected period can be closed can be created.",
                     JIDListIn = pendingIds
                 });
@@ -772,7 +784,7 @@ namespace OnAccount.Controllers
                     transaction.status = "Pending";
                     transaction.journal_id = nextJournalId;
                     transaction.journal_date = DateTime.Now;
-                    transaction.transaction_date = DateTime.Parse(newClosingDateIn);
+                    transaction.transaction_date = newClosingDate;
                     _dbConnectorService.AddTransaction(transaction);
                 }
                 else if (transaction.credit_account != 0)
@@ -785,7 +797,7 @@ namespace OnAccount.Controllers
                     transaction.status = "Pending";
                     transaction.journal_id = nextJournalId;
                     transaction.journal_date = DateTime.Now;
-                    transaction.transaction_date = DateTime.Parse(newClosingDateIn);
+                    transaction.transaction_date = newClosingDate;
                     _dbConnectorService.AddTransaction(transaction);
                 }
             }
@@ -796,22 +808,22 @@ namespace OnAccount.Controllers
             });
         }
 
-        [Authorize(Roles = "Manager, Accountant, Administrator")]
-        public async Task<IActionResult> partialViewDashboard()
-        {
-            ChartingDataService chartingService = new ChartingDataService();
+        //[Authorize(Roles = "Manager, Accountant, Administrator")]
+        //public async Task<IActionResult> partialViewDashboard()
+        //{
+        //    ChartingDataService chartingService = new ChartingDataService();
 
-            DashboardBundleModel dashboardBundleModel;
-            CurrentRaitoModel currentRaitoModel;
+        //    DashboardBundleModel dashboardBundleModel;
+        //    CurrentRaitoModel currentRaitoModel;
 
-            currentRaitoModel = new CurrentRaitoModel();
-            currentRaitoModel.current_assets_balance = chartingService.GetAccountTypeTotalBalance("Asset", "Short");
-            currentRaitoModel.current_liabilities_balance = chartingService.GetAccountTypeTotalBalance("Liability", "Short");
+        //    currentRaitoModel = new CurrentRaitoModel();
+        //    currentRaitoModel.current_assets_balance = chartingService.GetAccountTypeTotalBalance("Asset", "Short");
+        //    currentRaitoModel.current_liabilities_balance = chartingService.GetAccountTypeTotalBalance("Liability", "Short");
 
-            dashboardBundleModel = new DashboardBundleModel(currentRaitoModel);
+        //    dashboardBundleModel = new DashboardBundleModel(currentRaitoModel);
 
-            return PartialView("_DashboardPartial", dashboardBundleModel);
-        }
+        //    return PartialView("_DashboardPartial", dashboardBundleModel);
+        //}
 
     }
 }

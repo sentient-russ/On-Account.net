@@ -60,16 +60,16 @@
                 <div class="modal-warning-txt">
                     <span class="alert-secondary">Warning! This action cannot be undone.  Once an accounting period has been closed and approved by the manager the income and expenses will be zeroed out for the next calandar year.</span>
                 </div>
-                    <form asp-action="PostSystemSettings">
+                <form action="/Accounting/CreateClosingEntry" method="post">
                     <div class="form-floating mb-3">
-                        <input type="date" asp-for="open_close_date" class="form-control" autocomplete="user-name" placeholder="" id="open_close_date" />
-                        <label asp-for="open_close_date" class="control-label"></label>
-                        <span asp-validation-for="open_close_date" class="text-danger"></span>
+                        <input type="date" name="open_close_date" class="form-control" autocomplete="user-name" placeholder="" id="open_close_date" />
+                        <label for="open_close_date" class="control-label">Open/Close Date</label>
                     </div>
+                    <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                
                 <button type="button" class="btn btn-danger">Confirm Closing Date</button>
             </div>
         </div>

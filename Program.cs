@@ -167,6 +167,9 @@ app.MapControllerRoute(
     name: "Admin",
     pattern: "{controller=AdminController}/{action=ResetAllData}/{id?}");
 app.MapControllerRoute(
+    name: "Accounting",
+    pattern: "{controller=AccountingController}/{action=CreateClosingEntry}/{newClosingDateIn?}");
+app.MapControllerRoute(
     name: "Roles",
     pattern: "{controller=AdminController}/{action=CreateRole}/{id?}");
 app.MapControllerRoute(
