@@ -48,7 +48,6 @@ namespace oa.Services
 
         }
 
-        // Used for: Current Ratio,
         public decimal GetAccountTypeTotalBalance(string? accountType = "")
         {
             List<AccountsModel> assetAccounts = _connectorService.GetAccountsOnType(accountType);
@@ -78,6 +77,27 @@ namespace oa.Services
 
             return (decimal)assetTotalBalance;
         }
+
+        public decimal GetAccountIdsTotalBalane(List<string> idList)
+        {
+            List<AccountsModel> assetAccounts = new List<AccountsModel>();
+
+            foreach(string id in idList)
+            {
+                assetAccounts.Add(_connectorService.GetAccount(id));
+            }
+
+            decimal? assetTotalBalance = 0;
+            foreach (AccountsModel account in assetAccounts)
+            {
+                Console.WriteLine(account.name + "Test: cur_bal: " + account.current_balance); // Debugging
+                assetTotalBalance += account.current_balance;
+                Console.WriteLine(account.name + "Test: total: " + assetTotalBalance); // Debugging
+            }
+
+            return (decimal)assetTotalBalance;
+        }
+
 
         /*
          * Caculate an accounts balance from the begining of the accounting calandar year to a secified date. 
