@@ -54,6 +54,7 @@
                         decimal? assets0 = Model.returnOnAssetsModel.assets_balance;
                         double returnOnAssets = (double)(((revenue0 - expenses0) / assets0) * 100);
                         string returnOnAssetsString = String.Format("{0:0.##}%", returnOnAssets);
+                        Console.WriteLine("ReturnOnAssets Ratio: " + returnOnAssets);
 
                         if (returnOnAssets < (1.75 * 100))
                         {
@@ -84,8 +85,34 @@
                 <div class="card-header">
                     <div class="card-header-text">Return on Equity</div>
                 </div>
-                <div class="card-body">
-                    <span class="card-text">%100</span>
+                <div class="card-body" id="retOnEquity">
+                    @{
+                        decimal? equity0 = Model.returnOnEquityModel.equity_balance;
+                        double returnOnEquity = (double)(((revenue0 - expenses0) / equity0) * 100);
+                        string returnOnEquityString = String.Format("{0:0.##}%", returnOnEquity);
+                        Console.WriteLine("ReturnOnEquity Ratio: " + returnOnEquity);
+
+                        if (returnOnEquity < (1.75 * 100))
+                        {
+                            <script>
+                                document.getElementById('retOnEquity').classList.add('danger-subtle')
+                            </script>
+                        }
+                        else if (returnOnEquity >= (1.75 * 100) && returnOnEquity <= (2.25 * 100))
+                        {
+                            <script>
+                                document.getElementById('retOnEquity').classList.add('warning-subtle')
+                            </script>
+                        }
+                        else
+                        {
+                            <script>
+                                document.getElementById('retOnEquity').classList.add('success-subtle')
+                            </script>
+                        }
+                    }
+
+                    <span class="card-text">@returnOnEquityString</span>
                 </div>
             </div>
         </div>
