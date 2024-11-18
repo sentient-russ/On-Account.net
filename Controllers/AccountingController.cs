@@ -39,6 +39,7 @@ namespace OnAccount.Controllers
             DashboardBundleModel dashboardBundleModel;
             CurrentRaitoModel currentRaitoModel;
             ReturnOnAssetsModel returnOnAssetsModel;
+            ReturnOnEquityModel returnOnEquityModel;
 
             currentRaitoModel = new CurrentRaitoModel();
             currentRaitoModel.current_assets_balance = chartingService.GetAccountTypeTotalBalance("Asset", "Short");
@@ -49,7 +50,17 @@ namespace OnAccount.Controllers
             returnOnAssetsModel.expenses_balance = chartingService.GetAccountTypeTotalBalance("Expense");
             returnOnAssetsModel.assets_balance = chartingService.GetAccountTypeTotalBalance("Asset");
 
-            dashboardBundleModel = new DashboardBundleModel(currentRaitoModel, returnOnAssetsModel);
+            returnOnEquityModel = new ReturnOnEquityModel();
+            returnOnEquityModel.revenues_balance = chartingService.GetAccountTypeTotalBalance("Revenue");
+            returnOnEquityModel.expenses_balance = chartingService.GetAccountTypeTotalBalance("Expense");
+            returnOnEquityModel.equity_balance = chartingService.GetAccountTypeTotalBalance("Equity");
+
+            dashboardBundleModel = 
+                new DashboardBundleModel(
+                currentRaitoModel, 
+                returnOnAssetsModel,
+                returnOnEquityModel
+                );
 
             return View(dashboardBundleModel);
         }
