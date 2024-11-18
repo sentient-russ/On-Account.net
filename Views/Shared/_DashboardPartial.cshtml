@@ -121,8 +121,33 @@
                 <div class="card-header">
                     <div class="card-header-text">Net Profit Margin</div>
                 </div>
-                <div class="card-body">
-                    <span class="card-text">%100</span>
+                <div class="card-body" id="netProfMargin">
+                    @{
+                        double netProfitMargin = (double)(((revenue0 - expenses0) / revenue0) * 100);
+                        string netProfitMarginString = String.Format("{0:0.##}%", netProfitMargin);
+                        Console.WriteLine("NetProfitMargin Ratio: " + netProfitMargin);
+
+                        if (netProfitMargin < (1.75 * 100))
+                        {
+                            <script>
+                                document.getElementById('netProfMargin').classList.add('danger-subtle')
+                            </script>
+                        }
+                        else if (netProfitMargin >= (1.75 * 100) && netProfitMargin <= (2.25 * 100))
+                        {
+                            <script>
+                                document.getElementById('netProfMargin').classList.add('warning-subtle')
+                            </script>
+                        }
+                        else
+                        {
+                            <script>
+                                document.getElementById('netProfMargin').classList.add('success-subtle')
+                            </script>
+                        }
+                    }
+
+                    <span class="card-text">@netProfitMarginString</span>
                 </div>
             </div>
         </div>
@@ -131,8 +156,33 @@
                 <div class="card-header">
                     <div class="card-header-text">Asset Turnover</div>
                 </div>
-                <div class="card-body">
-                    <span class="card-text">%100</span>
+                <div class="card-body" id="assetTurnover">
+                     @{
+                        double assetTurnover = (double)((revenue0 / assets0) * 100);
+                        string assetTurnoverString = String.Format("{0:0.##}%", assetTurnover);
+                        Console.WriteLine("AssetTurnover Ratio: " + assetTurnover);
+
+                        if (assetTurnover < (1.75 * 100))
+                        {
+                            <script>
+                                document.getElementById('assetTurnover').classList.add('danger-subtle')
+                            </script>
+                        }
+                        else if (assetTurnover >= (1.75 * 100) && assetTurnover <= (2.25 * 100))
+                        {
+                            <script>
+                                document.getElementById('assetTurnover').classList.add('warning-subtle')
+                            </script>
+                        }
+                        else
+                        {
+                            <script>
+                                document.getElementById('assetTurnover').classList.add('success-subtle')
+                            </script>
+                        }
+                    }
+
+                    <span class="card-text">@assetTurnoverString</span>
                 </div>
             </div>
         </div>
@@ -141,8 +191,34 @@
                 <div class="card-header">
                     <div class="card-header-text"> Quick Ratio</div>
                 </div>
-                <div class="card-body">
-                    <span class="card-text">%100</span>
+                <div class="card-body" id="quickRatio">
+                    @{
+                        decimal? inventory0 = Model.quickRatioModel.inventory_balance;
+                        double quickRatio = (double)(((curAssets - inventory0) / curLiabilities) * 100);
+                        string quickRatioString = String.Format("{0:0.##}%", quickRatio);
+                        Console.WriteLine("Quick Ratio: " + quickRatio);
+
+                        if (quickRatio < (0.9 * 100))
+                        {
+                            <script>
+                                document.getElementById('quickRatio').classList.add('danger-subtle')
+                            </script>
+                        }
+                        else if (quickRatio >= (0.9 * 100) && quickRatio <= (1.2 * 100))
+                        {
+                            <script>
+                                document.getElementById('quickRatio').classList.add('warning-subtle')
+                            </script>
+                        }
+                        else
+                        {
+                            <script>
+                                document.getElementById('quickRatio').classList.add('success-subtle')
+                            </script>
+                        }
+                    }
+
+                    <span class="card-text">@quickRatioString</span>
                 </div>
             </div>
         </div>
