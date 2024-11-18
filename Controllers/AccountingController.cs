@@ -51,8 +51,9 @@ namespace OnAccount.Controllers
             returnOnAssetsModel.assets_balance = chartingService.GetAccountTypeTotalBalance("Asset");
 
             returnOnEquityModel = new ReturnOnEquityModel();
-            returnOnEquityModel.revenues_balance = chartingService.GetAccountTypeTotalBalance("Revenue");
-            returnOnEquityModel.expenses_balance = chartingService.GetAccountTypeTotalBalance("Expense");
+            // Revenues and expenses totals already exist in the model above (returnOnAssetsModel)
+            //returnOnEquityModel.revenues_balance = chartingService.GetAccountTypeTotalBalance("Revenue");
+            //returnOnEquityModel.expenses_balance = chartingService.GetAccountTypeTotalBalance("Expense");
             returnOnEquityModel.equity_balance = chartingService.GetAccountTypeTotalBalance("Equity");
 
             dashboardBundleModel = 
