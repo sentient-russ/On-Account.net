@@ -2863,10 +2863,10 @@ th, td {
     justify-content: center;
 }
 .danger-subtle {
-    background-color: #fd7e1425;
+    background-color: #dc354525;
 }
 .warning-subtle {
-    background-color: #dc354525;
+    background-color: #fd7e1425;
 }
 .success-subtle {
     background-color: #19875425;
