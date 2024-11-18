@@ -40,6 +40,7 @@ namespace OnAccount.Controllers
             CurrentRaitoModel currentRaitoModel;
             ReturnOnAssetsModel returnOnAssetsModel;
             ReturnOnEquityModel returnOnEquityModel;
+            QuickRatioModel quickRatioModel;
 
             currentRaitoModel = new CurrentRaitoModel();
             currentRaitoModel.current_assets_balance = chartingService.GetAccountTypeTotalBalance("Asset", "Short");
@@ -56,11 +57,19 @@ namespace OnAccount.Controllers
             //returnOnEquityModel.expenses_balance = chartingService.GetAccountTypeTotalBalance("Expense");
             returnOnEquityModel.equity_balance = chartingService.GetAccountTypeTotalBalance("Equity");
 
+            quickRatioModel = new QuickRatioModel();
+            List<string> inventoryIdList = new List<string>();
+            inventoryIdList.Add("115"); // Office Equipment
+            inventoryIdList.Add("140"); // Merchandise Inventory
+
+            quickRatioModel.inventory_balance = chartingService.GetAccountIdsTotalBalane(inventoryIdList);
+
             dashboardBundleModel = 
                 new DashboardBundleModel(
                 currentRaitoModel, 
                 returnOnAssetsModel,
-                returnOnEquityModel
+                returnOnEquityModel,
+                quickRatioModel
                 );
 
             return View(dashboardBundleModel);
