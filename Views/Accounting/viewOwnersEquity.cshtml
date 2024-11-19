@@ -1,27 +1,28 @@
-﻿@model IEnumerable<oa.Models.AccountsModel>
+﻿@model oa.Models.EquityBundle
 @{
-    ViewData["Title"] = "viewOwnersEquity";
-    double revenueTotal = 0;
-    double expenseTotal = 0;
-    double netIncomeTotal = 0;
-    int numberOfRevenueAccounts = ViewBag.numberOfRevenueAccounts;
-    int numberOfExpenseAccounts = ViewBag.numberOfExpenseAccounts;
-    double startingBalance = (double)ViewBag.retainedEarningsStartingBalance;
-    double dividends = (double)ViewBag.dividendsBalance;
-    int count = 0;
+    ViewData["Title"] = "viewIncomeStatement";
+    string? asOfDate = ViewBag.asOfDate;
+    string? lastClosingDate = ViewBag.lastClosingDate;
+    DateTime beginningDateObj = DateTime.Parse(lastClosingDate);
+    string beginningDate = beginningDateObj.ToString("MM-dd-yyyy");
+    string? titleDate = ViewBag.titleDate;
+    int? EquityCounter = 0;
 }
 <div class="text-center margin-top-120">
+    <h1 class="text-center mb-2"><span class="accent-color">@ViewBag.businessName</span></h1>
+    <h2 class="text-center mb-2">Statement of Retained Earnings</h2>
+    <h3 class="text-center mb-4">As of: <span class="accent-color">@titleDate</span></h3>
 </div>
-<h1 class="text-center mb-2"><span class="accent-color">@ViewBag.businessName</span></h1>
-<h2 class="text-center mb-2">Owner's Equity</h2>
-<h3 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h3>
 <div class="date-container">
-    <form class="row g-3" asp-controller="Accounting" asp-action="BalanceAsOfDate" method="post">
+    <form class="row g-3" asp-controller="Accounting" asp-action="viewOwnersEquity" method="post">
         <div class="col-auto">
             <label for="date" class="mr-1 padding-top-3">As of Date:</label>
         </div>
         <div class="col-auto">
-            <input type="date" class="form-control mr-1" id="date" name="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+            <input type="date" class="form-control mr-1" id="fromDate" name="fromDate" value="@lastClosingDate" required>
+        </div>
+        <div class="col-auto">
+            <input type="date" class="form-control mr-1" id="toDate" name="toDate" value="@asOfDate" required>
         </div>
         <div class="col-auto">
             <button type="submit" class="btn btn-outline-primary mb-2">Update Report</button>
@@ -31,90 +32,64 @@
 <div class="table-wrapper">
     <table class="table table-striped">
         <thead class="table-top-row">
-            <tr>
-                <th style="text-align:left; padding-left: 65px; font-weight: 600; font-size: 17px;">
-                    Account:                
+            <tr style="background-color: #fcb14f15; padding-left: 20px;">
+                <th style="text-align:left; padding-left: 100px;  font-weight: bold;">
+                    Account:
                 </th>
-                 <th style="text-align:right; padding-right:50px; font-weight: 600; font-size: 17px;">
-                    Total:
+                <th style="width:50%"></th>
+                <th style="text-align:right; font-weight: bold;">
+                    <span style="padding: 30px;">Amount:</span><span style="padding-right:45px;"">Total:</span>
                 </th>
             </tr>
         </thead>
         <tbody>
+           
             <tr>
+                <td style="text-align:left; padding-left: 40px; font-weight:600; font-size:15px; min-width: 400px;">Beginning Retained Earnings @beginningDate</td>
+                <td></td>
+                <td style="text-align:right;padding-right: 120px;">
+                    @FormatNegativeDouble((double)Model.BeginningRetainedEarnings)
+                </td>
             </tr>
-            @foreach (var item in Model)
-            {
-                @if (item.type.Equals("Revenue"))
-                {
-                    revenueTotal += (double)item.current_balance;
-                    count++;
-                }
-                if (count == numberOfRevenueAccounts)
-                {                        
-                    count = 0;                    
-                }
-            }
-            @foreach (var item in Model)
-            {
-                @if (item.type.Equals("Expense"))
-                {
-                    expenseTotal += (double)item.current_balance;
-                    count++;
-                }
-                if (count == numberOfExpenseAccounts)
-                {                           
-                    count = 0;
-                }
-            }
-            <tr></tr>
-            <td style="text-align:left; padding-left: 25px; font-weight:600; font-size:15px;">Beginning Balance</td>
-            <td style="text-align:right; padding-right:40px;">@FormatNegativeDouble(startingBalance)</td>
-                @{
-                    netIncomeTotal = revenueTotal - expenseTotal;
-                }
-            <tr></tr>
-            <td style="text-align:left; padding-left: 40px;">Net Income Total</td>
-            <td style="text-align:right; padding-right:40px;">@FormatNegativeDouble(netIncomeTotal)</td>
-
-            <tr></tr>
-            <td style="text-align:left; padding-left: 40px;">Dividends</td>
-            <td style="text-align:right; padding-right:40px;">@FormatNegativeDouble(dividends)</td>
-            @{
-                netIncomeTotal -= dividends;
-            }
-            <tr>
-            <td class="spanse" style="text-align:left; padding-left: 25px; font-weight:600; font-size: 15px; padding-top:10px;">Ending Balance:</td>
-            <td style="text-align:right; padding-right:40px;"><div class="top-border"><br></div><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(netIncomeTotal)</span></div></td>
-            </tr>
+                <tr>
+                    <td style="text-align:left;padding-left: 80px;">
+                        <span>Add: Net Income</span>
+                    </td>
+                    <td></td>
+                    <td style="text-align:right;padding-right: 120px;">
+                        @FormatNegativeDouble((double)Model.RunningNetIncome)
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:left;padding-left: 80px;">
+                        <span>Less: Dividends</span>
+                    </td>
+                    <td></td>
+                    <td style="text-align:right;padding-right: 120px;">
+                        @FormatNegativeDouble((double)Model.RunningDividends)
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:left;padding-left: 40px; font-weight:600; font-size:15px;">End Retained Earnings @titleDate </td>
+                    <td></td>
+                    <td style="text-align:right;padding-right:40px"><div class="top-border"><br><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(Model.EndRetainedEarnings)</span></div></td>
+                </tr>
         </tbody>
     </table>
 </div>
 
 @functions {
     public static string FormatNegativeDouble(double? value)
-
     {
-
         if (value.HasValue)
-
         {
-
             Console.WriteLine($"Formatting value: {value}");
-
             if (value < 0)
-
             {
-
                 return $"({Math.Abs(value.Value).ToString("C")})";
-
             }
-
             return value.Value.ToString("C");
-
         }
-
         return string.Empty;
-
     }
 }

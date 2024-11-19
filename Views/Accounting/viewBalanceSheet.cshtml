@@ -1,30 +1,32 @@
-﻿@model IEnumerable<oa.Models.AccountsModel>
-
+﻿@model oa.Models.BalanceSheetBundle
 @{
     ViewData["Title"] = "viewBalanceSheet";
-    double assetsTotal = 0;
-    double equityTotal = 0;
-    double liabilityTotal = 0;
-    double netIncomeTotal = 0;
-    int numberOfAssetAccounts = ViewBag.numberOfAssetAccounts;
-    int numberOfEquityAccounts = ViewBag.numberOfEquityAccounts;
-    int numberOfLiabilityAccounts = ViewBag.numberOfLiabilityAccounts;
-    double totalLiabilityAndEquity = 0;
-    int count = 0;
+    string? lastClosingDate = ViewBag.lastClosingDate;
+    string? asOfDate = ViewBag.asOfDate;
+    int shortTermAssetsCounter = 0;
+    int LongTermAssetsCounter = 0;
+    double? AssetsTotal = Model.LongTermAssetsTotal + Model.ShortTermAssetsTotal;
+    int shortTermLiabilitiesCounter = 0;
+    int LongTermLiabilitiesCounter = 0;
+    double? LiabilitiesTotal = Model.ShortTermLiabilitiesTotal + Model.LongTermLiabilitiesTotal;
+    int EquitiesCounter = 0;
+    double? EquityTotal = Model.EquityTotal;
 }
-
 <div class="text-center margin-top-120">
 <h1 class="text-center mb-2"><span class="accent-color">@ViewBag.businessName</span></h1>
     <h2 class="text-center mb-2">Balance Sheet</h2>
-    <h3 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h3>
+    <h3 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.titleDate </span></h3>
 </div>
 <div class="date-container">
-    <form class="row g-3" asp-controller="Accounting" asp-action="BalanceAsOfDate" method="post">
+    <form class="row g-3" asp-controller="Accounting" asp-action="viewBalanceSheet" method="post">
         <div class="col-auto">
             <label for="date" class="mr-1 padding-top-3">As of Date:</label>
         </div>
         <div class="col-auto">
-            <input type="date" class="form-control mr-1" id="date" name="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+            <input type="date" class="form-control mr-1" id="fromDate" name="fromDate" value="@lastClosingDate" required>
+        </div>
+        <div class="col-auto">
+            <input type="date" class="form-control mr-1" id="toDate" name="toDate" value="@asOfDate" required>
         </div>
         <div class="col-auto">
             <button type="submit" class="btn btn-outline-primary mb-2">Update Report</button>
@@ -35,25 +37,26 @@
     <table class="table table-striped">
         <thead class="table-top-row">
             <tr style="background-color: #fcb14f15; padding-left: 20px;">
-
                 <th style="text-align:left; padding-left: 100px; font-weight: bold;">
                     Account:
                 </th>
                 <th style="text-align:center; font-weight: bold;">
                     <span style="padding: 30px;">Amount:</span><span style="margin-right:45px;">Total:</span>
                 </th>
-
             </tr>
         </thead>
-
         <tbody>
             <tr>
-                <td style="text-align:left;padding-left: 40px; font-weight:600; font-size:15px;">Assets</td>
+                <td style="text-align:left;padding-left: 25px; font-weight:600; font-size:15px;">Assets</td>
                 <td></td>
             </tr>
-            @foreach (var item in Model)
+            <tr>
+                <td style="text-align:left;padding-left: 40px; font-weight:600; font-size:15px;">Current Assets</td>
+                <td></td>
+            </tr>
+            @foreach (var item in Model.ShortTermAssets)
             {
-                @if (item.type.Equals("Asset"))
+                @if (item.type.Equals("Asset") && item.term.Equals("Short"))
                 {
                     <tr>
                         <td style="text-align:left;padding-left: 80px;">
@@ -62,27 +65,116 @@
                         <td style="text-align:right;padding-right: 120px;">
                             @FormatNegativeDouble(((double)item.current_balance))
                         </td>
-                        @{
-                            assetsTotal += (double)item.current_balance;
-                            count++;
-                        }
                     </tr>
-                    @if (count == numberOfAssetAccounts)
-                    {
-                        <tr>
-                            <td style="text-align:left;padding-left: 25px; font-weight:600; font-size:15px; padding-top:10px;">Asset Total:</td>
-                            <td style="text-align:right;padding-right:40px"><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(assetsTotal)</span></div></td>
-                        </tr>
-                        count = 0;
-                    }
+                    shortTermAssetsCounter++;
+                }
+                @if (shortTermAssetsCounter == Model.ShortTermAssets.Count)
+                {
+                    <tr>
+                        <td style="text-align:left;padding-left: 40px; font-weight:600; font-size:15px; padding-top:10px;">Total Current Assets:</td>
+                        <td style="text-align:right;padding-right:40px"><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(Model.ShortTermAssetsTotal)</span></div></td>
+                    </tr>
                 }
             }
-
             <tr>
-                <td style="text-align:left;padding-left: 45px; font-weight:600; font-size:15px;">Equity</td>
+                <td style="text-align:left;padding-left: 40px; font-weight:600; font-size:15px;">Long Term Assets</td>
                 <td></td>
             </tr>
-            @foreach (var item in Model)
+            @foreach (var item in Model.LongTermAssets)
+            {
+                @if (item.type.Equals("Asset") && item.term.Equals("Long"))
+                {
+                    <tr>
+                        <td style="text-align:left;padding-left: 80px;">
+                            @Html.DisplayFor(modelItem => item.name)
+                        </td>
+                        <td style="text-align:right;padding-right: 120px;">
+                            @FormatNegativeDouble(((double)item.current_balance))
+                        </td>
+                    </tr>
+                    LongTermAssetsCounter++;
+                }
+                @if (LongTermAssetsCounter == Model.LongTermAssets.Count)
+                {
+                    <tr>
+                        <td style="text-align:left;padding-left: 40px; font-weight:600; font-size:15px; padding-top:10px;">Total Long Term Assets:</td>
+                        <td style="text-align:right;padding-right:40px"><div class="top-border"><br><span class="total-text-reg">@FormatNegativeDouble(Model.LongTermAssetsTotal)</span></div></td>
+                    </tr>
+                }
+            }
+            <tr>
+                <td style="text-align:left;padding-left: 25px; padding-top: 10px; font-weight: 600; font-size:15px; color: #cf8520 !important;">Assets Total:</td>
+                <td style="text-align:right;padding-right:40px"><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(AssetsTotal)</span></div></td>
+            </tr>
+            <tr>
+                <td style="text-align:left;padding-left: 25px; font-size: 15px; font-weight: 600;">Liabilities</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td style="text-align:left;padding-left: 40px; font-weight:600; font-size:15px;">Current Liabilities</td>
+                <td></td>
+            </tr>
+            @foreach (var item in Model.ShortTermLiabilities)
+            {
+                @if (item.type.Equals("Liability") && item.term.Equals("Short"))
+                {
+                    <tr>
+                        <td style="text-align:left;padding-left: 80px;">
+                            @Html.DisplayFor(modelItem => item.name)
+                        </td>
+                        <td style="text-align:right;padding-right: 120px;">
+                            @FormatNegativeDouble(((double)item.current_balance))
+                        </td>
+                    </tr>
+                    shortTermLiabilitiesCounter++;
+                }
+                @if (shortTermLiabilitiesCounter == Model.ShortTermLiabilities.Count)
+                {
+                    <tr>
+                        <td style="text-align:left;padding-left: 40px; font-weight:600; font-size:15px; padding-top:10px;">Total Current Liabilities:</td>
+                        <td style="text-align:right;padding-right:40px"><div class="top-border"><br><span class="total-text-reg">@FormatNegativeDouble(Model.ShortTermLiabilitiesTotal)</span></div></td>
+                    </tr>
+                }
+            }
+            <tr>
+                <td style="text-align:left;padding-left: 40px; font-weight:600; font-size:15px;">Long Term Liabilities</td>
+                <td></td>
+            </tr>
+            @foreach (var item in Model.LongTermLiabilities)
+            {
+                @if (item.type.Equals("Liability") && item.term.Equals("Long"))
+                {
+                    <tr>
+                        <td style="text-align:left;padding-left: 80px;">
+                            @Html.DisplayFor(modelItem => item.name)
+                        </td>
+                        <td style="text-align:right;padding-right: 120px;">
+                            @FormatNegativeDouble(((double)item.current_balance))
+                        </td>
+                    </tr>
+                    LongTermLiabilitiesCounter++;
+                }
+                @if (LongTermLiabilitiesCounter == Model.LongTermLiabilities.Count)
+                {
+                    <tr>
+                        <td style="text-align:left;padding-left: 40px; font-weight:600; font-size:15px; padding-top:10px;">Total Long Term Liabilities:</td>
+                        <td style="text-align:right;padding-right:40px"><div class="top-border"><br><span class="total-text-reg">@FormatNegativeDouble(Model.LongTermLiabilitiesTotal)</span></div></td>
+                    </tr>
+                }
+            }
+            <tr>
+                <td style="text-align:left;padding-left: 25px; padding-top: 10px; font-weight: 600; font-size:15px; color: #cf8520 !important;">Liabilities Total:</td>
+                <td style="text-align:right;padding-right:40px"><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(LiabilitiesTotal)</span></div></td>
+            </tr>
+            <tr>
+                <td style="text-align:left;padding-left: 25px; font-size: 15px; font-weight: 600;">Equities</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td style="text-align:left;padding-left: 45px; font-size: 15px; font-weight: 600;">Stockholders Equity</td>
+                <td></td>
+            </tr>
+            @foreach (var item in Model.Equities)
             {
                 @if (item.type.Equals("Equity"))
                 {
@@ -93,60 +185,20 @@
                         <td style="text-align:right;padding-right: 120px;">
                             @FormatNegativeDouble(((double)item.current_balance))
                         </td>
-                        @{
-                            equityTotal += (double)item.current_balance;
-                            count++;
-                        }
                     </tr>
-                    @if (count == numberOfEquityAccounts)
-                    {
-                        <tr>
-                            <td style="text-align:left;padding-left: 25px; padding-top: 10px; font-weight: 600; font-size:15px ">Equity Total:</td>
-                            <td style="text-align:right;padding-right:40px"><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(equityTotal)</span></div></td>
-                        </tr>
-                        count = 0;
-                    }
+                    EquitiesCounter++;
                 }
-            }
-
-            <tr>
-                <td style="text-align:left;padding-left: 45px; font-size: 15px; font-weight: 600;">Liabilities</td>
-                <td></td>
-            </tr>
-            @foreach (var item in Model)
-            {
-                @if (item.type.Equals("Liability"))
+                @if (EquitiesCounter == Model.Equities.Count)
                 {
                     <tr>
-                        <td style="text-align:left;padding-left: 80px;">
-                            @Html.DisplayFor(modelItem => item.name)
-                        </td>
-                        <td style="text-align:right;padding-right: 120px;">
-                            @FormatNegativeDouble(((double)item.current_balance))
-                        </td>
-                        @{
-                            liabilityTotal += (double)item.current_balance;
-                            count++;
-                        }
+                        <td style="text-align:left;padding-left: 25px; font-weight:600; font-size:15px; padding-top:10px; color: #cf8520 !important;">Equities Total:</td>
+                        <td style="text-align:right;padding-right:40px"><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(EquityTotal)</span></div></td>
                     </tr>
-                    @if (count == numberOfLiabilityAccounts)
-                    {
-                        <tr>
-                            <td style="text-align:left;padding-left: 25px; padding-top: 10px; font-weight: 600; font-size:15px">Liabilities Total:</td>
-                            <td style="text-align:right;padding-right:40px"><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(liabilityTotal)</span></div></td>
-                        </tr>
-                        count = 0;
-                        totalLiabilityAndEquity = liabilityTotal + equityTotal;
-                    }
                 }
             }
-
             <tr>
-                
-                <td class="spanse" style="text-align:left;padding-left: 25px; padding-top:10px; font-weight:600; font-size:15px;">Total Liabilities and Equity</td>
-  
-                <td style="text-align:right;padding-right:40px"><div class="top-border"><br><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(totalLiabilityAndEquity)</span></div></td>
-                
+                <td class="spanse" style="text-align:left;padding-left: 25px; padding-top:10px; font-weight:600; font-size:15px; color: #cf8520 !important;">Total Liabilities and Equity</td>
+                <td style="text-align:right;padding-right:40px"><div class="top-border"><br><div class="top-border"><br><span class="total-text">@FormatNegativeDouble(Model.TotalLiabilitiesStockHolderEquity)</span></div></td>                
             </tr>
         </tbody>
     </table>

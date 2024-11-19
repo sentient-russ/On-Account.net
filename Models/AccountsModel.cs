@@ -54,7 +54,7 @@ namespace oa.Models
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 1)]
         [DisplayName("Type:")]
-        public string? type { get; set; }
+        public string? type { get; set; } = "";
 
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 0)]

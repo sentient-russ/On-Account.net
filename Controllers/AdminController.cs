@@ -247,5 +247,21 @@ namespace OnAccount.Controllers
             resetService.DemoDataResetAll();
             return RedirectToAction(nameof(SystemSettings));
         }
+        [Authorize(Roles = "Administrator")]
+        [HttpPost]
+        public async Task<IActionResult> DemoDataTransactionsWithdjustingPending()
+        {
+            ResetDataService resetService = new ResetDataService();
+            resetService.DemoDataTransactionsWithdjustingPending();
+            return RedirectToAction(nameof(SystemSettings));
+        }
+        [Authorize(Roles = "Administrator")]
+        [HttpPost]
+        public async Task<IActionResult> DemoDataTransactionsWithAdjustingApproved()
+        {
+            ResetDataService resetService = new ResetDataService();
+            resetService.DemoDataResetAll();
+            return RedirectToAction(nameof(SystemSettings));
+        }
     }
 }

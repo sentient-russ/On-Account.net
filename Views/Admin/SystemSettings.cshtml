@@ -57,7 +57,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Close Anual Accounting Period?</h1>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Close Annual Accounting Period?</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -89,7 +89,7 @@
             </div>
             <div class="modal-body">
                 <div class="modal-warning-txt">
-                    <span class="alert-secondary">Warning! This action cannot be undone.</span>
+                    <span class="alert-secondary">Warning! This action cannot be undone. The database will be reset to a default set of 'Solved Problem' testing accounts.</span>
                 </div>
                 <form asp-action="ResetTransactions" method="post">
                     <button type="submit" class="btn btn-danger m-2">Reset Transactions to S.P. Default</button><br />
@@ -97,10 +97,15 @@
                 <form asp-action="ResetAllData" method="post">
                     <button type="submit" class="btn btn-danger m-2">Reset All Data to S.P. Default</button>
                 </form>
+                <form asp-action="DemoDataTransactionsWithdjustingPending" method="post">
+                    <button type="submit" class="btn btn-danger m-2">Reset Transactions, w/ Pending Adj. Entries</button>
+                </form>
+                <form asp-action="DemoDataTransactionsWithAdjustingApproved" method="post">
+                    <button type="submit" class="btn btn-danger m-2">Reset Transactions, w/ Approved Adj. Entries</button>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-
             </div>
         </div>
     </div>

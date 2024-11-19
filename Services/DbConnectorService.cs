@@ -1003,12 +1003,12 @@ namespace oa.Services
         /*
          * Caculate an accounts balance from the begining of the accounting calandar year to a secified date. 
          */
-        public decimal GetAccountBalanceForApprovedByDateRange(int? accountNumberIn, string? dateIn, bool includeAdjusting = false)
+        public decimal GetAccountBalanceForApprovedByDateRange(int? accountNumberIn,string? fromDateIn = "", string? toDateIn = "", bool includeAdjusting = false)
         {
             //get the beginning date.
             SettingsModel settings = GetSystemSettings();
             DateTime? fromDate = settings.open_close_date;
-            DateTime? toDate = DateTime.Parse(dateIn);
+            DateTime? toDate = DateTime.Parse(toDateIn);
 
             List<TransactionModel> accountTransactions = new List<TransactionModel>();
             try
@@ -1017,17 +1017,17 @@ namespace oa.Services
                 using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
                 if (!includeAdjusting)
                 {
-                    command = "SELECT * FROM on_account.transaction WHERE (debit_account=@accountNumberIn OR credit_account=@accountNumberIn) AND transaction_date BETWEEN @fromDate AND @toDateIn AND status = 'Approved' AND is_adjusting='false'";
+                    command = "SELECT * FROM on_account.transaction WHERE (debit_account=@accountNumberIn OR credit_account=@accountNumberIn) AND transaction_date BETWEEN @fromDate AND @toDate AND status = 'Approved' AND is_adjusting='false'";
                 }
                 else
                 {
-                    command = "SELECT * FROM on_account.transaction WHERE (debit_account=@accountNumberIn OR credit_account=@accountNumberIn) AND transaction_date BETWEEN @fromDate AND @toDateIn AND status = 'Approved'";
+                    command = "SELECT * FROM on_account.transaction WHERE (debit_account=@accountNumberIn OR credit_account=@accountNumberIn) AND transaction_date BETWEEN @fromDate AND @toDate AND status = 'Approved'";
                 }
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@accountNumberIn", accountNumberIn);
                 cmd1.Parameters.AddWithValue("@fromDate", fromDate);
-                cmd1.Parameters.AddWithValue("@toDateIn", toDate);
+                cmd1.Parameters.AddWithValue("@toDate", toDate);
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 while (reader1.Read())
                 {

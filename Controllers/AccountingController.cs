@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using oa.Areas.Identity.Data;
 using oa.Migrations;
+using System.Globalization;
+using System.Security.Principal;
 
 namespace OnAccount.Controllers
 {
@@ -200,7 +202,7 @@ namespace OnAccount.Controllers
         }
 
         //All users can view jounal entries
-        [Authorize(Roles = "Manager, Accountant")]
+        [Authorize(Roles = "Manager, Accountant, Administrator")]
         [HttpPost]
         [Route("api/journal")]
         public async Task<IActionResult> PostJournalEntry()
@@ -627,22 +629,24 @@ namespace OnAccount.Controllers
             SettingsModel settings = _dbConnectorService.GetSystemSettings();
             DateTime currentDate = DateTime.Now;
             var message = "";
-            string formattedDate = "";
+            string toDate = "";
+            if (dateIn == "") { toDate = settings.open_close_date.Value.ToString("MM-dd-yyyy"); } else { toDate = DateTime.Parse(dateIn).ToString("yyyy-MM-dd"); }
+            string fromDate;
             string viewInputDate = "";
             if (string.IsNullOrEmpty(dateIn))
             {
-                formattedDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
+                fromDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
                 viewInputDate = settings.open_close_date.Value.ToString("yyyy-MM-dd");
                 message = $"Please select a valid date after {settings.open_close_date.Value.ToString("MM-dd-yyyy")} and before {currentDate.ToString("MM-dd-yyyy")}. Note: All pending transactions must be 'Denied' or 'Approved' for the selected range.";
             }
             else
             {
-                formattedDate = DateTime.Parse(dateIn).ToString("MM-dd-yyyy");
+                fromDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
                 viewInputDate = DateTime.Parse(dateIn).ToString("yyyy-MM-dd");
             }
 
             // Check for pending transactions in the period
-            bool pendingTransactionsFound = _dbConnectorService.CheckForPendingByDateRange(formattedDate);
+            bool pendingTransactionsFound = _dbConnectorService.CheckForPendingByDateRange(toDate);
             if (pendingTransactionsFound)
             {
                 return RedirectToAction(nameof(GeneralJournal), new
@@ -655,6 +659,7 @@ namespace OnAccount.Controllers
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
+
             // Start date
             bool includeAdjustingBool = bool.Parse(includeAdjusting);
             List<AccountsModel> listOfAccounts = new List<AccountsModel>();
@@ -662,7 +667,7 @@ namespace OnAccount.Controllers
             // Iterate over the non-zero accounts to update balances based on date range
             foreach (AccountsModel account in listOfAccounts)
             {
-                account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, formattedDate, includeAdjustingBool);
+                account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjustingBool);
             }
             List<TrialBalanceModel> trialBalanceModels = new List<TrialBalanceModel>();
             for (int i = 0; i < listOfAccounts.Count(); i++)
@@ -685,7 +690,7 @@ namespace OnAccount.Controllers
             }
             ViewBag.isAdjusting = includeAdjusting;
             ViewBag.InputDate = viewInputDate;
-            ViewBag.AsOfDate = formattedDate;
+            ViewBag.AsOfDate = toDate;
             ViewBag.RecentOpeningClosingDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
             ViewBag.Message = message;
             return View(trialBalanceModels);
@@ -693,88 +698,227 @@ namespace OnAccount.Controllers
 
         //view for the income statement
         [Authorize(Roles = "Manager, Accountant, Administrator")]
-        public async Task<IActionResult> viewIncomeStatement()
+        public async Task<IActionResult> viewIncomeStatement(string fromDate = "", string? toDate = "")
         {
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
-            List <AccountsModel> accounts = new List<AccountsModel>();
-            accounts = _dbConnectorService.GetAccountsOnType("Revenue");
-            ViewBag.numberOfRevenueAccounts=accounts.Count;
-            List<AccountsModel> tempAccounts = new List<AccountsModel>();
-            tempAccounts = _dbConnectorService.GetAccountsOnType("Expense");
-            for(int i = 0; i < tempAccounts.Count(); i++)
+            DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
+            ViewBag.lastClosingDate = lastClosingDate.ToString("yyyy-MM-dd");
+            if (fromDate == "") { fromDate = lastClosingDate.ToString("MM-dd-yyyy"); }
+            if (toDate == "") { toDate = DateTime.Now.ToString("MM-dd-yyyy"); }
+            ViewBag.asOfDate = toDate; if (toDate != "")
             {
-                accounts.Add(tempAccounts[i]);
+                DateTime titleDateObj = DateTime.Parse(toDate);
+                ViewBag.titleDate = titleDateObj.ToString("MM-dd-yyyy");
+                ViewBag.asOfDate = titleDateObj.ToString("yyyy-MM-dd");
             }
-            ViewBag.numberOfExpenseAccounts=tempAccounts.Count;
-            DateTime currentDate = DateTime.Now;
-            ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
-            return View(accounts);
+            IncomeStatementBundle incomeBundle = new IncomeStatementBundle();
+            List<AccountsModel> allAccounts = _dbConnectorService.GetChartOfAccounts();
+            bool includeAdjusting = true;
+
+            foreach (AccountsModel account in allAccounts)
+            {
+                if (account.type == "Revenue" && account.current_balance != 0)
+                {
+
+                    account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
+                    incomeBundle.RevenueAccountsList.Add(account);
+                    incomeBundle.RevenueAccountsTotal += (double)account.current_balance;
+                }
+                if (account.type == "Expense" && account.current_balance != 0)
+                {
+                    account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
+                    incomeBundle.ExpenseAccountsList.Add(account);
+                    incomeBundle.ExxpenseAccountsTotal += (double)account.current_balance;
+                }
+            }
+            incomeBundle.Net = incomeBundle.RevenueAccountsTotal - incomeBundle.ExxpenseAccountsTotal;
+            return View(incomeBundle);
         }
 
         //view for the balance sheet
         [Authorize(Roles = "Manager, Accountant, Administrator")]
-        public async Task<IActionResult> viewBalanceSheet()
+        public async Task<IActionResult> ViewBalanceSheet(string fromDate = "", string? toDate = "")
         {
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
-
-            List<AccountsModel> accounts = new List<AccountsModel>();
-            accounts = _dbConnectorService.GetAccountsOnType("Asset");
-            ViewBag.numberOfAssetAccounts = accounts.Count;
-            List<AccountsModel> tempAccounts1 = new List<AccountsModel>();
-            tempAccounts1 = _dbConnectorService.GetAccountsOnType("Equity");
-      
-            for (int i = 0; i < tempAccounts1.Count(); i++)
-            {
-                accounts.Add(tempAccounts1[i]);
-            }
-            ViewBag.numberOfEquityAccounts=tempAccounts1.Count;
-            List<AccountsModel> tempAccounts2 = new List<AccountsModel>();
-            tempAccounts2 = _dbConnectorService.GetAccountsOnType("Liability");
+             
+            DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
+            ViewBag.lastClosingDate = lastClosingDate.ToString("yyyy-MM-dd");
+            if (fromDate == "") { fromDate = lastClosingDate.ToString("MM-dd-yyyy"); }
+            if (toDate == "") { toDate = DateTime.Now.ToString("MM-dd-yyyy"); }
             
-            for (int i = 0; i < tempAccounts2.Count(); i++)
+            if (toDate != "")
             {
-                accounts.Add(tempAccounts2[i]);
+                DateTime titleDateObj = DateTime.Parse(toDate);
+                ViewBag.titleDate = titleDateObj.ToString("MM-dd-yyyy");
+                ViewBag.asOfDate = titleDateObj.ToString("yyyy-MM-dd");
+            } 
+
+            BalanceSheetBundle balanceBundle = new BalanceSheetBundle();
+            List<AccountsModel> allAccounts = _dbConnectorService.GetChartOfAccounts();
+            bool includeAdjusting = true;
+            foreach (AccountsModel account in allAccounts)
+            {
+                if (account.type == "Asset" && account.term == "Short" && account.current_balance != 0)
+                {
+
+                    string? normal_side = _dbConnectorService.GetAccountNormalSideByNumber(account.number.ToString());
+                    if (normal_side == "Debit")
+                    {
+                        account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
+                        balanceBundle.ShortTermAssets.Add(account);
+                        balanceBundle.ShortTermAssetsTotal += (double)account.current_balance;
+                    }
+                    else if (normal_side == "Credit")
+                    {
+                        account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting) * -1;
+                        balanceBundle.ShortTermAssets.Add(account);
+                        balanceBundle.ShortTermAssetsTotal -= (double)account.current_balance;
+                    }
+
+                }
+                else if (account.type == "Asset" && account.term == "Long" && account.current_balance != 0)
+                {
+                    string? normal_side = _dbConnectorService.GetAccountNormalSideByNumber(account.number.ToString());
+                    if (normal_side == "Debit")
+                    {
+                        account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
+                        balanceBundle.LongTermAssets.Add(account);
+                        balanceBundle.LongTermAssetsTotal += (double)account.current_balance;
+                    }
+                    else if (normal_side == "Credit")
+                    {
+                        account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting) * -1;
+                        balanceBundle.LongTermAssets.Add(account);
+                        balanceBundle.LongTermAssetsTotal += (double)account.current_balance;
+                    }
+                }
+                else if (account.type == "Liability" && account.term == "Short" && account.current_balance != 0)
+                {
+                    string? normal_side = _dbConnectorService.GetAccountNormalSideByNumber(account.number.ToString());
+                    if (normal_side == "Credit")
+                    {
+                        account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
+                        balanceBundle.ShortTermLiabilities.Add(account);
+                        balanceBundle.ShortTermLiabilitiesTotal += (double)account.current_balance;
+                    }
+                    else if (normal_side == "Debit")
+                    {
+                        account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting) * -1;
+                        balanceBundle.ShortTermLiabilities.Add(account);
+                        balanceBundle.ShortTermLiabilitiesTotal += (double)account.current_balance;
+                    }
+                }
+                else if (account.type == "Liability" && account.term == "Long" && account.current_balance != 0)
+                {
+                    string? normal_side = _dbConnectorService.GetAccountNormalSideByNumber(account.number.ToString());
+                    if (normal_side == "Credit")
+                    {
+                        account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
+                        balanceBundle.LongTermLiabilities.Add(account);
+                        balanceBundle.LongTermLiabilitiesTotal += (double)account.current_balance;
+                    }
+                    else if (normal_side == "Debit")
+                    {
+                        account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting) * -1;
+                        balanceBundle.LongTermLiabilities.Add(account);
+                        balanceBundle.LongTermLiabilitiesTotal += (double)account.current_balance;
+                    }
+                }
+                else if (account.type == "Equity")
+                {
+                    string? normal_side = _dbConnectorService.GetAccountNormalSideByNumber(account.number.ToString());
+                    if (normal_side == "Credit")
+                    {
+                        account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
+                        if (account.number == 290)
+                        {
+                            IncomeStatementBundle incomeBundle = new IncomeStatementBundle();
+                            foreach (AccountsModel accnt in allAccounts)
+                            {
+                                if (accnt.type == "Revenue" && accnt.current_balance != 0)
+                                {
+                                    accnt.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(accnt.number, fromDate, toDate, includeAdjusting);
+                                    incomeBundle.RevenueAccountsList.Add(accnt);
+                                    incomeBundle.RevenueAccountsTotal += (double)accnt.current_balance;
+                                }
+                                if (accnt.type == "Expense" && accnt.current_balance != 0)
+                                {
+                                    accnt.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(accnt.number, fromDate, toDate, includeAdjusting);
+                                    incomeBundle.ExpenseAccountsList.Add(accnt);
+                                    incomeBundle.ExxpenseAccountsTotal += (double)accnt.current_balance;
+                                }
+                            }
+                            account.current_balance = account.current_balance + (decimal)(incomeBundle.RevenueAccountsTotal - incomeBundle.ExxpenseAccountsTotal);
+                        }
+                        
+                        balanceBundle.Equities.Add(account);
+                        balanceBundle.EquityTotal += (double)account.current_balance;
+                    }
+                    else if (normal_side == "Debit")
+                    {
+                        account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting) * -1;
+                        balanceBundle.Equities.Add(account);
+                        balanceBundle.EquityTotal += (double)account.current_balance;
+                    }
+                }                
+                balanceBundle.TotalLiabilitiesStockHolderEquity = balanceBundle.ShortTermLiabilitiesTotal + balanceBundle.LongTermLiabilitiesTotal + balanceBundle.EquityTotal;
             }
-            ViewBag.numberOfLiabilityAccounts = tempAccounts2.Count;
-            DateTime currentDate = DateTime.Now;
-            ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
-            return View(accounts);
+            return View(balanceBundle);
         }
 
         //view for the Owner's equity
         [Authorize(Roles = "Manager, Accountant, Administrator")]
-        public async Task<IActionResult> viewOwnersEquity()
+        public async Task<IActionResult> viewOwnersEquity(string fromDate = "", string? toDate = "")
         {
+
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
 
-            List<AccountsModel> accounts = new List<AccountsModel>();
-            accounts = _dbConnectorService.GetAccountsOnType("Revenue");
-            ViewBag.numberOfRevenueAccounts = accounts.Count;
-            List<AccountsModel> tempAccounts = new List<AccountsModel>();
-            tempAccounts = _dbConnectorService.GetAccountsOnType("Expense");
-            for (int i = 0; i < tempAccounts.Count(); i++)
-            {
-                accounts.Add(tempAccounts[i]);
-            }
-            ViewBag.numberOfExpenseAccounts = tempAccounts.Count;
-            AccountsModel tempAccounts3 = new AccountsModel();
-            tempAccounts3 = _dbConnectorService.GetAccount("291");
-            AccountsModel tempAccounts4 = new AccountsModel();
-            tempAccounts4 = _dbConnectorService.GetAccount("295");
-            ViewBag.retainedEarningsStartingBalance=tempAccounts3.current_balance;
-            ViewBag.dividendsBalance = tempAccounts4.current_balance;
-            DateTime startingPeriod = (DateTime)tempAccounts3.account_creation_date;
-            ViewBag.startingPeriod = startingPeriod.ToString("MM-dd-yyyy");
-            DateTime currentDate = DateTime.Now;
-            ViewBag.Date = currentDate.ToString("MM-dd-yyyy");
+            DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
+            ViewBag.lastClosingDate = lastClosingDate.ToString("yyyy-MM-dd");
+            if (fromDate == "") { fromDate = lastClosingDate.ToString("MM-dd-yyyy"); }
+            if (toDate == "") { toDate = DateTime.Now.ToString("MM-dd-yyyy"); }
 
-            return View(accounts);
+            if (toDate != "")
+            {
+                DateTime titleDateObj = DateTime.Parse(toDate);
+                ViewBag.titleDate = titleDateObj.ToString("MM-dd-yyyy");
+                ViewBag.asOfDate = titleDateObj.ToString("yyyy-MM-dd");
+            }
+
+            EquityBundle equityBundle = new EquityBundle();
+            List<AccountsModel> allAccounts = _dbConnectorService.GetChartOfAccounts();
+            bool includeAdjusting = true;
+
+            // calc running net income
+            IncomeStatementBundle incomeBundle = new IncomeStatementBundle();
+            foreach (AccountsModel accnt in allAccounts)
+            {
+                if (accnt.type == "Revenue" && accnt.current_balance != 0)
+                {
+                    accnt.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(accnt.number, fromDate, toDate, includeAdjusting);
+                    incomeBundle.RevenueAccountsList.Add(accnt);
+                    incomeBundle.RevenueAccountsTotal += (double)accnt.current_balance;
+                }
+                if (accnt.type == "Expense" && accnt.current_balance != 0)
+                {
+                    accnt.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(accnt.number, fromDate, toDate, includeAdjusting);
+                    incomeBundle.ExpenseAccountsList.Add(accnt);
+                    incomeBundle.ExxpenseAccountsTotal += (double)accnt.current_balance;
+                }
+            }
+            equityBundle.BeginningRetainedEarnings = (double)_dbConnectorService.GetAccountBalanceForApprovedByDateRange(290, fromDate, toDate, includeAdjusting);
+            equityBundle.RunningNetIncome = incomeBundle.RevenueAccountsTotal - incomeBundle.ExxpenseAccountsTotal;
+            equityBundle.RunningDividends = (double)_dbConnectorService.GetAccountBalanceForApprovedByDateRange(295, fromDate, toDate, includeAdjusting);            
+            equityBundle.EndRetainedEarnings = equityBundle.BeginningRetainedEarnings + equityBundle.RunningNetIncome - equityBundle.RunningDividends;
+
+
+            return View(equityBundle);
         }
 
         //end point to process the closing entry and return the journalId.
