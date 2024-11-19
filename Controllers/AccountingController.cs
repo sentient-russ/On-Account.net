@@ -626,14 +626,32 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager, Accountant, Administrator")]
         public async Task<IActionResult> viewTrialBalance(string? dateIn = "", string? includeAdjusting = "false")
         {
+            string? fromDate = "";
+            string? toDate = dateIn;
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            ViewBag.businessName = systemSettings.business_name;
+
+            DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
+            ViewBag.lastClosingDate = lastClosingDate.ToString("yyyy-MM-dd");
+            if (fromDate == "") { fromDate = lastClosingDate.ToString("MM-dd-yyyy"); }
+            if (toDate == "") { toDate = lastClosingDate.ToString("MM-dd-yyyy"); }
+
+            if (toDate != "")
+            {
+                DateTime titleDateObj = DateTime.Parse(toDate);
+                ViewBag.titleDate = titleDateObj.ToString("MM-dd-yyyy");
+                ViewBag.asOfDate = titleDateObj.ToString("yyyy-MM-dd");
+            }
+
+
             SettingsModel settings = _dbConnectorService.GetSystemSettings();
             DateTime currentDate = DateTime.Now;
             var message = "";
-            string toDate = "";
-            if (dateIn == "") { toDate = settings.open_close_date.Value.ToString("MM-dd-yyyy"); } else { toDate = DateTime.Parse(dateIn).ToString("yyyy-MM-dd"); }
-            string fromDate;
             string viewInputDate = "";
-            if (string.IsNullOrEmpty(dateIn))
+
+
+            if (string.IsNullOrEmpty(dateIn) || dateIn == fromDate)
             {
                 fromDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
                 viewInputDate = settings.open_close_date.Value.ToString("yyyy-MM-dd");
@@ -655,10 +673,6 @@ namespace OnAccount.Controllers
                     messageIn = "Pending transactions were found in the requested date range which must be Approved or Denied before a trial balance can be created."
                 });
             }
-
-            SettingsModel systemSettings = new SettingsModel();
-            systemSettings = _dbConnectorService.GetSystemSettings();
-            ViewBag.businessName = systemSettings.business_name;
 
             // Start date
             bool includeAdjustingBool = bool.Parse(includeAdjusting);
@@ -688,7 +702,7 @@ namespace OnAccount.Controllers
                     trialBalanceModels.Add(trialBalanceTemp);
                 }
             }
-            ViewBag.isAdjusting = includeAdjusting;
+            //ViewBag.isAdjusting = includeAdjusting;
             ViewBag.InputDate = viewInputDate;
             ViewBag.AsOfDate = toDate;
             ViewBag.RecentOpeningClosingDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");

@@ -25,6 +25,11 @@ namespace oa.Controllers
             return View();
         }
 
+        public IActionResult Attribution()
+        {
+            return View();
+        }
+
         public IActionResult FirstLogin()
         {
             return View();

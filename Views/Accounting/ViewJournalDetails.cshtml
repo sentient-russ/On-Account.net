@@ -457,3 +457,46 @@
     }
 
 
+    <script>
+        function UpdateCurrencyOnLoad() {
+            document.querySelectorAll('.currencyField').forEach(function (input) {
+                let value = input.value.trim(); // Trim spaces from the input
+                value = value.replace(/[^0-9.]/g, '');
+                let parts = value.split('.');
+                let integerPart = parts[0];
+                let decimalPart = parts[1] ? parts[1].substring(0, 2) : '';
+
+                // Remove leading zeros and handle empty integerPart
+                var flt = parseInt(integerPart, 10);
+                if (isNaN(flt)) {
+                    flt = 0;
+                }
+
+                // Back to string
+                integerPart = flt.toString();
+                integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+                let formattedValue = integerPart;
+                if (formattedValue.length >= 1) {
+                    formattedValue = '$' + formattedValue;
+                } else {
+                    formattedValue = '$0';
+                }
+
+                let newTail = "";
+                if (decimalPart === "") {
+                    newTail = ".00";
+                } else if (decimalPart.length == 1) {
+                    newTail = "." + decimalPart + "0";
+                } else if (decimalPart.length == 2) {
+                    newTail = "." + decimalPart;
+                } else if (decimalPart.length > 2) {
+                    newTail = "." + decimalPart.substring(0, 2);
+                }
+
+                formattedValue = formattedValue + newTail;
+                input.value = formattedValue;
+            });
+        }
+        window.addEventListener('load', UpdateCurrencyOnLoad);
+    </script>
