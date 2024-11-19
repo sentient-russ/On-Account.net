@@ -56,13 +56,13 @@
                         string returnOnAssetsString = String.Format("{0:0.##}%", returnOnAssets);
                         Console.WriteLine("ReturnOnAssets Ratio: " + returnOnAssets);
 
-                        if (returnOnAssets < (1.75 * 100))
+                        if (returnOnAssets < (0.05 * 100))
                         {
                             <script>
                                 document.getElementById('retOnAssets').classList.add('danger-subtle')
                             </script>
                         }
-                        else if (returnOnAssets >= (1.75 * 100) && returnOnAssets <= (2.25 * 100))
+                        else if (returnOnAssets >= (0.05 * 100) && returnOnAssets <= (0.20 * 100))
                         {
                             <script>
                                 document.getElementById('retOnAssets').classList.add('warning-subtle')
@@ -92,13 +92,13 @@
                         string returnOnEquityString = String.Format("{0:0.##}%", returnOnEquity);
                         Console.WriteLine("ReturnOnEquity Ratio: " + returnOnEquity);
 
-                        if (returnOnEquity < (1.75 * 100))
+                        if (returnOnEquity < (0.10 * 100))
                         {
                             <script>
                                 document.getElementById('retOnEquity').classList.add('danger-subtle')
                             </script>
                         }
-                        else if (returnOnEquity >= (1.75 * 100) && returnOnEquity <= (2.25 * 100))
+                        else if (returnOnEquity >= (0.10 * 100) && returnOnEquity <= (0.15 * 100))
                         {
                             <script>
                                 document.getElementById('retOnEquity').classList.add('warning-subtle')
@@ -127,13 +127,13 @@
                         string netProfitMarginString = String.Format("{0:0.##}%", netProfitMargin);
                         Console.WriteLine("NetProfitMargin Ratio: " + netProfitMargin);
 
-                        if (netProfitMargin < (1.75 * 100))
+                        if (netProfitMargin < (0.10 * 100))
                         {
                             <script>
                                 document.getElementById('netProfMargin').classList.add('danger-subtle')
                             </script>
                         }
-                        else if (netProfitMargin >= (1.75 * 100) && netProfitMargin <= (2.25 * 100))
+                        else if (netProfitMargin >= (0.10 * 100) && netProfitMargin <= (0.20 * 100))
                         {
                             <script>
                                 document.getElementById('netProfMargin').classList.add('warning-subtle')
@@ -162,13 +162,13 @@
                         string assetTurnoverString = String.Format("{0:0.##}%", assetTurnover);
                         Console.WriteLine("AssetTurnover Ratio: " + assetTurnover);
 
-                        if (assetTurnover < (1.75 * 100))
+                        if (assetTurnover < (.15 * 100))
                         {
                             <script>
                                 document.getElementById('assetTurnover').classList.add('danger-subtle')
                             </script>
                         }
-                        else if (assetTurnover >= (1.75 * 100) && assetTurnover <= (2.25 * 100))
+                        else if (assetTurnover >= (.15 * 100) && assetTurnover <= (.25 * 100))
                         {
                             <script>
                                 document.getElementById('assetTurnover').classList.add('warning-subtle')
