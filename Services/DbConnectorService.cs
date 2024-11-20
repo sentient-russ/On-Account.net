@@ -1006,9 +1006,19 @@ namespace oa.Services
         public decimal GetAccountBalanceForApprovedByDateRange(int? accountNumberIn,string? fromDateIn = "", string? toDateIn = "", bool includeAdjusting = false)
         {
             //get the beginning date.
-            SettingsModel settings = GetSystemSettings();
+            SettingsModel settings = GetSystemSettings(); 
             DateTime? fromDate = settings.open_close_date;
             DateTime? toDate = DateTime.Parse(toDateIn);
+
+            if (fromDateIn != "")
+            {
+                fromDate = DateTime.Parse(fromDateIn);
+            }
+            if(toDateIn != "")
+            {
+                toDate = DateTime.Parse(toDateIn);
+            }
+
 
             List<TransactionModel> accountTransactions = new List<TransactionModel>();
             try
@@ -1836,6 +1846,33 @@ namespace oa.Services
             return nextJournalId;
         }
         /*
+         * Gets the next transaction id
+         */
+        public int GetNextTransactionId()
+        {
+            int nextTransactionId = 0;
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT MAX(id) FROM on_account.transaction";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    int highestId = reader1.GetInt32(0);
+                    nextTransactionId = highestId + 1;
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return nextTransactionId;
+        }
+        /*
          * Gets transaction number from journal id
          * 
          */
@@ -2161,7 +2198,6 @@ namespace oa.Services
             return foundPendingIds;
         }
 
-
         public List<TransactionModel> GetCurrentYearClosingTransactions(DateTime newClosingDateIn)
         {
             SettingsModel settings = GetSystemSettings();
@@ -2219,9 +2255,9 @@ namespace oa.Services
             {
                 Console.WriteLine(ex.ToString());
             }
+
             return currentYearTransactions;
-        }
-        
+        }        
     }
 }
 

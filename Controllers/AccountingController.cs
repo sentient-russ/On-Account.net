@@ -8,6 +8,8 @@ using oa.Areas.Identity.Data;
 using oa.Migrations;
 using System.Globalization;
 using System.Security.Principal;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace OnAccount.Controllers
 {
@@ -21,9 +23,10 @@ namespace OnAccount.Controllers
         private readonly IEmailSender _emailSender;
         public DateTime today = DateTime.Today;
         public string? todayStr = "";
+        private readonly UserManager<AppUser> _userManager;
 
         public AccountingController(DbConnectorService connectorService,
-            UserService userService, IEmailSender emailSender)
+            UserService userService, IEmailSender emailSender, UserManager<AppUser> userManager)
         {
             _dbConnectorService = connectorService;
             _userService = userService;
@@ -31,6 +34,7 @@ namespace OnAccount.Controllers
             accountModel = new AccountsModel();
             this._emailSender = emailSender;
             todayStr = today.ToString("MM-dd-yyyy");
+            _userManager = userManager;
         }
         //All users can view the accounting home landing page
         [Authorize(Roles = "Administrator,Manager,Accountant")]
@@ -543,11 +547,17 @@ namespace OnAccount.Controllers
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
 
+
+
             _dbConnectorService.UpdateTransactionStatus(id, "Approved");
             List<TransactionModel> listOfTransactions = _dbConnectorService.GetAccountTransactionsByJournalNumber(id);
             List<int?> listOfAccount=new List<int?>();
             for(int i = 0; i<listOfTransactions.Count(); i++)
             {
+
+
+
+
                 if (listOfTransactions[i].debit_account != 0)
                 {
                     listOfAccount.Add(listOfTransactions[i].debit_account);
@@ -557,11 +567,16 @@ namespace OnAccount.Controllers
                     listOfAccount.Add(listOfTransactions[i].credit_account);
                 }
             }
+
             for (int i=0;i<listOfAccount.Count();i++)
             {
+
+
                 _dbConnectorService.CalculateAccountBalance(listOfAccount[i].ToString());
                 
             }
+
+
             // need log update here
             return RedirectToAction(nameof(GeneralJournal), new { status = "Pending" });
         }
@@ -624,6 +639,10 @@ namespace OnAccount.Controllers
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
+            if(includeAdjusting == "true")
+            {
+                ViewBag.isAdjusting = "()";
+            }
 
             DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
             ViewBag.lastClosingDate = lastClosingDate.ToString("yyyy-MM-dd");
@@ -667,6 +686,8 @@ namespace OnAccount.Controllers
                 });
             }
 
+            string retainedEarningsAccountNum = "290";
+            _dbConnectorService.CalculateAccountBalance(retainedEarningsAccountNum);
             // Start date
             bool includeAdjustingBool = bool.Parse(includeAdjusting);
             List<AccountsModel> listOfAccounts = new List<AccountsModel>();
@@ -674,8 +695,19 @@ namespace OnAccount.Controllers
             // Iterate over the non-zero accounts to update balances based on date range
             foreach (AccountsModel account in listOfAccounts)
             {
-                account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjustingBool);
+                if(account.type == "Expense" || account.type == "Revenue")
+                {
+                    account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjustingBool);
+                } else
+                {
+                    account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, "04/01/2024", toDate, includeAdjustingBool);
+                }
+
             }
+
+
+            _dbConnectorService.CalculateAccountBalance(retainedEarningsAccountNum);
+            
             List<TrialBalanceModel> trialBalanceModels = new List<TrialBalanceModel>();
             for (int i = 0; i < listOfAccounts.Count(); i++)
             {
@@ -700,6 +732,10 @@ namespace OnAccount.Controllers
             ViewBag.AsOfDate = toDate;
             ViewBag.RecentOpeningClosingDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
             ViewBag.Message = message;
+            if (includeAdjusting == "true")
+            {
+                ViewBag.isAdjusting = "true";
+            }
             return View(trialBalanceModels);
         }
 
@@ -933,6 +969,10 @@ namespace OnAccount.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateClosingEntry()
         {
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userDetails = _dbConnectorService.GetUserDetailsById(userId);
+
             var openCloseDate = Request.Form["open_close_date"].ToString();
             DateTime newClosingDate = DateTime.Parse(openCloseDate);
             //check for and handle pending in range condition
@@ -945,40 +985,147 @@ namespace OnAccount.Controllers
                     JIDListIn = pendingIds
                 });
             }
+            //get retained earning from current income minus exp
+            EquityBundle equityBundle = new EquityBundle();
+            List<AccountsModel> allAccounts = _dbConnectorService.GetChartOfAccounts();
+            bool includeAdjusting = true;
+
+            // calc running net income
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
+            string? fromDate = lastClosingDate.ToString("MM-dd-yyyy");
+            IncomeStatementBundle incomeBundle = new IncomeStatementBundle();
+            string? toDate = openCloseDate;
+            foreach (AccountsModel accnt in allAccounts)
+            {
+                if (accnt.type == "Revenue" && accnt.current_balance != 0)
+                {
+                    accnt.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(accnt.number, fromDate, toDate, includeAdjusting);
+                    incomeBundle.RevenueAccountsList.Add(accnt);
+                    incomeBundle.RevenueAccountsTotal += (double)accnt.current_balance;
+                }
+                if (accnt.type == "Expense" && accnt.current_balance != 0)
+                {
+                    accnt.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(accnt.number, fromDate, toDate, includeAdjusting);
+                    incomeBundle.ExpenseAccountsList.Add(accnt);
+                    incomeBundle.ExxpenseAccountsTotal += (double)accnt.current_balance;
+                }
+            }
+            equityBundle.BeginningRetainedEarnings = (double)_dbConnectorService.GetAccountBalanceForApprovedByDateRange(290, fromDate, toDate, includeAdjusting);
+            equityBundle.RunningNetIncome = incomeBundle.RevenueAccountsTotal - incomeBundle.ExxpenseAccountsTotal;
+            equityBundle.RunningDividends = (double)_dbConnectorService.GetAccountBalanceForApprovedByDateRange(295, fromDate, toDate, includeAdjusting);
+            equityBundle.EndRetainedEarnings = equityBundle.BeginningRetainedEarnings + equityBundle.RunningNetIncome - equityBundle.RunningDividends;
+
             //get revenue and expense transactions in the closing year date range 
             List<TransactionModel> transactions = new List<TransactionModel>();
             transactions = _dbConnectorService.GetCurrentYearClosingTransactions(newClosingDate);
-            int nextJournalId = _dbConnectorService.GetNextJournalId();
-            //reverse amounts
-            foreach (TransactionModel transaction in transactions)
+
+            //resort
+            List<TransactionModel> debitTransactions = new List<TransactionModel>();
+            List<TransactionModel> creditTransactions = new List<TransactionModel>();
+
+            foreach(var transaction in transactions)
             {
-                if (transaction.credit_account != 0)
+                if(transaction.credit_account > 0)
                 {
-                    transaction.debit_account = transaction.credit_account;
-                    transaction.debit_amount = transaction.credit_amount;
-                    transaction.credit_account = 0;
-                    transaction.credit_amount = 0;
-                    transaction.is_adjusting = "true";
-                    transaction.status = "Pending";
-                    transaction.journal_id = nextJournalId;
-                    transaction.journal_date = DateTime.Now;
-                    transaction.transaction_date = newClosingDate;
-                    _dbConnectorService.AddTransaction(transaction);
-                }
-                else if (transaction.credit_account != 0)
+                    creditTransactions.Add(transaction);
+                }else if (transaction.debit_account > 0)
                 {
-                    transaction.credit_account = transaction.debit_account;
-                    transaction.credit_amount = transaction.debit_amount;
-                    transaction.debit_account = 0;
-                    transaction.debit_amount = 0;
-                    transaction.is_adjusting = "true";
-                    transaction.status = "Pending";
-                    transaction.journal_id = nextJournalId;
-                    transaction.journal_date = DateTime.Now;
-                    transaction.transaction_date = newClosingDate;
-                    _dbConnectorService.AddTransaction(transaction);
+                    debitTransactions.Add(transaction);
                 }
             }
+            var sortedDebitTransactions = debitTransactions
+                .OrderBy(t => t.debit_account)
+                .ThenBy(t => t.debit_amount)
+                .ToList();
+            var sortedCreditTransactions = creditTransactions
+                .OrderBy(t => t.debit_account)
+                .ThenBy(t => t.debit_amount)
+                .ToList();
+
+
+            List<TransactionModel> sortedTransactions = new List<TransactionModel>();
+            for (int i = creditTransactions.Count - 1; 0 <= i; i--)
+            {
+                sortedTransactions.Add(sortedCreditTransactions[i]);
+            }
+
+            for (int i = debitTransactions.Count - 1; 0 <= i; i--)
+            {
+                sortedTransactions.Add(sortedDebitTransactions[i]);
+            }
+
+            int nextJournalId = _dbConnectorService.GetNextJournalId();
+
+            //reverse amounts
+            foreach (TransactionModel transaction in sortedTransactions)
+            {
+                if (transaction.credit_amount > 0)
+                {
+                    TransactionModel nextJournalTransactionItem = new TransactionModel();
+                    nextJournalTransactionItem.transaction_number = _dbConnectorService.GetNextTransactionId();
+                    nextJournalTransactionItem.debit_account = transaction.credit_account;
+                    nextJournalTransactionItem.debit_amount = transaction.credit_amount;
+                    nextJournalTransactionItem.credit_account = 0;
+                    nextJournalTransactionItem.credit_amount = 0;
+                    nextJournalTransactionItem.is_adjusting = "true";
+                    nextJournalTransactionItem.status = "Pending";
+                    nextJournalTransactionItem.journal_id = nextJournalId;
+                    nextJournalTransactionItem.journal_date = DateTime.Now;
+                    nextJournalTransactionItem.created_by = userDetails.ScreenName;
+                    nextJournalTransactionItem.transaction_date = newClosingDate;
+                    nextJournalTransactionItem.is_adjusting = "true";
+                    nextJournalTransactionItem.is_opening = false;
+                    nextJournalTransactionItem.journal_description = $"Closing entry created by: {nextJournalTransactionItem.created_by} on {nextJournalTransactionItem.transaction_date}.";
+                    _dbConnectorService.AddTransaction(nextJournalTransactionItem);
+                }
+                else if (transaction.debit_amount > 0)
+                {
+                    TransactionModel nextJournalTransactionItem = new TransactionModel();
+                    nextJournalTransactionItem.transaction_number = _dbConnectorService.GetNextTransactionId();
+                    nextJournalTransactionItem.credit_account = transaction.debit_account;
+                    nextJournalTransactionItem.credit_amount = transaction.debit_amount;
+                    nextJournalTransactionItem.debit_account = 0;
+                    nextJournalTransactionItem.debit_amount = 0;
+                    nextJournalTransactionItem.is_adjusting = "true";
+                    nextJournalTransactionItem.status = "Pending";
+                    nextJournalTransactionItem.journal_id = nextJournalId;
+                    nextJournalTransactionItem.journal_date = DateTime.Now;
+                    nextJournalTransactionItem.created_by = userDetails.ScreenName;
+                    nextJournalTransactionItem.transaction_date = newClosingDate;
+                    nextJournalTransactionItem.is_adjusting = "true";
+                    nextJournalTransactionItem.is_opening = false;
+                    nextJournalTransactionItem.journal_description = $"Closing entry created by: {nextJournalTransactionItem.created_by} on {nextJournalTransactionItem.transaction_date}.";
+                    _dbConnectorService.AddTransaction(nextJournalTransactionItem);
+                }
+            }
+            
+            //add retained earning transaction to adjusting entry
+            TransactionModel retainedEarningsJournalTransactionItem = new TransactionModel();
+            retainedEarningsJournalTransactionItem.transaction_number = _dbConnectorService.GetNextTransactionId();
+            retainedEarningsJournalTransactionItem.credit_account = 290; //retained earnings
+            retainedEarningsJournalTransactionItem.credit_amount = equityBundle.RunningNetIncome;
+            retainedEarningsJournalTransactionItem.is_adjusting = "true";
+            retainedEarningsJournalTransactionItem.status = "Pending";
+            retainedEarningsJournalTransactionItem.journal_id = nextJournalId;
+            retainedEarningsJournalTransactionItem.journal_date = DateTime.Now;
+            retainedEarningsJournalTransactionItem.created_by = userDetails.ScreenName;
+            retainedEarningsJournalTransactionItem.transaction_date = newClosingDate;
+            retainedEarningsJournalTransactionItem.is_adjusting = "true";
+            retainedEarningsJournalTransactionItem.is_opening = false;
+            retainedEarningsJournalTransactionItem.journal_description = $"Closing entry created by: {retainedEarningsJournalTransactionItem.created_by} on {retainedEarningsJournalTransactionItem.transaction_date}.";
+            _dbConnectorService.AddTransaction(retainedEarningsJournalTransactionItem);
+            //update retained earnings account bal
+            
+
+
+
+            // set the new closing date
+            systemSettings.open_close_date = DateTime.Parse(toDate);
+            systemSettings.open_close_on_date = DateTime.Now;
+            systemSettings.closing_user = userDetails.ScreenName;
+            _dbConnectorService.UpdateSystemSettings(systemSettings);
 
             return RedirectToAction(nameof(ViewJournalDetails), new
             {

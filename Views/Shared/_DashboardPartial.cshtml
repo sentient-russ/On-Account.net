@@ -15,7 +15,8 @@
                     @{
                         decimal? curAssets = Model.currentRaitoModel.current_assets_balance;
                         decimal? curLiabilities = Model.currentRaitoModel.current_liabilities_balance;
-                        double currentRatio = (double)((curAssets / curLiabilities) * 100);
+                        double currentRatio = 0.0;
+                        if(curLiabilities == 0) { } else { currentRatio = (double)((curAssets / curLiabilities) * 100); }
                         string currentRatioString = String.Format("{0:0.##}%", currentRatio);
 
                         if (currentRatio < (1.75*100))
@@ -52,7 +53,8 @@
                         decimal? revenue0 = Model.returnOnAssetsModel.revenues_balance;
                         decimal? expenses0 = Model.returnOnAssetsModel.expenses_balance;
                         decimal? assets0 = Model.returnOnAssetsModel.assets_balance;
-                        double returnOnAssets = (double)(((revenue0 - expenses0) / assets0) * 100);
+                        double returnOnAssets = 0.0;
+                        if (assets0 == 0) { } else { returnOnAssets = (double)(((revenue0 - expenses0) / assets0) * 100); }
                         string returnOnAssetsString = String.Format("{0:0.##}%", returnOnAssets);
                         Console.WriteLine("ReturnOnAssets Ratio: " + returnOnAssets);
 
@@ -88,7 +90,8 @@
                 <div class="card-body" id="retOnEquity">
                     @{
                         decimal? equity0 = Model.returnOnEquityModel.equity_balance;
-                        double returnOnEquity = (double)(((revenue0 - expenses0) / equity0) * 100);
+                        double returnOnEquity = 0.0;
+                        if (equity0 == 0) { } else { returnOnEquity = (double)(((revenue0 - expenses0) / equity0) * 100); }
                         string returnOnEquityString = String.Format("{0:0.##}%", returnOnEquity);
                         Console.WriteLine("ReturnOnEquity Ratio: " + returnOnEquity);
 
@@ -123,7 +126,9 @@
                 </div>
                 <div class="card-body" id="netProfMargin">
                     @{
-                        double netProfitMargin = (double)(((revenue0 - expenses0) / revenue0) * 100);
+
+                        double netProfitMargin = 0.0;
+                        if (revenue0 == 0) { } else {netProfitMargin = (double)(((revenue0 - expenses0) / revenue0) * 100); }                        
                         string netProfitMarginString = String.Format("{0:0.##}%", netProfitMargin);
                         Console.WriteLine("NetProfitMargin Ratio: " + netProfitMargin);
 
@@ -158,7 +163,8 @@
                 </div>
                 <div class="card-body" id="assetTurnover">
                      @{
-                        double assetTurnover = (double)((revenue0 / assets0) * 100);
+                        double assetTurnover = 0.0;
+                        if (assets0 == 0) { } else { assetTurnover = (double)((revenue0 / assets0) * 100); }
                         string assetTurnoverString = String.Format("{0:0.##}%", assetTurnover);
                         Console.WriteLine("AssetTurnover Ratio: " + assetTurnover);
 
@@ -194,7 +200,8 @@
                 <div class="card-body" id="quickRatio">
                     @{
                         decimal? inventory0 = Model.quickRatioModel.inventory_balance;
-                        double quickRatio = (double)(((curAssets - inventory0) / curLiabilities) * 100);
+                        double quickRatio = 0.0;
+                        if (curLiabilities == 0) { } else { quickRatio = (double)(((curAssets - inventory0) / curLiabilities) * 100); }
                         string quickRatioString = String.Format("{0:0.##}%", quickRatio);
                         Console.WriteLine("Quick Ratio: " + quickRatio);
 
