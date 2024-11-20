@@ -43,22 +43,15 @@ namespace OnAccount.Controllers
             ReturnOnAssetsModel returnOnAssetsModel;
             ReturnOnEquityModel returnOnEquityModel;
             QuickRatioModel quickRatioModel;
-
             currentRaitoModel = new CurrentRaitoModel();
             currentRaitoModel.current_assets_balance = chartingService.GetAccountTypeTotalBalance("Asset", "Short");
             currentRaitoModel.current_liabilities_balance = chartingService.GetAccountTypeTotalBalance("Liability", "Short");
-
             returnOnAssetsModel = new ReturnOnAssetsModel();
             returnOnAssetsModel.revenues_balance = chartingService.GetAccountTypeTotalBalance("Revenue");
             returnOnAssetsModel.expenses_balance = chartingService.GetAccountTypeTotalBalance("Expense");
             returnOnAssetsModel.assets_balance = chartingService.GetAccountTypeTotalBalance("Asset");
-
             returnOnEquityModel = new ReturnOnEquityModel();
-            // Revenues and expenses totals already exist in the model above (returnOnAssetsModel)
-            //returnOnEquityModel.revenues_balance = chartingService.GetAccountTypeTotalBalance("Revenue");
-            //returnOnEquityModel.expenses_balance = chartingService.GetAccountTypeTotalBalance("Expense");
             returnOnEquityModel.equity_balance = chartingService.GetAccountTypeTotalBalance("Equity");
-
             quickRatioModel = new QuickRatioModel();
             List<string> inventoryIdList = new List<string>();
             inventoryIdList.Add("115"); // Office Equipment

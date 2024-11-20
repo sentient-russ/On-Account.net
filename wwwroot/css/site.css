@@ -1519,8 +1519,6 @@ input:-webkit-autofill:focus {
     --res-background-gradient: white;
     --bs-border-color: #353535;
     --bs-table-bg: #fcb14f75 !important;
-    /*--bs-body-bg: transparent;*/
-    /* --res-background-gradient: linear-gradient(126.22deg,#393939 -8%,#000000c9,#393939 14%);*/
 }
 thead {
     background-color: #fcb14f75 !important;
