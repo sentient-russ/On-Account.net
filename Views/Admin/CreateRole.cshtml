@@ -3,6 +3,7 @@
 
 <div class="row margin-top-120">
     <div class="col-md-4 mx-auto">
+        <a class="btn btn-outline-primary background-default-b email-btn-left" asp-controller="Admin" asp-action="ManageRoles" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Goes back to list of user accounts">Back</a>
         <form method="post">
             <h2 class="text-center mb-2">Create Role</h2>
             <hr />
@@ -13,7 +14,7 @@
                 <label asp-for="Name" class="control-label"></label>
                 <span asp-validation-for="Name" class="test-damger"></span>
              <div>
-                    <button type="submit" class="btn btn-primary mt-2" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Adds new role to On Account">Save</button>
+             <button type="submit" class="btn btn-primary mt-2" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Adds new role to On Account">Save</button>
         </form>
     </div>
 </div>
