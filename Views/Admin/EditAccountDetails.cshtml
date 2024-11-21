@@ -6,6 +6,7 @@
 <h1 class="text-center mb-5  margin-top-120">Edit Account Details</h1>
 <div class="container-email-btn">
     <div class="row-email-btn">
+        <a class="btn btn-outline-primary background-default-b email-btn-left" asp-controller="Admin" asp-action="ManageAccounts" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Goes back to list of user accounts">Back</a>
         <a class="btn btn-outline-danger email-btn-left" asp-action="Lock" asp-route-id="@Model.Id" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Locks the Current user and prevents access">Lock Account</a>
         <a class="btn btn-outline-success email-btn-left" asp-action="Unlock" asp-route-id="@Model.Id" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Unlocks the current users account">Unlock Account</a>
         <a class="btn btn-outline-secondary emial-btn-right" asp-action="Email" asp-route-id="@Model.Id" role="button" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="Takes you to a page to send an email to an account">Send Email</a>
