@@ -29,8 +29,8 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="_dbConnectorService" />
-      <Field Name="logger" />
       <Field Name="_emailSender" />
+      <Field Name="logger" />
     </ShowAsAssociation>
   </Class>
   <Class Name="oa.Services.DbConnectorService" Collapsed="true">
@@ -40,12 +40,103 @@
       <FileName>Services\DbConnectorService.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="Microsoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;" Collapsed="true">
-    <Position X="9.25" Y="5.25" Width="1.5" />
+  <Class Name="oa.Areas.Identity.Data.ApplicationDbContext">
+    <Position X="2.75" Y="11.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAgAAEAAAAAEACABAEAAAAAAAAAQBQBAAgAA=</HashCode>
+      <FileName>Areas\Identity\Data\ApplicationDbContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="oa.Areas.Identity.Data.ApplicationUserEntityConfiguration" BaseTypeListCollapsed="true">
+    <Position X="2.75" Y="16" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Areas\Identity\Data\ApplicationDbContext.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="oa.Areas.Identity.Data.AppUser">
+    <Position X="5.25" Y="11.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQACQEAAAAAIACCKAIgASCAAAAAEAAgSIgAAJAAAAAg=</HashCode>
+      <FileName>Areas\Identity\Data\AppUser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="oa.Models.DashboardBundleModel">
+    <Position X="7.75" Y="11.75" Width="1.5" />
+    <AssociationLine Name="quickRatioModel" Type="oa.Models.QuickRatioModel">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.673" Y="0.363" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="returnOnEquityModel" Type="oa.Models.ReturnOnEquityModel">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.718" Y="0.29" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="returnOnAssetsModel" Type="oa.Models.ReturnOnAssetsModel">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.7" Y="0.271" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="currentRaitoModel" Type="oa.Models.CurrentRaitoModel">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.5" Y="0.082" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAEAAAAAAAAAAAAAAACAAIA=</HashCode>
+      <FileName>Models\DashboardBundleModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="currentRaitoModel" />
+      <Property Name="quickRatioModel" />
+      <Property Name="returnOnAssetsModel" />
+      <Property Name="returnOnEquityModel" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="oa.Models.CurrentRaitoModel" Collapsed="true">
+    <Position X="7.75" Y="14" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\CurrentRaitoModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="oa.Models.QuickRatioModel" Collapsed="true">
+    <Position X="7.75" Y="15" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAgQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\QuickRatioModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="oa.Models.ReturnOnAssetsModel" Collapsed="true">
+    <Position X="7.75" Y="15.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAIAAAAAAAIAA=</HashCode>
+      <FileName>Models\ReturnOnAssetsModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="oa.Models.ReturnOnEquityModel" Collapsed="true">
+    <Position X="7.75" Y="16.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>Models\ReturnOnEquityModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.AspNetCore.Identity.IdentityUser" Collapsed="true">
+    <Position X="1" Y="11.5" Width="1.5" />
     <TypeIdentifier />
-  </Interface>
+  </Class>
+  <Class Name="Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityDbContext&lt;TUser&gt;">
+    <Position X="1" Y="12.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
   <Interface Name="Microsoft.AspNetCore.Identity.UI.Services.IEmailSender">
     <Position X="9.25" Y="3" Width="1.75" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Microsoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;" Collapsed="true">
+    <Position X="9.25" Y="5.25" Width="1.5" />
     <TypeIdentifier />
   </Interface>
   <Font Name="Segoe UI" Size="9" />
