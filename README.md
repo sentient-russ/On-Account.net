@@ -8,4 +8,4 @@ On-Account is a double-entry, US currency-based accounting system that begain de
 
 ### **Licensing:**
 > - No use or licensing of any kind is authorized with this software. By receiving it, you agree that it will not be used without the express written consent of each of its contributors. This notification supersedes any past agreement, whether written or implied.
-> - We do expect to have a publicly available version available that will be open source.  This will be found under the releases section of this repository with a licensing agreement that is specific to the release itself.  Thank you.
+> - We do expect to have a publicly available version available that will be open source.  This will be found under the releases section of this repository with a licensing agreement that is specific to the release itself. Thank you.
