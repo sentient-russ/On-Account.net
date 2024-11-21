@@ -71,6 +71,8 @@ namespace OnAccount.Controllers
                 quickRatioModel
                 );
 
+            ViewBag.pendingExists = _dbConnectorService.PendingTransactionExists();
+
             return View(dashboardBundleModel);
         }
         //All users can view the chart of accounts

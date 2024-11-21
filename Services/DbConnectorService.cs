@@ -1519,6 +1519,37 @@ namespace oa.Services
             return returnBundle;
         }
 
+        // Check if pending transaction exists
+        public Boolean PendingTransactionExists()
+        {
+            int result_num = 0;
+            try
+            {
+                using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+                string command = "SELECT EXISTS(SELECT * FROM on_account.transaction where status = \"Pending\")";
+                conn1.Open();
+                MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+                MySqlDataReader reader1 = cmd1.ExecuteReader();
+                while (reader1.Read())
+                {
+                    result_num = reader1.IsDBNull(0) ? 0 : reader1.GetInt32(0);
+                }
+                reader1.Close();
+                conn1.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            if (result_num == 1)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         //only gets transactions that have been approved
         public List<TransactionModel> GetAllApprovedTransactions()
         {

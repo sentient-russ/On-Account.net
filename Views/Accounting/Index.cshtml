@@ -15,6 +15,19 @@
     }
 }
 
+@{
+    if (ViewBag.pendingExists)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" style="position: sticky; top: 70px; width: fit-content;" role="alert">
+            <span>Pending transactions exist that need attending to!</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" style="margin:auto;">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+}
+
+
 <h1 class="text-center margin-top-120">Accounting Home</h1>
 <p class="text-center">Welcome @UserManager.GetUserName(User)!</p>
 <p class="text-center">Your current role is: @role</p>
