@@ -6,50 +6,50 @@
 
 <div class="settings-row">
     <div class="settings-form-container">
-    <div class="mx-auto">
-        <form asp-action="PostSystemSettings">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-floating mb-3">
-                <input asp-for="business_name" class="form-control" autocomplete="user-name" placeholder="" id="business_name" />
-                <label asp-for="business_name" class="control-label"></label>
-                <span asp-validation-for="business_name" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="date" asp-for="open_close_date" class="form-control" autocomplete="user-name" placeholder="" id="open_close_date" readonly />
-                <label asp-for="open_close_date" class="control-label"></label>
-                <span asp-validation-for="open_close_date" class="text-danger"></span>
-            </div>
-            <div class="closing-btn-container mb-2">
-                <button type="button" class="btn btn-outline-danger closing-btn" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    Close Anual Accounting Period
-                </button>
-            </div>
-            <div class="closing-information-container">
-                Last closed by: @Model.closing_user <br />
-                Last closed on: @Model.open_close_on_date
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="closing_user" class="form-control" autocomplete="user-name" placeholder="" id="closing_user" hidden />
-                <label asp-for="closing_user" class="control-label" hidden></label>
-                <span asp-validation-for="closing_user" class="text-danger" hidden></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="date" asp-for="open_close_on_date" class="form-control" autocomplete="user-name" placeholder="" id="open_close_on_date" hidden />
-                <label asp-for="open_close_on_date" class="control-label" hidden></label>
-                <span asp-validation-for="open_close_on_date" class="text-danger" hidden></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-                <a asp-action="Index" id="journal_back_href">
-                    <div class="btn btn-outline-primary" id="journal_back_btn">
-                        <span class="">Return Home</span>
-                    </div>
-                </a>
-            </div>
-        </form>
+        <div class="mx-auto">
+            <form asp-action="PostSystemSettings">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-floating mb-3">
+                    <input asp-for="business_name" class="form-control" autocomplete="user-name" placeholder="" id="business_name" />
+                    <label asp-for="business_name" class="control-label"></label>
+                    <span asp-validation-for="business_name" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="date" asp-for="open_close_date" class="form-control" autocomplete="user-name" placeholder="" id="open_close_date" readonly />
+                    <label asp-for="open_close_date" class="control-label"></label>
+                    <span asp-validation-for="open_close_date" class="text-danger"></span>
+                </div>
+                <div class="closing-btn-container mb-2">
+                    <button type="button" class="btn btn-outline-danger closing-btn" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        Close Anual Accounting Period
+                    </button>
+                </div>
+                <div class="closing-information-container">
+                    Last closed by: @Model.closing_user <br />
+                    Last closed on: @Model.open_close_on_date
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="closing_user" class="form-control" autocomplete="user-name" placeholder="" id="closing_user" hidden />
+                    <label asp-for="closing_user" class="control-label" hidden></label>
+                    <span asp-validation-for="closing_user" class="text-danger" hidden></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="date" asp-for="open_close_on_date" class="form-control" autocomplete="user-name" placeholder="" id="open_close_on_date" hidden />
+                    <label asp-for="open_close_on_date" class="control-label" hidden></label>
+                    <span asp-validation-for="open_close_on_date" class="text-danger" hidden></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <a asp-action="Index" id="journal_back_href">
+                        <div class="btn btn-outline-primary" id="journal_back_btn">
+                            <span class="">Return Home</span>
+                        </div>
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 </div>
 
 <!-- Close Accounting Period Modal -->
@@ -64,16 +64,17 @@
                 <div class="modal-warning-txt">
                     <span class="alert-secondary">Warning! This action cannot be undone.  Once an accounting period has been closed and approved by the manager the income and expenses will be zeroed out for the next calandar year.</span>
                 </div>
-                <form action="/Accounting/CreateClosingEntry" method="post">
+                <form id="closePeriodForm" action="/Accounting/CreateClosingEntry" method="post">
                     <div class="form-floating mb-3">
-                        <input type="date" name="open_close_date" class="form-control" autocomplete="user-name" placeholder="" id="open_close_date" />
+                        <input type="date" name="open_close_date" class="form-control" autocomplete="user-name" placeholder="" id="open_close_date" required />
                         <label for="open_close_date" class="control-label">Open/Close Date</label>
+                        <span id="dateValidationMessage" class="text-danger" style="display: none;">Please enter a valid date.</span>
                     </div>
-                    <button type="submit" class="btn btn-danger" data-bs-dismiss="modal" id="open_close_date">Confirm Closing Date</button>
+                    <button type="submit" class="btn btn-danger" id="confirmCloseDate">Confirm Closing Date</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </form>
             </div>
-            <div class="modal-footer">               
+            <div class="modal-footer">
             </div>
         </div>
     </div>
@@ -84,7 +85,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="staticBackdropLabel2">Demo Reset Menu</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"  data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="modal-warning-txt">
@@ -97,7 +98,7 @@
                 <form asp-action="DemoDataTransactionsWithdjustingPending" method="post">
                     <button type="submit" class="btn btn-danger m-2" data-bs-dismiss="modal">Reset w/ Transactions - Pending Adjusting Entries.</button>
                 </form>
-             </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
@@ -111,31 +112,31 @@
 </div>
 
 <style>
-    .closing-btn{
+    .closing-btn {
         height: 50px;
-        font-weight:600;
-        font-size:16px;
-        letter-spacing:.5px;
-        text-align:center
+        font-weight: 600;
+        font-size: 16px;
+        letter-spacing: .5px;
+        text-align: center
     }
-    .closing-btn-container{
-        text-align:center;
+    .closing-btn-container {
+        text-align: center;
     }
-    .demo-container{
-        display:flex;
-        position:absolute;
+    .demo-container {
+        display: flex;
+        position: absolute;
         bottom: 50px;
         width: 97.5%;
-        justify-content:center;
+        justify-content: center;
     }
-    .settings-form-container{
+    .settings-form-container {
         min-width: 400px;
         padding: 20px;
         border: 1px solid;
         border-radius: 10px;
         box-shadow: 3px 3px 3px;
     }
-    .settings-row{
+    .settings-row {
         --bs-gutter-x: 1.5rem;
         --bs-gutter-y: 0;
         display: flex;
@@ -143,10 +144,29 @@
         margin-top: calc(-1 * var(--bs-gutter-y));
         margin-right: calc(-.5 * var(--bs-gutter-x));
         margin-left: calc(-.5 * var(--bs-gutter-x));
-        justify-content:center;
+        justify-content: center;
     }
 </style>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.getElementById('closePeriodForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var dateInput = document.getElementById('open_close_date').value;
+            console.log(dateInput);
+            if (dateInput == null || dateInput == "") {
+                var validationMessage = document.getElementById('dateValidationMessage');
+                validationMessage.style.display = 'block';
+                return;
+            } else {
+                var validationMessage = document.getElementById('dateValidationMessage');
+                validationMessage.style.display = 'none';
+            }
+            this.submit();
+            var modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdrop'));
+            modal.hide();
+        });
+    </script>
 }
-

@@ -923,22 +923,6 @@ namespace oa.Services
             {
                 balance = cr - dr;
             }
-            if (accountNumberIn.Equals("290"))
-            {
-                dr = 0;
-                cr = 0;
-                List<AccountsModel> revenueAccounts = GetAccountsOnType("Revenue");
-                List<AccountsModel> expenseAccounts = GetAccountsOnType("Expense");
-                for (int i = 0; i < revenueAccounts.Count; i++)
-                {
-                    dr += (double)revenueAccounts[i].current_balance;
-                }
-                for (int i = 0; i < expenseAccounts.Count; i++)
-                {
-                    cr += (double)expenseAccounts[i].current_balance;
-                }
-                balance = dr - cr;
-            }
             UpdateAccountBalance(accountNumberIn, balance);
             return balance;
         }
