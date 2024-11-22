@@ -40,8 +40,11 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator,Manager,Accountant")]
         public IActionResult Index()
         {
-            ChartingDataService chartingService = new ChartingDataService();
+            //leaving this as example on obtaining users details from identity claims.
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            AppUserModel userDetails = _dbConnectorService.GetUserDetailsById(userId);
 
+            ChartingDataService chartingService = new ChartingDataService();
             DashboardBundleModel dashboardBundleModel;
             CurrentRaitoModel currentRaitoModel;
             ReturnOnAssetsModel returnOnAssetsModel;
@@ -274,7 +277,7 @@ namespace OnAccount.Controllers
                         supporting_document = supportingDocFound,
                         is_adjusting = journalEntry.is_adjusting,
 
-                    }; 
+                    };
 
                     _dbConnectorService.AddTransaction(transactionIn);
                 }
@@ -300,12 +303,13 @@ namespace OnAccount.Controllers
             ViewBag.businessName = systemSettings.business_name;
 
             List<TransactionModel> currentTransactions = _dbConnectorService.GetAccountTransactions(id);
-            for(var i = currentTransactions.Count -1; 0 < i; i--)
+            for (var i = currentTransactions.Count - 1; 0 < i; i--)
             {
                 if (currentTransactions[i].status == "Pending")
                 {
                     currentTransactions.RemoveAt(i);
-                } else if (currentTransactions[i].status == "Denied")
+                }
+                else if (currentTransactions[i].status == "Denied")
                 {
                     currentTransactions.RemoveAt(i);
                 }
@@ -339,14 +343,14 @@ namespace OnAccount.Controllers
             {
                 totalPages = 1;
                 currentTransactions = _dbConnectorService.GetAccountTransactionsByJournalNumber(JID);
-            } 
+            }
             // handles the event where a list of journal entries need to be closed to close out the accounting year
             else if (JIDListIn.Count != 0)
             {
-                for(int i = 0; i < JIDListIn.Count; i++)
+                for (int i = 0; i < JIDListIn.Count; i++)
                 {
                     List<TransactionModel> nextJournalTransactionsList = _dbConnectorService.GetAccountTransactionsByJournalNumber(JIDListIn[i]);
-                    for(int j = 0; j < nextJournalTransactionsList.Count; j++)
+                    for (int j = 0; j < nextJournalTransactionsList.Count; j++)
                     {
                         currentTransactions.Add(nextJournalTransactionsList[j]);
                     }
@@ -369,18 +373,20 @@ namespace OnAccount.Controllers
                 }
                 // determine first and last journal number to send to the view
                 var endingJournalNumber = (Int32.Parse(Id) * journalsPerPage);
-                var startingJournalNumber = (endingJournalNumber - journalsPerPage) -1;
+                var startingJournalNumber = (endingJournalNumber - journalsPerPage) - 1;
                 currentTransactions = _dbConnectorService.GetAllTransactionsByJournalRange(startingJournalNumber, endingJournalNumber);
-            } else
+            }
+            else
             {
                 //trim list to current pages transactions
                 var numberJournalsWithSatus = _dbConnectorService.GetNumJournalsStatus(status);
-                if(numberJournalsWithSatus == 0)
+                if (numberJournalsWithSatus == 0)
                 {
                     //This is needed for when no transactions exist with a specified status to avoid devide by 0 error.
                     //An error woud be appropriate.
                     return RedirectToAction(nameof(GeneralJournal), new { messageIn = "No transactions exist with that status." });
-                } else
+                }
+                else
                 {
                     totalPages = (double)numberJournalsWithSatus / (double)journalsPerPage;
                 }
@@ -388,29 +394,31 @@ namespace OnAccount.Controllers
                 if (totalPages % 1 != 0)
                 {
                     totalPages = (int)totalPages + 1;
-                } else if (totalPages % 1 == 0)
+                }
+                else if (totalPages % 1 == 0)
                 {
                     totalPages = totalPages;
                 }
                 else if (totalPages <= 0)
                 {
                     totalPages = 1;
-                } else
+                }
+                else
                 {
                     totalPages = (numberJournalsWithSatus / journalsPerPage) + 1;
                 }
                 var endingJournalNumber = (Int32.Parse(Id) * journalsPerPage);
                 var startingJournalNumber = (endingJournalNumber - journalsPerPage);
 
-                currentTransactions = _dbConnectorService.GetAllTransactionsByJournalStatus(startingJournalNumber, endingJournalNumber -1, status);
+                currentTransactions = _dbConnectorService.GetAllTransactionsByJournalStatus(startingJournalNumber, endingJournalNumber - 1, status);
             }
 
-            for(var i = 0; i < currentTransactions.Count; i++)
+            for (var i = 0; i < currentTransactions.Count; i++)
             {
                 if (currentTransactions[i].debit_amount == 0)
                 {
                     currentTransactions[i].debit_amount = null;
-                } 
+                }
                 else if (currentTransactions[i].credit_amount == 0)
                 {
                     currentTransactions[i].credit_amount = null;
@@ -446,13 +454,14 @@ namespace OnAccount.Controllers
             ViewBag.currentPage = Int32.Parse(Id);
             ViewBag.totalPages = (int)totalPages;
             ViewBag.previousPage = Int32.Parse(Id) - 1;
-            if((int)totalPages > Int32.Parse(Id))
+            if ((int)totalPages > Int32.Parse(Id))
             {
                 ViewBag.nextPage = Int32.Parse(Id) + 1;
-            } else
+            }
+            else
             {
                 ViewBag.nextPage = 0;
-            }            
+            }
             ViewBag.recordCount = currentTransactions.Count();
             ViewBag.lastStatus = status;
             ViewBag.JournalFocusMessage = messageIn;
@@ -520,7 +529,7 @@ namespace OnAccount.Controllers
             return View(infoBundle);
         }
         //Only the manager can approve or deny a transaction.
-        [Authorize(Roles = "Manager")] 
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DenyJournal(string? id)
         {
 
@@ -549,17 +558,11 @@ namespace OnAccount.Controllers
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
 
-
-
             _dbConnectorService.UpdateTransactionStatus(id, "Approved");
             List<TransactionModel> listOfTransactions = _dbConnectorService.GetAccountTransactionsByJournalNumber(id);
-            List<int?> listOfAccount=new List<int?>();
-            for(int i = 0; i<listOfTransactions.Count(); i++)
+            List<int?> listOfAccount = new List<int?>();
+            for (int i = 0; i < listOfTransactions.Count(); i++)
             {
-
-
-
-
                 if (listOfTransactions[i].debit_account != 0)
                 {
                     listOfAccount.Add(listOfTransactions[i].debit_account);
@@ -570,15 +573,10 @@ namespace OnAccount.Controllers
                 }
             }
 
-            for (int i=0;i<listOfAccount.Count();i++)
+            for (int i = 0; i < listOfAccount.Count(); i++)
             {
-
-
                 _dbConnectorService.CalculateAccountBalance(listOfAccount[i].ToString());
-                
             }
-
-
             // need log update here
             return RedirectToAction(nameof(GeneralJournal), new { status = "Pending" });
         }
@@ -606,13 +604,10 @@ namespace OnAccount.Controllers
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
-
             AppUserModel appUserMessage = new AppUserModel();
             appUserMessage = detailsIn;
-
             // Task runs in a standalone discard while the redirection takes place. (No more await)
             _ = Task.Run(() => _emailSender.SendEmailAsync(appUserMessage.Email, appUserMessage.Subject, appUserMessage.Message));
-
             return RedirectToAction("Index", "Home");
         }
 
@@ -624,9 +619,8 @@ namespace OnAccount.Controllers
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
-
             AccountsModel currentAccount = _dbConnectorService.GetAccount(id);
-            ViewBag.Accountname=currentAccount.name;
+            ViewBag.Accountname = currentAccount.name;
             string accountName = currentAccount.name;
             List<LogModel> logs = _dbConnectorService.GetAccountLogs(accountName);
             logs.Reverse();
@@ -641,7 +635,7 @@ namespace OnAccount.Controllers
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
-            if(includeAdjusting == "true")
+            if (includeAdjusting == "true")
             {
                 ViewBag.isAdjusting = "()";
             }
@@ -658,12 +652,10 @@ namespace OnAccount.Controllers
                 ViewBag.asOfDate = titleDateObj.ToString("yyyy-MM-dd");
             }
 
-
             SettingsModel settings = _dbConnectorService.GetSystemSettings();
             DateTime currentDate = DateTime.Now;
             var message = "";
             string viewInputDate = "";
-
 
             if (string.IsNullOrEmpty(dateIn) || dateIn == fromDate)
             {
@@ -697,19 +689,16 @@ namespace OnAccount.Controllers
             // Iterate over the non-zero accounts to update balances based on date range
             foreach (AccountsModel account in listOfAccounts)
             {
-                if(account.type == "Expense" || account.type == "Revenue")
+                if (account.type == "Expense" || account.type == "Revenue")
                 {
                     account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjustingBool);
-                } else
+                }
+                else
                 {
                     account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, "04/01/2024", toDate, includeAdjustingBool);
                 }
-
             }
-
-
             _dbConnectorService.CalculateAccountBalance(retainedEarningsAccountNum);
-            
             List<TrialBalanceModel> trialBalanceModels = new List<TrialBalanceModel>();
             for (int i = 0; i < listOfAccounts.Count(); i++)
             {
@@ -766,7 +755,6 @@ namespace OnAccount.Controllers
             {
                 if (account.type == "Revenue" && account.current_balance != 0)
                 {
-
                     account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
                     incomeBundle.RevenueAccountsList.Add(account);
                     incomeBundle.RevenueAccountsTotal += (double)account.current_balance;
@@ -781,7 +769,6 @@ namespace OnAccount.Controllers
             incomeBundle.Net = incomeBundle.RevenueAccountsTotal - incomeBundle.ExxpenseAccountsTotal;
             return View(incomeBundle);
         }
-
         //view for the balance sheet
         [Authorize(Roles = "Manager, Accountant, Administrator")]
         public async Task<IActionResult> ViewBalanceSheet(string fromDate = "", string? toDate = "")
@@ -789,18 +776,17 @@ namespace OnAccount.Controllers
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
-             
             DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
             ViewBag.lastClosingDate = lastClosingDate.ToString("yyyy-MM-dd");
             if (fromDate == "") { fromDate = lastClosingDate.ToString("MM-dd-yyyy"); }
             if (toDate == "") { toDate = DateTime.Now.ToString("MM-dd-yyyy"); }
-            
+
             if (toDate != "")
             {
                 DateTime titleDateObj = DateTime.Parse(toDate);
                 ViewBag.titleDate = titleDateObj.ToString("MM-dd-yyyy");
                 ViewBag.asOfDate = titleDateObj.ToString("yyyy-MM-dd");
-            } 
+            }
 
             BalanceSheetBundle balanceBundle = new BalanceSheetBundle();
             List<AccountsModel> allAccounts = _dbConnectorService.GetChartOfAccounts();
@@ -899,7 +885,7 @@ namespace OnAccount.Controllers
                             }
                             account.current_balance = account.current_balance + (decimal)(incomeBundle.RevenueAccountsTotal - incomeBundle.ExxpenseAccountsTotal);
                         }
-                        
+
                         balanceBundle.Equities.Add(account);
                         balanceBundle.EquityTotal += (double)account.current_balance;
                     }
@@ -909,7 +895,7 @@ namespace OnAccount.Controllers
                         balanceBundle.Equities.Add(account);
                         balanceBundle.EquityTotal += (double)account.current_balance;
                     }
-                }                
+                }
                 balanceBundle.TotalLiabilitiesStockHolderEquity = balanceBundle.ShortTermLiabilitiesTotal + balanceBundle.LongTermLiabilitiesTotal + balanceBundle.EquityTotal;
             }
             return View(balanceBundle);
@@ -959,7 +945,7 @@ namespace OnAccount.Controllers
             }
             equityBundle.BeginningRetainedEarnings = (double)_dbConnectorService.GetAccountBalanceForApprovedByDateRange(290, fromDate, toDate, includeAdjusting);
             equityBundle.RunningNetIncome = incomeBundle.RevenueAccountsTotal - incomeBundle.ExxpenseAccountsTotal;
-            equityBundle.RunningDividends = (double)_dbConnectorService.GetAccountBalanceForApprovedByDateRange(295, fromDate, toDate, includeAdjusting);            
+            equityBundle.RunningDividends = (double)_dbConnectorService.GetAccountBalanceForApprovedByDateRange(295, fromDate, toDate, includeAdjusting);
             equityBundle.EndRetainedEarnings = equityBundle.BeginningRetainedEarnings + equityBundle.RunningNetIncome - equityBundle.RunningDividends;
 
 
@@ -1027,12 +1013,13 @@ namespace OnAccount.Controllers
             List<TransactionModel> debitTransactions = new List<TransactionModel>();
             List<TransactionModel> creditTransactions = new List<TransactionModel>();
 
-            foreach(var transaction in transactions)
+            foreach (var transaction in transactions)
             {
-                if(transaction.credit_account > 0)
+                if (transaction.credit_account > 0)
                 {
                     creditTransactions.Add(transaction);
-                }else if (transaction.debit_account > 0)
+                }
+                else if (transaction.debit_account > 0)
                 {
                     debitTransactions.Add(transaction);
                 }
@@ -1102,7 +1089,7 @@ namespace OnAccount.Controllers
                     _dbConnectorService.AddTransaction(nextJournalTransactionItem);
                 }
             }
-            
+
             //add retained earning transaction to adjusting entry
             TransactionModel retainedEarningsJournalTransactionItem = new TransactionModel();
             retainedEarningsJournalTransactionItem.transaction_number = _dbConnectorService.GetNextTransactionId();
@@ -1119,9 +1106,6 @@ namespace OnAccount.Controllers
             retainedEarningsJournalTransactionItem.journal_description = $"Closing entry created by: {retainedEarningsJournalTransactionItem.created_by} on {retainedEarningsJournalTransactionItem.transaction_date}.";
             _dbConnectorService.AddTransaction(retainedEarningsJournalTransactionItem);
             //update retained earnings account bal
-            
-
-
 
             // set the new closing date
             systemSettings.open_close_date = DateTime.Parse(toDate);
@@ -1136,3 +1120,5 @@ namespace OnAccount.Controllers
         }
     }
 }
+
+

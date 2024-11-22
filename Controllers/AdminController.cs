@@ -12,6 +12,7 @@ using Google.Protobuf.WellKnownTypes;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using oa.Areas.Identity.Services;
+using System.Security.Claims;
 namespace OnAccount.Controllers
 {
     [Authorize(Roles = "Administrator")]
@@ -28,8 +29,8 @@ namespace OnAccount.Controllers
         private readonly ApplicationDbContext _DbContext;
         private readonly DbConnectorService _dbConnectorService;
 
-        public AdminController(ILogger<AdminController> logger, 
-            RoleManager<IdentityRole> roleManager, 
+        public AdminController(ILogger<AdminController> logger,
+            RoleManager<IdentityRole> roleManager,
             UserManager<AppUser> userManager,
             IUserStore<AppUser> userStore,
             SignInManager<AppUser> signInManager,
@@ -49,7 +50,10 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Administrator")]
         public IActionResult Index()
         {
-            
+            //leaving this as example on obtaining users details from identity claims.
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            AppUserModel userDetails = _dbConnectorService.GetUserDetailsById(userId);
+
             return View();
         }
         [Authorize(Roles = "Administrator")]
@@ -101,7 +105,7 @@ namespace OnAccount.Controllers
             {
                 items.Add(new SelectListItem
                 {
-                    Text = role.Name,  
+                    Text = role.Name,
                 });
             }
             appUser.RoleList = items;
@@ -229,15 +233,7 @@ namespace OnAccount.Controllers
 
             return RedirectToAction(nameof(SystemSettings));
         }
-        //Demo Reset
-        [Authorize(Roles = "Administrator")]
-        [HttpPost]
-        public async Task<IActionResult> ResetTransactions()
-        {
-            ResetDataService resetService = new ResetDataService();
-            resetService.ResetDataTransaction();
-            return RedirectToAction(nameof(SystemSettings));
-        }
+
         //Demo Reset
         [Authorize(Roles = "Administrator")]
         [HttpPost]
@@ -255,13 +251,7 @@ namespace OnAccount.Controllers
             resetService.DemoDataTransactionsWithdjustingPending();
             return RedirectToAction(nameof(SystemSettings));
         }
-        [Authorize(Roles = "Administrator")]
-        [HttpPost]
-        public async Task<IActionResult> DemoDataTransactionsWithAdjustingApproved()
-        {
-            ResetDataService resetService = new ResetDataService();
-            resetService.DemoDataResetAll();
-            return RedirectToAction(nameof(SystemSettings));
-        }
+
     }
 }
+
