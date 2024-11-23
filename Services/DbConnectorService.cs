@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using oa.Areas.Identity.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace oa.Services
 {
@@ -935,7 +936,7 @@ namespace oa.Services
             bool rangeHasPending = true;
             //get the beginning date.
             SettingsModel settings = GetSystemSettings();
-            DateTime? fromDate = settings.open_close_date;
+            DateTime? fromDate = settings.system_start_date;
             DateTime? toDate = DateTime.Parse(dateIn);
             List<TransactionModel> accountTransactions = new List<TransactionModel>();
             try
@@ -2137,6 +2138,7 @@ namespace oa.Services
                     settings.closing_user = reader1.IsDBNull(2) ? null : reader1.GetString(2);
                     settings.open_close_date = reader1.IsDBNull(3) ? null : reader1.GetDateTime(3);
                     settings.open_close_on_date = reader1.IsDBNull(4) ? null : reader1.GetDateTime(4);
+                    settings.system_start_date = reader1.IsDBNull(5) ? null : reader1.GetDateTime(5);
                 }
                 reader1.Close();
                 conn1.Close();
@@ -2155,7 +2157,7 @@ namespace oa.Services
                 try
                 {
                     using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                    string command = "INSERT INTO on_account.system_settings (business_name, open_close_date, closing_user, open_close_on_date) VALUES (@business_name, @open_close_date, @closing_user, @open_close_on_date)";
+                    string command = "INSERT INTO on_account.system_settings (business_name, open_close_date, closing_user, open_close_on_date, system_start_date VALUES (@business_name, @open_close_date, @closing_user, @open_close_on_date, @system_start_date)";
                     conn1.Open();
                     MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                     cmd1.Parameters.AddWithValue("@Id", settingsIn.Id);
@@ -2163,6 +2165,7 @@ namespace oa.Services
                     cmd1.Parameters.AddWithValue("@open_close_date", settingsIn.open_close_date);
                     cmd1.Parameters.AddWithValue("@closing_user", settingsIn.closing_user);
                     cmd1.Parameters.AddWithValue("@open_close_on_date", settingsIn.open_close_on_date);
+                    cmd1.Parameters.AddWithValue("@system_start_date", settingsIn.system_start_date);
                     MySqlDataReader reader1 = cmd1.ExecuteReader();
                     reader1.Close();
                     conn1.Close();
@@ -2174,7 +2177,7 @@ namespace oa.Services
             else {
                 try {
                     using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
-                    string command = "UPDATE on_account.system_settings SET business_name = @business_name, open_close_date = @open_close_date, closing_user = @closing_user, open_close_on_date = @open_close_on_date WHERE Id=@Id";
+                    string command = "UPDATE on_account.system_settings SET business_name = @business_name, open_close_date = @open_close_date, closing_user = @closing_user, open_close_on_date = @open_close_on_date system_start_date = @system_start_date WHERE Id=@Id";
                     conn1.Open();
                     MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                     cmd1.Parameters.AddWithValue("@Id", settingsIn.Id);
@@ -2182,6 +2185,7 @@ namespace oa.Services
                     cmd1.Parameters.AddWithValue("@open_close_date", settingsIn.open_close_date);
                     cmd1.Parameters.AddWithValue("@closing_user", settingsIn.closing_user);
                     cmd1.Parameters.AddWithValue("@open_close_on_date", settingsIn.open_close_on_date);
+                    cmd1.Parameters.AddWithValue("@system_start_date", settingsIn.system_start_date);
                     MySqlDataReader reader1 = cmd1.ExecuteReader();
                     reader1.Close();
                     conn1.Close();

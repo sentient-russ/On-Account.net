@@ -722,12 +722,26 @@ namespace OnAccount.Controllers
             ViewBag.InputDate = viewInputDate;
             ViewBag.AsOfDate = toDate;
             ViewBag.RecentOpeningClosingDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
-            ViewBag.Message = message;
+            
             if (includeAdjusting == "true")
             {
                 ViewBag.isAdjusting = "true";
             }
-            return View(trialBalanceModels);
+            if(trialBalanceModels.Count != 0)
+            {
+                ViewBag.Message = "";
+            } else
+            {
+                fromDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
+                viewInputDate = settings.open_close_date.Value.ToString("yyyy-MM-dd");
+                message = $"Please select a valid date after {settings.open_close_date.Value.ToString("MM-dd-yyyy")} and before {currentDate.ToString("MM-dd-yyyy")}. Note: All pending transactions must be 'Denied' or 'Approved' for the selected range.";
+                ViewBag.Message = message;
+            }
+            var sortedTrialBalanceModels = trialBalanceModels
+                .OrderBy(t => t.credit)
+                .ThenBy(t => t.accountname)
+                .ToList();
+            return View(sortedTrialBalanceModels);
         }
 
         //view for the income statement
@@ -776,7 +790,7 @@ namespace OnAccount.Controllers
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
-            DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
+            DateTime lastClosingDate = (DateTime)systemSettings.system_start_date;
             ViewBag.lastClosingDate = lastClosingDate.ToString("yyyy-MM-dd");
             if (fromDate == "") { fromDate = lastClosingDate.ToString("MM-dd-yyyy"); }
             if (toDate == "") { toDate = DateTime.Now.ToString("MM-dd-yyyy"); }
@@ -795,21 +809,25 @@ namespace OnAccount.Controllers
             {
                 if (account.type == "Asset" && account.term == "Short" && account.current_balance != 0)
                 {
-
                     string? normal_side = _dbConnectorService.GetAccountNormalSideByNumber(account.number.ToString());
                     if (normal_side == "Debit")
                     {
                         account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
-                        balanceBundle.ShortTermAssets.Add(account);
-                        balanceBundle.ShortTermAssetsTotal += (double)account.current_balance;
+                        if(account.current_balance > 0)
+                        {
+                            balanceBundle.ShortTermAssets.Add(account);
+                            balanceBundle.ShortTermAssetsTotal += (double)account.current_balance;
+                        }
                     }
                     else if (normal_side == "Credit")
                     {
                         account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting) * -1;
-                        balanceBundle.ShortTermAssets.Add(account);
-                        balanceBundle.ShortTermAssetsTotal -= (double)account.current_balance;
+                        if(account.current_balance > 0)
+                        {
+                            balanceBundle.ShortTermAssets.Add(account);
+                            balanceBundle.ShortTermAssetsTotal -= (double)account.current_balance;
+                        }
                     }
-
                 }
                 else if (account.type == "Asset" && account.term == "Long" && account.current_balance != 0)
                 {
@@ -817,14 +835,22 @@ namespace OnAccount.Controllers
                     if (normal_side == "Debit")
                     {
                         account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
-                        balanceBundle.LongTermAssets.Add(account);
-                        balanceBundle.LongTermAssetsTotal += (double)account.current_balance;
+                        if(account.current_balance > 0)
+                        {
+                            balanceBundle.LongTermAssets.Add(account);
+                            balanceBundle.LongTermAssetsTotal += (double)account.current_balance;
+                        }
+
                     }
                     else if (normal_side == "Credit")
                     {
                         account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting) * -1;
-                        balanceBundle.LongTermAssets.Add(account);
-                        balanceBundle.LongTermAssetsTotal += (double)account.current_balance;
+                        if(account.current_balance > 0)
+                        {
+                            balanceBundle.LongTermAssets.Add(account);
+                            balanceBundle.LongTermAssetsTotal += (double)account.current_balance;
+                        }
+
                     }
                 }
                 else if (account.type == "Liability" && account.term == "Short" && account.current_balance != 0)
@@ -833,14 +859,21 @@ namespace OnAccount.Controllers
                     if (normal_side == "Credit")
                     {
                         account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
-                        balanceBundle.ShortTermLiabilities.Add(account);
-                        balanceBundle.ShortTermLiabilitiesTotal += (double)account.current_balance;
+                        if (account.current_balance > 0)
+                        {
+                            balanceBundle.ShortTermLiabilities.Add(account);
+                            balanceBundle.ShortTermLiabilitiesTotal += (double)account.current_balance;
+                        }
                     }
                     else if (normal_side == "Debit")
                     {
                         account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting) * -1;
-                        balanceBundle.ShortTermLiabilities.Add(account);
-                        balanceBundle.ShortTermLiabilitiesTotal += (double)account.current_balance;
+                        if (account.current_balance > 0)
+                        {
+                            balanceBundle.ShortTermLiabilities.Add(account);
+                            balanceBundle.ShortTermLiabilitiesTotal += (double)account.current_balance;
+                        }
+
                     }
                 }
                 else if (account.type == "Liability" && account.term == "Long" && account.current_balance != 0)
@@ -849,14 +882,20 @@ namespace OnAccount.Controllers
                     if (normal_side == "Credit")
                     {
                         account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
-                        balanceBundle.LongTermLiabilities.Add(account);
-                        balanceBundle.LongTermLiabilitiesTotal += (double)account.current_balance;
+                        if (account.current_balance > 0)
+                        {
+                            balanceBundle.LongTermLiabilities.Add(account);
+                            balanceBundle.LongTermLiabilitiesTotal += (double)account.current_balance;
+                        }
                     }
                     else if (normal_side == "Debit")
                     {
                         account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting) * -1;
-                        balanceBundle.LongTermLiabilities.Add(account);
-                        balanceBundle.LongTermLiabilitiesTotal += (double)account.current_balance;
+                        if (account.current_balance > 0)
+                        {
+                            balanceBundle.LongTermLiabilities.Add(account);
+                            balanceBundle.LongTermLiabilitiesTotal += (double)account.current_balance;
+                        }
                     }
                 }
                 else if (account.type == "Equity")

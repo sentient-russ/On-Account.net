@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Baskervville+SC&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Baskervville+SC&family=Outfit:wght@100..900&display=swap');
+html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
 
 .top-border {
     border-top: 2.5px solid;
@@ -21,9 +27,7 @@
 .spanse {
     width: 85vw;
 }
-.span-spacer {
-    padding-right:40px;
-}
+
 .dark-row {
     --bs-table-bg: --var(transparent);
     background-color: #db1e1e00;
@@ -587,6 +591,7 @@ input.currency {
     border-radius: 5px;
     padding-top: 6.5px;
     padding-bottom: 6.5px;
+    padding-left:10%;
 }
 
 .edit-account-row {
@@ -958,9 +963,7 @@ input:-webkit-autofill:focus {
 }
 
 .transaction-description {
-    padding-top: 6.5px;
     transform: translateX(-7.5px);
-
 }
 
 .add-label {
@@ -971,8 +974,8 @@ input:-webkit-autofill:focus {
     display: flex;
     flex-direction: column;
     justify-content: left;
-    margin-top: 10px;
-    margin-left: 12px;
+    margin-top: 5px;
+    margin-left: 5px;
 }
 .journal-final-input-row {
     display: flex;
@@ -991,18 +994,27 @@ input:-webkit-autofill:focus {
     margin-left:10px;
 }
 
-.journal-row-heading {
-    margin-top: 5px;
-    border: 1px solid #8C8C8C;
-    background-color: #ffcb6f29;
-    border-radius: 5px;
-    padding-top: 6.5px;
-    padding-bottom: 6.5px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+.add-account-form-container{
+    max-width: 1150px;
+}
+.transaction-container {
+    max-width: 1150px;
+}
+.col-md-3 {
+    width: 260px;
 }
 
+.col-md-6 {
+    width: 510px;
+}
+
+.col-md-1 {
+    width: 100px;
+}
+
+.col-md-2 {
+    width: 140px;
+}
 .journal-description {
     /*margin-left:10px;*/
     margin-right: 10px;
@@ -1011,7 +1023,7 @@ input:-webkit-autofill:focus {
 
 .transaction-upload-container {
     max-width: 350px;
-    margin-right: 316px;
+    margin-right: 100%;
 }
 
 .transaction-date-container {
@@ -1222,7 +1234,10 @@ th, td {
     box-shadow: 0px 3px 3px 2px rgba(0,0,0,.4);
     padding: 10px;
     background-color: #fff;
-    min-width: 1180px;
+    max-width: 1180px;
+    margin-left:auto;
+    margin-right:auto;
+    min-width:1180px;
 }
 .general-journal-total-row {
     --bs-table-bg: #fcb14f45;
@@ -1974,7 +1989,7 @@ input.currency {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 100%;
+    width: 1150px;
 }
 
 .journal-row {
@@ -1984,6 +1999,7 @@ input.currency {
     border-radius: 5px;
     padding-top: 6.5px;
     padding-bottom: 6.5px;
+    width:1150px;
 }
 
 .edit-account-row {
@@ -2353,23 +2369,10 @@ input:-webkit-autofill:focus {
     text-align: center;
 }
 
-.transaction-description {
-    padding-top: 6.5px;
-    transform: translateX(-7.5px);
-
-}
-
 .add-label {
     justify-content: end;
 }
 
-.journal-save-row {
-    display: flex;
-    flex-direction: column;
-    justify-content: left;
-    margin-top: 10px;
-    margin-left: 12px;
-}
 .journal-final-input-row {
     display: flex;
     flex-direction: row;
@@ -2388,15 +2391,16 @@ input:-webkit-autofill:focus {
 }
 
 .journal-row-heading {
-    margin-top: 5px;
     border: 1px solid #8C8C8C;
     background-color: #ffcb6f29;
     border-radius: 5px;
     padding-top: 6.5px;
     padding-bottom: 6.5px;
+    padding-left: 115px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content:left;
+    margin-top:-32.5px;
 }
 
 .journal-description {
@@ -2413,9 +2417,6 @@ input:-webkit-autofill:focus {
 .transaction-date-container {
     max-width: 175px;
 
-}
-.transaction-description{
-    margin-left: 4px;
 }
 .add-sub-transactions-continer {
     max-width: 350px;

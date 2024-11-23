@@ -15,11 +15,7 @@
     var numNewLines = Model.transactions_list.Count - 2;
 
 }
-<div class="text-center" style="margin-top: -90px;">
-    <img src="~/img/journal.jpg" style="max-height: 150px; transform:translateY(225px);" />
-</div>
-<h3 class="text-center" style="transform:translateY(250px);">Journal Details</h3>
-<div class="journal-wrapper">
+<div class="journal-wrapper margin-top-120">
     <div class="form-container">
         <form class="add-account-form-container">
             @* row 0 *@
@@ -119,11 +115,14 @@
                     @* empty spot *@
                 </div>
             </div>
-            <hr />
+            <div class="text-center" style="height:0px;">
+                <img src="~/img/journal.jpg" style="max-height: 150px; transform:translateY(-250px);" />
+            </div>
+            <h3 class="text-center" style="transform:translateY(-100px);">Journal Details</h3>
             <div class="transaction-container" data-transaction="1">
                 <div class="journal-container text-center">
                     <!-- heading row -->
-                    <div class="journal-row-heading" style="padding-left: 6.5%;">
+                    <div class="journal-row-heading">
                         <div class="col-md-3 transaction-date-container">
                             <div class="journal-transaction-date">
                                 <input class="form-control text-center" style="margin-left:10px;" value="@Model.journal_date?.ToString("MM-dd-yyyy", CultureInfo.InvariantCulture)" data-transaction="1" data-line="0" id="transaction-date" readonly />
@@ -173,7 +172,7 @@
                         </div>
                     </div>
                     @*  line items start *@
-                    <div class="journal-row" style="padding-left: 6.5%;">
+                    <div class="journal-row">
                         <!-- entry 1.1 row -->
                         <div class="row g-1 journal-item-row" data-transaction="1" data-line="1">
                             <div class="col-md-3">
@@ -384,19 +383,21 @@
                                         <span class="totals"></span>
                                     </div>
                                 </div>
-                                <div class="col-md-2" style="margin-left: 5px;">
-                                    <hr class="hr-journal-totals" />
-                                    <hr class="hr-journal-totals" />
+                                <div class="col-md-2">
+
                                     <div class="">
                                         <input class="form-control text-end currencyField" value="@Model.total_adjustment" data-val="false" data-transaction="1" readonly />
                                     </div>
+                                    <hr class="hr-journal-totals" />
+                                    <hr class="hr-journal-totals" />
                                 </div>
                                 <div class="col-md-2" style="margin-left:2.5px">
-                                    <hr class="hr-journal-totals" />
-                                    <hr class="hr-journal-totals" />
+
                                     <div class="">
                                         <input class="form-control text-end currencyField" value="@Model.total_adjustment" data-val="false" data-transaction="1" readonly />
                                     </div>
+                                    <hr class="hr-journal-totals" />
+                                    <hr class="hr-journal-totals" />
                                 </div>
                             </div>
                             <div>
