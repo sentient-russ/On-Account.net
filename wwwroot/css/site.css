@@ -1337,24 +1337,6 @@ th, td {
     padding-top: 10px;
     z-index: 1;
 }
-.about-card-row {
-    display: flex;
-    justify-content: center;
-    margin-left: 25%;
-    margin-right: 25%;
-    width: 50%;
-    min-width: 375px;
-    border: 1px solid;
-    margin-bottom: 30px;
-    border: 1.5px solid;
-    border-color: black;
-    border-radius: 10px 10px 10px 10px;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,0);
-    box-shadow: 1px 2px 2px 1px rgba(0,0,0,.4);
-    background-color: #2d3f4f;
-
-    z-index: 1;
-}
 .about-card {
     display: flex;
     flex-direction: row;
@@ -2698,9 +2680,9 @@ th, td {
 .about-card-row {
     display: flex;
     justify-content: center;
-    margin-left: 25%;
-    margin-right: 25%;
-    width: 50%;
+    margin-left: 10%;
+    margin-right: 10%;
+    width: 80%;
     min-width: 375px;
     border: 1px solid;
     margin-bottom: 30px;
@@ -2710,7 +2692,6 @@ th, td {
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0);
     box-shadow: 1px 2px 2px 1px rgba(0,0,0,.4);
     background-color: #2d3f4f;
-
     z-index: 1;
 }
 .about-card {

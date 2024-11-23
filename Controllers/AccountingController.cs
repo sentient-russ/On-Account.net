@@ -695,7 +695,7 @@ namespace OnAccount.Controllers
                 }
                 else
                 {
-                    account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, "04/01/2024", toDate, includeAdjustingBool);
+                    account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, systemSettings.system_start_date.Value.ToString("MM-dd-yyyy"), toDate, includeAdjustingBool);
                 }
             }
             _dbConnectorService.CalculateAccountBalance(retainedEarningsAccountNum);
@@ -944,23 +944,19 @@ namespace OnAccount.Controllers
         [Authorize(Roles = "Manager, Accountant, Administrator")]
         public async Task<IActionResult> viewOwnersEquity(string fromDate = "", string? toDate = "")
         {
-
             SettingsModel systemSettings = new SettingsModel();
             systemSettings = _dbConnectorService.GetSystemSettings();
             ViewBag.businessName = systemSettings.business_name;
-
             DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
             ViewBag.lastClosingDate = lastClosingDate.ToString("yyyy-MM-dd");
             if (fromDate == "") { fromDate = lastClosingDate.ToString("MM-dd-yyyy"); }
             if (toDate == "") { toDate = DateTime.Now.ToString("MM-dd-yyyy"); }
-
             if (toDate != "")
             {
                 DateTime titleDateObj = DateTime.Parse(toDate);
                 ViewBag.titleDate = titleDateObj.ToString("MM-dd-yyyy");
                 ViewBag.asOfDate = titleDateObj.ToString("yyyy-MM-dd");
             }
-
             EquityBundle equityBundle = new EquityBundle();
             List<AccountsModel> allAccounts = _dbConnectorService.GetChartOfAccounts();
             bool includeAdjusting = true;
@@ -986,8 +982,6 @@ namespace OnAccount.Controllers
             equityBundle.RunningNetIncome = incomeBundle.RevenueAccountsTotal - incomeBundle.ExxpenseAccountsTotal;
             equityBundle.RunningDividends = (double)_dbConnectorService.GetAccountBalanceForApprovedByDateRange(295, fromDate, toDate, includeAdjusting);
             equityBundle.EndRetainedEarnings = equityBundle.BeginningRetainedEarnings + equityBundle.RunningNetIncome - equityBundle.RunningDividends;
-
-
             return View(equityBundle);
         }
 
@@ -996,10 +990,8 @@ namespace OnAccount.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateClosingEntry()
         {
-
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userDetails = _dbConnectorService.GetUserDetailsById(userId);
-
             var openCloseDate = Request.Form["open_close_date"].ToString();
             DateTime newClosingDate = DateTime.Parse(openCloseDate);
             //check for and handle pending in range condition
