@@ -14,19 +14,13 @@
 <h3 class="text-center mb-4">Account Name: <span class="accent-color">@ViewBag.AccountName</span></h3>
 <h3 class="text-center mb-4">Balance:<span class="accent-color"> @FormatNegativeDouble((double?)ViewBag.AccountBalance)</span></h3>
 <h3 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.Date</span></h3>
-
-@* code here to remove button if the user is not admin or manager *@
-<div class="search-row">
-    <div class="search-colum-1">
-    </div>
-    <div class="search-colum-2">
-        <img src="~/img/search.svg" class="search-img"  />
-    </div>
+<div class="search-row-secondary">
     <div class="search-colum-3">
         <input type="text" id="searchInput" class="form-control mb-3" style="max-width:200px;" placeholder="Search...">
+        <img src="~/img/search.svg" class="mng-acct-search-img" />
     </div>
 </div>
-<div class="table-wrapper">
+<div class="table-wrapper margin-top-20">
 <table class="table  table-striped">
     <thead class="table-top-row">
         <tr>

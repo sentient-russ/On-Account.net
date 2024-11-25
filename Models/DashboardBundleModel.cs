@@ -19,5 +19,9 @@
             this.returnOnEquityModel = returnOnEquityModel;
             this.quickRatioModel = quickRatioModel;
         }
+
+        public List<ChartMonth> IEMonths { get; set; }
+        public LinkedList<Top5ExpenseModel> Top5List { get; set;}
+
     }
 }
