@@ -2838,6 +2838,7 @@ th, td {
 .warning-subtle {
     background-color: #fd7e1425;
 }
+
 .success-subtle {
     background-color: #19875425;
 }
@@ -2882,6 +2883,5 @@ th, td {
 
 .chart-container {
     display: flex;
-
     width: 100%;
 }
