@@ -955,6 +955,7 @@ input:-webkit-autofill:focus {
 }
 
 .transaction-description {
+    margin-top:8px;
     transform: translateX(-7.5px);
 }
 
