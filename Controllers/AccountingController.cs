@@ -63,7 +63,6 @@ namespace OnAccount.Controllers
             inventoryIdList.Add("140"); // Merchandise Inventory
 
             quickRatioModel.inventory_balance = chartingService.GetAccountIdsTotalBalane(inventoryIdList);
-
             dashboardBundleModel = 
                 new DashboardBundleModel(
                 currentRaitoModel, 
@@ -72,13 +71,13 @@ namespace OnAccount.Controllers
                 quickRatioModel
                 );
             ViewBag.pendingJournalCount = _dbConnectorService.PendingJournalCount();
-
             List<ChartMonth> IEMonths = GetChartData();
             dashboardBundleModel.IEMonths = IEMonths;
-
+            LinkedList<Top5ExpenseModel> Top5 = Top5Expenses();
+            dashboardBundleModel.Top5List = Top5;
             return View(dashboardBundleModel);
         }
-        // Helper method to get chart data
+        // Helper method to get chart data Revenue and Expenses
         public List<ChartMonth> GetChartData()
         {
             SettingsModel systemSettings = new SettingsModel();
@@ -130,6 +129,38 @@ namespace OnAccount.Controllers
                 IEData.Add(nextMonth);
             }
             return IEData;
+        }
+
+        // Helper method to get chart data top 5 expenses
+        public LinkedList<Top5ExpenseModel> Top5Expenses()
+        {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
+            ViewBag.lastClosingDate = lastClosingDate.ToString("yyyy-MM-dd");
+            string fromDate = lastClosingDate.ToString("MM-dd-yyyy");
+            int startingMonth = Int32.Parse(fromDate.Split("-")[0]);
+
+            List<AccountsModel> allAccounts = _dbConnectorService.GetChartOfAccounts();
+            LinkedList<Top5ExpenseModel> linkedList = new LinkedList<Top5ExpenseModel>();
+
+            foreach (var account in allAccounts)
+            {
+                if (account.type == "Expense" && account.current_balance != 0)
+                {
+                    Top5ExpenseModel top5ExpenseModel = new Top5ExpenseModel();
+                    top5ExpenseModel.accountNum = account.number;
+                    top5ExpenseModel.accountDesc = account.name;
+                    top5ExpenseModel.accountAmount = (double)account.current_balance;
+                    linkedList.AddLast(top5ExpenseModel);
+
+                }
+            }
+            //sort greates to least
+            List<Top5ExpenseModel> list = new List<Top5ExpenseModel>(linkedList);
+            list.Sort((x, y) => y.accountAmount.CompareTo(x.accountAmount));
+            linkedList = new LinkedList<Top5ExpenseModel>(list);
+            return linkedList;
         }
         //All users can view the chart of accounts
         [Authorize(Roles = "Administrator, Manager, Accountant")]

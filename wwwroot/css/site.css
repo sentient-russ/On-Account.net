@@ -2854,26 +2854,34 @@ th, td {
     display: flex;
     flex-direction: row;
     justify-content:center;
-    min-width:550px;
-
+    min-height:350px;
     margin: 5px;
     border: 1px solid;
     border-radius: 10px;
     padding: 10px;
     box-shadow: grey 3px 3px 3px;
+    overflow:hidden;
 }
 .chart-col-3 {
     display: flex;
     flex-direction: row;
-    justify-content:center;
-
-    margin:5px;
-    padding: 10px;
+    justify-content: center;
+    margin: 5px;
+    width: fit-content;
+    min-height: 350px;
     border: 1px solid;
     border-radius: 10px;
     box-shadow: grey 3px 3px 3px;
+    padding: 10px;
+    overflow: hidden;
 }
 
 .txt-warning{
     color: #cf8520;
+}
+
+.chart-container {
+    display: flex;
+
+    width: 100%;
 }

@@ -16,7 +16,7 @@
     int journalCount = ViewBag.pendingJournalCount;
     string journalCountStr = journalCount.ToString();
     string journalMessage = $"There are {journalCountStr} pending journal entries!";
-
+    // Revenue and expense chart
     List<string> monthsList = new List<string>();
     List<string> expensesList = new List<string>();
     List<string> revenuesList = new List<string>();
@@ -29,28 +29,51 @@
     string[] monthsArray = monthsList.ToArray();
     string[] expenses = expensesList.ToArray();
     string[] revenues = revenuesList.ToArray();
+    // Top 5 Expense Chart
+    List<string> accountDescriptionsList = new List<string>();
+    List<string> accountAmountsList = new List<string>();
+    var node = Model.Top5List.First; // Start from the first node
+    for (var i = 0; i < Model.Top5List.Count; i++)
+    {
+        if (node != null)
+        {
+            string desc = node.Value.accountNum.ToString() + " - " + node.Value.accountDesc;
+            accountDescriptionsList.Add(desc);
+            accountAmountsList.Add(node.Value.accountAmount.ToString());
+            node = node.Next; // Move to the next node
+        }
+    }
+    string[] descripts = accountDescriptionsList.ToArray();
+    string[] amnts = accountAmountsList.ToArray();
+    string[] firstFiveElementDesc = new string[5];
+    string[] firstFiveElementAmnt = new string[5];
+
+    Array.Copy(descripts, firstFiveElementDesc, 5);
+    Array.Copy(amnts, firstFiveElementAmnt, 5);
 }
+
 <h1 class="text-center margin-top-120">Accounting Home</h1>
 <p class="text-center">Welcome @UserManager.GetUserName(User)!</p>
 <p class="text-center">Your current role is: @role</p>
 @{
     if (journalCount > 0)
     {
-        <p class="text-center txt-warning">@journalMessage</p>
+                            <p class="text-center txt-warning">@journalMessage</p>
     }
 }
 <hr />
 <partial name="_DashboardPartial" />
 <hr />
-<div class="chart-container" >
-    @* <div class="chart-col-1"></div> *@
+<div class="chart-container">
     <div class="chart-col-2">
-        <canvas id="BarChart-1"></canvas>
+        <canvas id="BarChart-1" height="325" width="500"></canvas>
     </div>
     <div class="chart-col-3">
-        <canvas id="DonutChart-1"></canvas>
+        <div class="donut-chart-container">
+            <canvas id="DonutChart-1" height="325" width="500"></canvas>
+        </div>
+
     </div>
-     @* <div class="chart-col-4"></div> *@
 </div>
 <hr />
 <div class="outer-container">
@@ -118,7 +141,6 @@
         'rgba(91, 25, 135, 0.5)', // purple, expenses
         'rgba(25, 109, 135, 0.5)', // blue
         'rgba(135, 86, 25, 0.5)', // brown
-        'rgba(25, 109, 135, 0.5)', // magenta
         'rgba(135, 25, 25, 0.5)' // red
     ];
     const ctx1 = document.getElementById('BarChart-1');
@@ -151,34 +173,66 @@
                 title: {
                     display: true,
                     text: 'Income and Expenses',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    }
                 }
-            }
+            },
+            responsive: false,
+
         }
     });
-    const ctx2 = document.getElementById('DonutChart-1');
+    const ctx2 = document.getElementById('DonutChart-1').getContext('2d');
     new Chart(ctx2, {
         type: 'doughnut',
         data: {
-            labels: [
-                'Red',
-                'Blue',
-                'Yellow'
-            ],
+            labels: @Html.Raw(Json.Serialize(firstFiveElementDesc)),
             datasets: [{
                 label: 'Expenses',
-                data: [300, 50, 100, 400, 200],
+                data: @Html.Raw(Json.Serialize(firstFiveElementAmnt)),
                 backgroundColor: colors,
                 hoverOffset: 2,
                 radius: 100
             }]
         },
         options: {
+            layout:{
+                padding:{
+                    left: 25
+                }
+            },
             plugins: {
                 title: {
                     display: true,
                     text: 'Top 5 Expenses',
+                    position: 'top',
+                    align: 'start',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    },
+                    padding: {
+                        top: 30,
+                        left: 50
+                    }
+                    
+                },
+                legend: {
+                    display: true,
+                    position: 'right',
+                    align: 'start',
+                    labels: {
+                        boxWidth: 10,
+                        padding: 5
+                                                    
+                    },
+                    padding:{
+                        top: 10
+                    }
                 }
-            }
+            },
+            responsive: true
         }
     });
 </script>
