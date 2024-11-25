@@ -5,9 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using oa.Areas.Identity.Data;
-using oa.Migrations;
-using System.Globalization;
-using System.Security.Principal;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
@@ -36,6 +33,7 @@ namespace OnAccount.Controllers
             todayStr = today.ToString("MM-dd-yyyy");
             _userManager = userManager;
         }
+
         //All users can view the accounting home landing page
         [Authorize(Roles = "Administrator,Manager,Accountant")]
         public IActionResult Index()
@@ -73,10 +71,65 @@ namespace OnAccount.Controllers
                 returnOnEquityModel,
                 quickRatioModel
                 );
+            ViewBag.pendingJournalCount = _dbConnectorService.PendingJournalCount();
 
-            ViewBag.pendingExists = _dbConnectorService.PendingTransactionExists();
+            List<ChartMonth> IEMonths = GetChartData();
+            dashboardBundleModel.IEMonths = IEMonths;
 
             return View(dashboardBundleModel);
+        }
+        // Helper method to get chart data
+        public List<ChartMonth> GetChartData()
+        {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
+            ViewBag.lastClosingDate = lastClosingDate.ToString("yyyy-MM-dd");
+            string fromDate = lastClosingDate.ToString("MM-dd-yyyy");
+            int startingMonth = Int32.Parse(fromDate.Split("-")[0]);
+            List<int?> months = new List<int?>();
+
+            // Create a list of months starting from the startingMonth and wrapping around
+            for (int i = 0; i < 12; i++)
+            {
+                int month = (startingMonth + i - 1) % 12 + 1;
+                months.Add(month);
+            }
+
+            List<AccountsModel> allAccounts = _dbConnectorService.GetChartOfAccounts();
+            List<ChartMonth> IEData = new List<ChartMonth>();
+
+            // Get the total for each account type and month
+            for (int i = 0; i < months.Count; i++)
+            {
+                string monthNumStr = months[i].ToString();
+                if (monthNumStr.Length == 1)
+                {
+                    monthNumStr = "0" + monthNumStr;
+                }
+                ChartMonth nextMonth = new ChartMonth();
+                nextMonth.month = Int32.Parse(monthNumStr);
+                string[] monthAbbr = {
+                    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                };
+                nextMonth.monthName = monthAbbr[(int)months[i] - 1];
+                foreach (var account in allAccounts)
+                {
+                    if (account.type == "Revenue" && account.current_balance != 0)
+                    {
+                        decimal amount = _dbConnectorService.GetAccountBalanceForMonthByMonth(account.number, monthNumStr);
+                        nextMonth.revenueTotal = nextMonth.revenueTotal + (double)amount;
+                    }
+                    if (account.type == "Expense" && account.current_balance != 0)
+                    {
+                        decimal amount = _dbConnectorService.GetAccountBalanceForMonthByMonth(account.number, monthNumStr);
+                        nextMonth.enpensesTotal = nextMonth.enpensesTotal + (double)amount;
+                    }
+                }
+                IEData.Add(nextMonth);
+            }
+            return IEData;
         }
         //All users can view the chart of accounts
         [Authorize(Roles = "Administrator, Manager, Accountant")]

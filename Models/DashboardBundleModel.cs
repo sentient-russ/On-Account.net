@@ -19,5 +19,8 @@
             this.returnOnEquityModel = returnOnEquityModel;
             this.quickRatioModel = quickRatioModel;
         }
+
+        public List<ChartMonth> IEMonths { get; set; }
+
     }
 }

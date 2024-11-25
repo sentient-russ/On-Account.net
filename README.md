@@ -3,7 +3,7 @@ The On-Account web application originated as a class project that has far surpas
 
 The On-Account system is now a fully functional platform that enhances the efficiency of the basic accounting process. Our software provides secure, user-friendly, and accessible financial management solutions. It can be utilized anywhere and everywhere through an always-available web application. This allows users to manage their financial accounts whenever necessary while maintaining a high level of security. On-Account delivers a simple interface to manage the many complex functionalities that proper bookkeeping demands. These features encompass all the foundational financial calculations, record-keeping, and reporting functionalities necessary for a business to adhere to general accounting principles in a double-entry accrual-based accounting system.
 
-<img src="https://github.com/user-attachments/assets/f6a09992-1992-4382-9919-aaa89c6b1a1e" alt="screen_shots" width="400">
+<center><img src="https://github.com/user-attachments/assets/f6a09992-1992-4382-9919-aaa89c6b1a1e" alt="screen_shots" width="400"></center>
 
 ## Table of Contents
 - [Functionalities Listing](#functionalities-listing)

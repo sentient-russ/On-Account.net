@@ -13,31 +13,46 @@
         AppUserModel user = dbServ.GetUserDetailsById(userid);
         role = user.UserRole;
     }
-}
+    int journalCount = ViewBag.pendingJournalCount;
+    string journalCountStr = journalCount.ToString();
+    string journalMessage = $"There are {journalCountStr} pending journal entries!";
 
-@{
-    if (ViewBag.pendingExists)
+    List<string> monthsList = new List<string>();
+    List<string> expensesList = new List<string>();
+    List<string> revenuesList = new List<string>();
+    for (var i = 0; i < Model.IEMonths.Count; i++)
     {
-        <div class="alert alert-warning alert-dismissible fade show" style="position: sticky; top: 70px; width: fit-content;" role="alert">
-            <span>Pending transactions exist that need attending to!</span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close" style="margin:auto;">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+        monthsList.Add(Model.IEMonths[i].monthName);
+        expensesList.Add(Model.IEMonths[i].enpensesTotal.ToString());
+        revenuesList.Add(Model.IEMonths[i].revenueTotal.ToString());
     }
+    string[] monthsArray = monthsList.ToArray();
+    string[] expenses = expensesList.ToArray();
+    string[] revenues = revenuesList.ToArray();
 }
-
-
 <h1 class="text-center margin-top-120">Accounting Home</h1>
 <p class="text-center">Welcome @UserManager.GetUserName(User)!</p>
 <p class="text-center">Your current role is: @role</p>
-
-<div class="dashboard-container" id="partial-dashboard">
-    @*<partial name="_DashboardPartial" model="Model"/>*@
-</div>
-
-
+@{
+    if (journalCount > 0)
+    {
+        <p class="text-center txt-warning">@journalMessage</p>
+    }
+}
+<hr />
 <partial name="_DashboardPartial" />
+<hr />
+<div class="chart-container" >
+    @* <div class="chart-col-1"></div> *@
+    <div class="chart-col-2">
+        <canvas id="BarChart-1"></canvas>
+    </div>
+    <div class="chart-col-3">
+        <canvas id="DonutChart-1"></canvas>
+    </div>
+     @* <div class="chart-col-4"></div> *@
+</div>
+<hr />
 <div class="outer-container">
     <div class="container-row">
         <div class="btn-container">
@@ -57,6 +72,7 @@
             </div>
         </div>
     </div>
+    <hr />
     <div class="container-row">
         <div class="btn-container">
             <div class="btn-row">
@@ -95,5 +111,74 @@
     </div>
 </div>
 
-
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const colors = [
+        'rgba(25, 135, 84, 0.5)', // green, income
+        'rgba(91, 25, 135, 0.5)', // purple, expenses
+        'rgba(25, 109, 135, 0.5)', // blue
+        'rgba(135, 86, 25, 0.5)', // brown
+        'rgba(25, 109, 135, 0.5)', // magenta
+        'rgba(135, 25, 25, 0.5)' // red
+    ];
+    const ctx1 = document.getElementById('BarChart-1');
+    new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(Json.Serialize(monthsArray)),
+            datasets: [{
+                label: 'Income',
+                data: @Html.Raw(Json.Serialize(revenues)),
+                backgroundColor: colors[0],
+                borderColor: 'rgba(25, 135, 84, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Expenses',
+                data: @Html.Raw(Json.Serialize(expenses)),
+                backgroundColor: colors[1],
+                borderColor: 'rgba(91, 25, 135, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Income and Expenses',
+                }
+            }
+        }
+    });
+    const ctx2 = document.getElementById('DonutChart-1');
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'Red',
+                'Blue',
+                'Yellow'
+            ],
+            datasets: [{
+                label: 'Expenses',
+                data: [300, 50, 100, 400, 200],
+                backgroundColor: colors,
+                hoverOffset: 2,
+                radius: 100
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Top 5 Expenses',
+                }
+            }
+        }
+    });
+</script>

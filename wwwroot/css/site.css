@@ -27,7 +27,6 @@ html, body {
 .spanse {
     width: 85vw;
 }
-
 .dark-row {
     --bs-table-bg: --var(transparent);
     background-color: #db1e1e00;
@@ -245,10 +244,6 @@ footer {
     flex-direction: column;
     text-align: center !important;
 }
-
-
-
-
 
 .row-email.btn {
     display: flex;
@@ -717,7 +712,6 @@ input.currency {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    margin-bottom: 50px;
     text-align: center;
 }
 
@@ -728,8 +722,6 @@ input.currency {
     border: 2px solid;
     border-color: black;
     border-radius: 10px 10px 10px 10px;
-    margin-top: 50px;
-    padding-bottom: 10px;
     box-shadow: 0 3px 5px 0 rgba(0,0,0,.4);
     min-width: 125px;
     margin: 10px;
@@ -2105,33 +2097,6 @@ input.currency {
     flex-direction: column;
     padding-bottom: 20px;
 }
-
-.container-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    margin-bottom: 50px;
-    text-align: center;
-}
-
-.btn-container {
-    display: flex;
-    flex-direction: column;
-    width: 20%;
-    border: 2px solid;
-    border-color: black;
-    border-radius: 10px 10px 10px 10px;
-    margin-top: 50px;
-    padding-bottom: 10px;
-    box-shadow: 0 3px 5px 0 rgba(0,0,0,.4);
-}
-
-.btn-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
 .btn-img {
 }
 
@@ -2877,3 +2842,38 @@ th, td {
     background-color: #19875425;
 }
 
+.chart-container {
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+    width: 100%;
+    max-height: 350px;
+}
+
+.chart-col-2 {
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+    min-width:550px;
+
+    margin: 5px;
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: grey 3px 3px 3px;
+}
+.chart-col-3 {
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+
+    margin:5px;
+    padding: 10px;
+    border: 1px solid;
+    border-radius: 10px;
+    box-shadow: grey 3px 3px 3px;
+}
+
+.txt-warning{
+    color: #cf8520;
+}
