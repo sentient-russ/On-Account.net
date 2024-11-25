@@ -2277,6 +2277,16 @@ namespace oa.Services
 
             return currentYearTransactions;
         }        
+        //string error returning from database
+        public string GetErrorBasedOnCodeNumber(string codeNumber)
+        {
+            string foundCodeDescription="";
+            using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+            string command = "";
+            command = "Select * from on_account.error where ID= @errorCodeNumber;";
+
+            return foundCodeDescription;
+        }
     }
 }
 
