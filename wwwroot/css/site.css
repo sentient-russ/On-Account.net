@@ -976,19 +976,25 @@ input:-webkit-autofill:focus {
     justify-content: space-around;
     margin-top: 10px;
 }
+
 .add-new-transaction {
     min-height: 32px;
     min-width: 40px;
     padding-bottom: 0px;
     margin-left: 15px;
 }
-
+.form-container{
+    display:flex;
+    justify-content:center;
+}
 .remove-new-transaction{
     margin-left:10px;
 }
 
 .add-account-form-container{
-    max-width: 1150px;
+    min-width: 60%;
+    max-width: 90%;
+    
 }
 .transaction-container {
     max-width: 1150px;
@@ -2030,7 +2036,7 @@ input.currency {
 }
 
 .greyed-out {
-    background-color: #ffcb6f29;
+    background-color: #8C8C8C61;
     --bs-body-bg: transparent;
     border-radius: 5px 5px 5px 5px;
     border-color: #8C8C8C !important;
