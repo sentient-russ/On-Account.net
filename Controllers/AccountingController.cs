@@ -7,6 +7,15 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using oa.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using iText.Html2pdf;
+using iText.Kernel.Pdf;
+using System.IO;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using System.Security.Principal;
 
 namespace OnAccount.Controllers
 {
@@ -21,9 +30,11 @@ namespace OnAccount.Controllers
         public DateTime today = DateTime.Today;
         public string? todayStr = "";
         private readonly UserManager<AppUser> _userManager;
+        private readonly ICompositeViewEngine _viewEngine;
+        private readonly ITempDataProvider _tempDataProvider;
 
         public AccountingController(DbConnectorService connectorService,
-            UserService userService, IEmailSender emailSender, UserManager<AppUser> userManager)
+            UserService userService, IEmailSender emailSender, UserManager<AppUser> userManager, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider)
         {
             _dbConnectorService = connectorService;
             _userService = userService;
@@ -32,6 +43,8 @@ namespace OnAccount.Controllers
             this._emailSender = emailSender;
             todayStr = today.ToString("MM-dd-yyyy");
             _userManager = userManager;
+            _viewEngine = viewEngine;
+            _tempDataProvider = tempDataProvider;
         }
 
         //All users can view the accounting home landing page
@@ -70,7 +83,16 @@ namespace OnAccount.Controllers
                 returnOnEquityModel,
                 quickRatioModel
                 );
-            ViewBag.pendingJournalCount = _dbConnectorService.PendingJournalCount();
+                
+            int? pendingCount = _dbConnectorService.PendingJournalCount();
+            if(pendingCount <= 0)
+            {
+                ViewBag.pendingJournalCount = 0;
+            }
+            else
+            {
+                ViewBag.pendingJournalCount = (int)pendingCount;
+            }
             List<ChartMonth> IEMonths = GetChartData();
             dashboardBundleModel.IEMonths = IEMonths;
             LinkedList<Top5ExpenseModel> Top5 = Top5Expenses();
@@ -806,7 +828,9 @@ namespace OnAccount.Controllers
             ViewBag.InputDate = viewInputDate;
             ViewBag.AsOfDate = toDate;
             ViewBag.RecentOpeningClosingDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
-            
+            ViewBag.pendingJournalCount = 0; 
+
+
             if (includeAdjusting == "true")
             {
                 ViewBag.isAdjusting = "true";
@@ -849,21 +873,25 @@ namespace OnAccount.Controllers
             List<AccountsModel> allAccounts = _dbConnectorService.GetChartOfAccounts();
             bool includeAdjusting = true;
 
-            foreach (AccountsModel account in allAccounts)
+            for(var i = 0; i < allAccounts.Count; i++)
             {
-                if (account.type == "Revenue" && account.current_balance != 0)
+
+                if (allAccounts[i].type == "Revenue" && allAccounts[i].current_balance != 0)
                 {
-                    account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
-                    incomeBundle.RevenueAccountsList.Add(account);
-                    incomeBundle.RevenueAccountsTotal += (double)account.current_balance;
+                    allAccounts[i].current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(allAccounts[i].number, fromDate, toDate, includeAdjusting);
+                    incomeBundle.RevenueAccountsList.Add(allAccounts[i]);
+                    incomeBundle.RevenueAccountsTotal += (double)allAccounts[i].current_balance;
                 }
-                if (account.type == "Expense" && account.current_balance != 0)
+                if (allAccounts[i].type == "Expense" && allAccounts[i].current_balance != 0)
                 {
-                    account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
-                    incomeBundle.ExpenseAccountsList.Add(account);
-                    incomeBundle.ExxpenseAccountsTotal += (double)account.current_balance;
+                    allAccounts[i].current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(allAccounts[i].number, fromDate, toDate, includeAdjusting);
+                    incomeBundle.ExpenseAccountsList.Add(allAccounts[i]);
+                    incomeBundle.ExxpenseAccountsTotal += (double)allAccounts[i].current_balance;
                 }
+
+
             }
+
             incomeBundle.Net = incomeBundle.RevenueAccountsTotal - incomeBundle.ExxpenseAccountsTotal;
             return View(incomeBundle);
         }
@@ -1232,6 +1260,64 @@ namespace OnAccount.Controllers
             {
                 Id = nextJournalId
             });
+        }
+        public async Task<IActionResult> GeneratePdf()
+        {
+            ViewBag.pendingJournalCount = 0; 
+            // Render the Razor view to a string
+            var htmlContent = await RenderViewToStringAsync("Index", null);
+
+            // Create a memory stream to hold the PDF
+            var memoryStream = new MemoryStream();
+
+            // Create a PDF document
+            using (var pdfWriter = new PdfWriter(memoryStream))
+            {
+                pdfWriter.SetCloseStream(false);
+                var pdfDocument = new PdfDocument(pdfWriter);
+                var converterProperties = new ConverterProperties();
+
+                // Convert HTML to PDF
+                HtmlConverter.ConvertToPdf(htmlContent, pdfDocument, converterProperties);
+            }
+
+            // Reset the memory stream position
+            memoryStream.Position = 0;
+
+            // Return the PDF as a file
+            return File(memoryStream, "application/pdf", "output.pdf");
+        }
+
+        private async Task<string> RenderViewToStringAsync(string viewName, object model)
+        {
+            var actionContext = new ActionContext(HttpContext, RouteData, new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor());
+            using (var sw = new StringWriter())
+            {
+                var viewResult = _viewEngine.FindView(actionContext, viewName, false);
+
+                if (viewResult.View == null)
+                {
+                    throw new ArgumentNullException($"{viewName} does not match any available view");
+                }
+
+                var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                    Model = model
+                };
+
+                var viewContext = new ViewContext(
+                    actionContext,
+                    viewResult.View,
+                    viewDictionary,
+                    new TempDataDictionary(actionContext.HttpContext, _tempDataProvider),
+                    sw,
+                    new HtmlHelperOptions()
+                );
+
+                await viewResult.View.RenderAsync(viewContext);
+                return sw.ToString();
+            }
+        
         }
     }
 }

@@ -986,7 +986,6 @@ namespace oa.Services
         ////query all transactions where includeAdjusting = true, status = approved, month = @month type = @type
         public decimal GetAccountBalanceForMonthByMonth(int? accountNumberIn, string? monthNumIn = "")
         {
-
             string monthLikeStr = "%-" + monthNumIn + "-%";
 
             List<TransactionModel> accountTransactions = new List<TransactionModel>();
@@ -1584,7 +1583,7 @@ namespace oa.Services
         }
 
         // Get count of pending transactions
-        public int PendingJournalCount()
+        public int? PendingJournalCount()
         {
             int numberOfPendingJournals = 0;
             try
