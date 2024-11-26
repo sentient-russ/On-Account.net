@@ -2352,7 +2352,18 @@ namespace oa.Services
             using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
             string command = "";
             command = "Select * from on_account.error where ID= @errorCodeNumber;";
-
+            conn1.Open();
+            MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+            cmd1.Parameters.AddWithValue("errorCodeNumber", codeNumber);
+            MySqlDataReader reader1 = cmd1.ExecuteReader();
+            while (reader1.Read())
+            {
+                ErrorModel errorModel = new ErrorModel();
+                errorModel.Id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                errorModel.Error = reader1.IsDBNull(1) ? null : reader1.GetString(1);
+                errorModel.Descritpion = reader1.IsDBNull(2) ? null : reader1.GetString(2);
+                foundCodeDescription = errorModel.Descritpion;
+            }
             return foundCodeDescription;
         }
     }
