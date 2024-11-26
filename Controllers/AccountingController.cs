@@ -875,23 +875,18 @@ namespace OnAccount.Controllers
 
             for(var i = 0; i < allAccounts.Count; i++)
             {
-
+                allAccounts[i].current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(allAccounts[i].number, fromDate, toDate, includeAdjusting);
                 if (allAccounts[i].type == "Revenue" && allAccounts[i].current_balance != 0)
                 {
-                    allAccounts[i].current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(allAccounts[i].number, fromDate, toDate, includeAdjusting);
                     incomeBundle.RevenueAccountsList.Add(allAccounts[i]);
                     incomeBundle.RevenueAccountsTotal += (double)allAccounts[i].current_balance;
                 }
                 if (allAccounts[i].type == "Expense" && allAccounts[i].current_balance != 0)
                 {
-                    allAccounts[i].current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(allAccounts[i].number, fromDate, toDate, includeAdjusting);
                     incomeBundle.ExpenseAccountsList.Add(allAccounts[i]);
                     incomeBundle.ExxpenseAccountsTotal += (double)allAccounts[i].current_balance;
                 }
-
-
             }
-
             incomeBundle.Net = incomeBundle.RevenueAccountsTotal - incomeBundle.ExxpenseAccountsTotal;
             return View(incomeBundle);
         }
@@ -1261,64 +1256,7 @@ namespace OnAccount.Controllers
                 Id = nextJournalId
             });
         }
-        public async Task<IActionResult> GeneratePdf()
-        {
-            ViewBag.pendingJournalCount = 0; 
-            // Render the Razor view to a string
-            var htmlContent = await RenderViewToStringAsync("Index", null);
 
-            // Create a memory stream to hold the PDF
-            var memoryStream = new MemoryStream();
-
-            // Create a PDF document
-            using (var pdfWriter = new PdfWriter(memoryStream))
-            {
-                pdfWriter.SetCloseStream(false);
-                var pdfDocument = new PdfDocument(pdfWriter);
-                var converterProperties = new ConverterProperties();
-
-                // Convert HTML to PDF
-                HtmlConverter.ConvertToPdf(htmlContent, pdfDocument, converterProperties);
-            }
-
-            // Reset the memory stream position
-            memoryStream.Position = 0;
-
-            // Return the PDF as a file
-            return File(memoryStream, "application/pdf", "output.pdf");
-        }
-
-        private async Task<string> RenderViewToStringAsync(string viewName, object model)
-        {
-            var actionContext = new ActionContext(HttpContext, RouteData, new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor());
-            using (var sw = new StringWriter())
-            {
-                var viewResult = _viewEngine.FindView(actionContext, viewName, false);
-
-                if (viewResult.View == null)
-                {
-                    throw new ArgumentNullException($"{viewName} does not match any available view");
-                }
-
-                var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
-                {
-                    Model = model
-                };
-
-                var viewContext = new ViewContext(
-                    actionContext,
-                    viewResult.View,
-                    viewDictionary,
-                    new TempDataDictionary(actionContext.HttpContext, _tempDataProvider),
-                    sw,
-                    new HtmlHelperOptions()
-                );
-
-                await viewResult.View.RenderAsync(viewContext);
-                return sw.ToString();
-            }
-        
-        }
     }
 }
 
