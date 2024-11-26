@@ -986,7 +986,6 @@ namespace oa.Services
         ////query all transactions where includeAdjusting = true, status = approved, month = @month type = @type
         public decimal GetAccountBalanceForMonthByMonth(int? accountNumberIn, string? monthNumIn = "")
         {
-
             string monthLikeStr = "%-" + monthNumIn + "-%";
 
             List<TransactionModel> accountTransactions = new List<TransactionModel>();
@@ -1584,7 +1583,7 @@ namespace oa.Services
         }
 
         // Get count of pending transactions
-        public int PendingJournalCount()
+        public int? PendingJournalCount()
         {
             int numberOfPendingJournals = 0;
             try
@@ -2344,6 +2343,42 @@ namespace oa.Services
             }
 
             return currentYearTransactions;
+        }
+        // Gets a list of system error messages from the database
+        public List<ErrorModel> GetErrorList()
+        {
+            List<ErrorModel> ErrorList = new List<ErrorModel>();
+            using var conn1 = new MySqlConnection(Environment.GetEnvironmentVariable("DbConnectionString"));
+            string command = "SELECT * FROM on_account.error;";
+            conn1.Open();
+            MySqlCommand cmd1 = new MySqlCommand(command, conn1);
+            MySqlDataReader reader1 = cmd1.ExecuteReader();
+            while (reader1.Read())
+            {
+                ErrorModel error = new ErrorModel();
+                error.Id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                error.IdStr = reader1.IsDBNull(0) ? null : reader1.GetInt32(0).ToString();
+                error.Error = reader1.IsDBNull(1) ? null : reader1.GetString(1);
+                error.Descritpion = reader1.IsDBNull(2) ? null : reader1.GetString(2);
+                ErrorList.Add(error);
+            }
+            return ErrorList;
+        }
+        // Returns a uniform error message format based on input error number as a string
+        public string GetError(string? errorNumStrIn)
+        {
+
+            List<ErrorModel> ErrorList = GetErrorList();
+            string returnMessage = "";
+            foreach (var error in ErrorList)
+            {
+                if(errorNumStrIn == error.IdStr)
+                {
+                    returnMessage = "Error:" + error.IdStr + " - " + error.Descritpion;
+                }
+            }
+            return returnMessage;
+        }
         }        
         //string error returning from database
         public string GetErrorBasedOnCodeNumber(string codeNumber)

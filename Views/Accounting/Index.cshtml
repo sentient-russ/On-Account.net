@@ -13,7 +13,12 @@
         AppUserModel user = dbServ.GetUserDetailsById(userid);
         role = user.UserRole;
     }
-    int journalCount = ViewBag.pendingJournalCount;
+    int journalCount = 0;
+    if (ViewBag.pendingJournalCount != null)
+    {
+       journalCount = ViewBag.pendingJournalCount;
+    } 
+
     string journalCountStr = journalCount.ToString();
     string journalMessage = $"There are {journalCountStr} pending journal entries!";
     // Revenue and expense chart

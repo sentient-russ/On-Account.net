@@ -7,6 +7,15 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using oa.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using iText.Html2pdf;
+using iText.Kernel.Pdf;
+using System.IO;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using System.Security.Principal;
 
 namespace OnAccount.Controllers
 {
@@ -21,9 +30,11 @@ namespace OnAccount.Controllers
         public DateTime today = DateTime.Today;
         public string? todayStr = "";
         private readonly UserManager<AppUser> _userManager;
+        private readonly ICompositeViewEngine _viewEngine;
+        private readonly ITempDataProvider _tempDataProvider;
 
         public AccountingController(DbConnectorService connectorService,
-            UserService userService, IEmailSender emailSender, UserManager<AppUser> userManager)
+            UserService userService, IEmailSender emailSender, UserManager<AppUser> userManager, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider)
         {
             _dbConnectorService = connectorService;
             _userService = userService;
@@ -32,6 +43,8 @@ namespace OnAccount.Controllers
             this._emailSender = emailSender;
             todayStr = today.ToString("MM-dd-yyyy");
             _userManager = userManager;
+            _viewEngine = viewEngine;
+            _tempDataProvider = tempDataProvider;
         }
 
         //All users can view the accounting home landing page
@@ -70,7 +83,16 @@ namespace OnAccount.Controllers
                 returnOnEquityModel,
                 quickRatioModel
                 );
-            ViewBag.pendingJournalCount = _dbConnectorService.PendingJournalCount();
+                
+            int? pendingCount = _dbConnectorService.PendingJournalCount();
+            if(pendingCount <= 0)
+            {
+                ViewBag.pendingJournalCount = 0;
+            }
+            else
+            {
+                ViewBag.pendingJournalCount = (int)pendingCount;
+            }
             List<ChartMonth> IEMonths = GetChartData();
             dashboardBundleModel.IEMonths = IEMonths;
             LinkedList<Top5ExpenseModel> Top5 = Top5Expenses();
@@ -754,13 +776,14 @@ namespace OnAccount.Controllers
             }
 
             // Check for pending transactions in the period
+            string error_15 = _dbConnectorService.GetError("15");
             bool pendingTransactionsFound = _dbConnectorService.CheckForPendingByDateRange(toDate);
             if (pendingTransactionsFound)
             {
                 return RedirectToAction(nameof(GeneralJournal), new
                 {
                     status = "Pending",
-                    messageIn = "Pending transactions were found in the requested date range which must be Approved or Denied before a trial balance can be created."
+                    messageIn = error_15
                 });
             }
 
@@ -806,7 +829,9 @@ namespace OnAccount.Controllers
             ViewBag.InputDate = viewInputDate;
             ViewBag.AsOfDate = toDate;
             ViewBag.RecentOpeningClosingDate = settings.open_close_date.Value.ToString("MM-dd-yyyy");
-            
+            ViewBag.pendingJournalCount = 0; 
+
+
             if (includeAdjusting == "true")
             {
                 ViewBag.isAdjusting = "true";
@@ -849,19 +874,18 @@ namespace OnAccount.Controllers
             List<AccountsModel> allAccounts = _dbConnectorService.GetChartOfAccounts();
             bool includeAdjusting = true;
 
-            foreach (AccountsModel account in allAccounts)
+            for(var i = 0; i < allAccounts.Count; i++)
             {
-                if (account.type == "Revenue" && account.current_balance != 0)
+                allAccounts[i].current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(allAccounts[i].number, fromDate, toDate, includeAdjusting);
+                if (allAccounts[i].type == "Revenue" && allAccounts[i].current_balance != 0)
                 {
-                    account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
-                    incomeBundle.RevenueAccountsList.Add(account);
-                    incomeBundle.RevenueAccountsTotal += (double)account.current_balance;
+                    incomeBundle.RevenueAccountsList.Add(allAccounts[i]);
+                    incomeBundle.RevenueAccountsTotal += (double)allAccounts[i].current_balance;
                 }
-                if (account.type == "Expense" && account.current_balance != 0)
+                if (allAccounts[i].type == "Expense" && allAccounts[i].current_balance != 0)
                 {
-                    account.current_balance = _dbConnectorService.GetAccountBalanceForApprovedByDateRange(account.number, fromDate, toDate, includeAdjusting);
-                    incomeBundle.ExpenseAccountsList.Add(account);
-                    incomeBundle.ExxpenseAccountsTotal += (double)account.current_balance;
+                    incomeBundle.ExpenseAccountsList.Add(allAccounts[i]);
+                    incomeBundle.ExxpenseAccountsTotal += (double)allAccounts[i].current_balance;
                 }
             }
             incomeBundle.Net = incomeBundle.RevenueAccountsTotal - incomeBundle.ExxpenseAccountsTotal;
@@ -1075,16 +1099,17 @@ namespace OnAccount.Controllers
         public async Task<IActionResult> CreateClosingEntry()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userDetails = _dbConnectorService.GetUserDetailsById(userId);
+            var userDetails = _dbConnectorService.GetUserDetailsById(userId);            
             var openCloseDate = Request.Form["open_close_date"].ToString();
             DateTime newClosingDate = DateTime.Parse(openCloseDate);
+            string? error_14 = _dbConnectorService.GetError("14");
             //check for and handle pending in range condition
             List<string> pendingIds = _dbConnectorService.GetPeriodPendingJournalIds(newClosingDate);
             if (pendingIds.Count > 0)
             {
                 return RedirectToAction(nameof(GeneralJournal), new
                 {
-                    messageIn = "Pending transactions were found in the requested date range which must be Approved or Denied before a the selected period can be closed can be created.",
+                    messageIn = error_14,
                     JIDListIn = pendingIds
                 });
             }
@@ -1233,6 +1258,7 @@ namespace OnAccount.Controllers
                 Id = nextJournalId
             });
         }
+
     }
 }
 
