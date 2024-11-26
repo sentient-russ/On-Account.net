@@ -2364,7 +2364,7 @@ namespace oa.Services
             }
             return ErrorList;
         }
-        // Returns an error message
+        // Returns a uniform error message format based on input error number as a string
         public string GetError(string? errorNumStrIn)
         {
 
@@ -2374,7 +2374,7 @@ namespace oa.Services
             {
                 if(errorNumStrIn == error.IdStr)
                 {
-                    returnMessage = error.IdStr + " - " + error.Descritpion;
+                    returnMessage = "Error:" + error.IdStr + " - " + error.Descritpion;
                 }
             }
             return returnMessage;

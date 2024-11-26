@@ -776,13 +776,14 @@ namespace OnAccount.Controllers
             }
 
             // Check for pending transactions in the period
+            string error_15 = _dbConnectorService.GetError("15");
             bool pendingTransactionsFound = _dbConnectorService.CheckForPendingByDateRange(toDate);
             if (pendingTransactionsFound)
             {
                 return RedirectToAction(nameof(GeneralJournal), new
                 {
                     status = "Pending",
-                    messageIn = "Pending transactions were found in the requested date range which must be Approved or Denied before a trial balance can be created."
+                    messageIn = error_15
                 });
             }
 
@@ -1098,16 +1099,17 @@ namespace OnAccount.Controllers
         public async Task<IActionResult> CreateClosingEntry()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userDetails = _dbConnectorService.GetUserDetailsById(userId);
+            var userDetails = _dbConnectorService.GetUserDetailsById(userId);            
             var openCloseDate = Request.Form["open_close_date"].ToString();
             DateTime newClosingDate = DateTime.Parse(openCloseDate);
+            string? error_14 = _dbConnectorService.GetError("14");
             //check for and handle pending in range condition
             List<string> pendingIds = _dbConnectorService.GetPeriodPendingJournalIds(newClosingDate);
             if (pendingIds.Count > 0)
             {
                 return RedirectToAction(nameof(GeneralJournal), new
                 {
-                    messageIn = "Pending transactions were found in the requested date range which must be Approved or Denied before a the selected period can be closed can be created.",
+                    messageIn = error_14,
                     JIDListIn = pendingIds
                 });
             }

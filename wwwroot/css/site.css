@@ -994,8 +994,8 @@ input:-webkit-autofill:focus {
 .add-account-form-container{
     min-width: 60%;
     max-width: 90%;
-    
 }
+
 .transaction-container {
     max-width: 1150px;
 }
@@ -1014,6 +1014,7 @@ input:-webkit-autofill:focus {
 .col-md-2 {
     width: 140px;
 }
+
 .journal-description {
     /*margin-left:10px;*/
     margin-right: 10px;
