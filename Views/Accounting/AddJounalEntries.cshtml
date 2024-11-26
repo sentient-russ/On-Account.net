@@ -15,20 +15,19 @@
 }
 <div class="container-journal">
 <div class="journal-wrapper margin-top-120">
-<div class="form-container">
+<div class="form-container-journal">
     <form class="add-account-form-container">
         @* row 0 *@
         <div class="journal-upper-container">
         <div class="row g-2 journal-col">
             <div class="col-md">
-                <div class="form-floating mb-2">
-                </div>
+                <div class="form-floating mb-2"></div>
             </div>
-                    <div class="col-md journal-col">
-                        <div class="form-floating" style="margin-bottom: -7px;">
-                    <input class="form-control form-control-sm" placeholder="nextJournalId" value="@Model.journal_id" id="journal-id" readonly />
-                    <label for="journal_id" class="control-label">Journal Id:</label>
-                </div>
+                <div class="col-md journal-col">
+                   <div class="form-floating" style="margin-bottom: -7px;">
+                        <input class="form-control form-control-sm" placeholder="nextJournalId" value="@Model.journal_id" id="journal-id" readonly />
+                        <label for="journal_id" class="control-label">Journal Id:</label>
+                   </div>                   
             </div>
         </div>
         @* row 1 *@

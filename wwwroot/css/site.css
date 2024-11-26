@@ -986,14 +986,19 @@ input:-webkit-autofill:focus {
     margin-left: 15px;
 }
 .form-container{
+    max-width:90%;
+    min-width:70%;
+}
+.form-container-journal{
+
+}
+.remove-new-transaction {
+    margin-left: 10px;
+}
+
+.account-form-container{
     display:flex;
-}
-.remove-new-transaction{
-    margin-left:10px;
-}
-
-.add-account-form-container{
-
+    justify-content:center;
 }
 
 .transaction-container {
