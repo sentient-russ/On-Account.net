@@ -13,9 +13,11 @@
     double? EquityTotal = Model.EquityTotal;
 }
 <div class="text-center margin-top-120">
-<h1 class="text-center mb-2"><span class="accent-color">@ViewBag.businessName</span></h1>
-    <h2 class="text-center mb-2">Balance Sheet</h2>
-    <h3 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.titleDate </span></h3>
+    <div data-print-marker="print-content">
+        <h1 class="text-center mb-2"><span class="accent-color">@ViewBag.businessName</span></h1>
+        <h2 class="text-center mb-2">Balance Sheet</h2>
+        <h3 class="text-center mb-4">As of: <span class="accent-color">@ViewBag.titleDate </span></h3>
+    </div>
 </div>
 <div class="date-container">
     <form class="row g-3" asp-controller="Accounting" asp-action="viewBalanceSheet" method="post">
@@ -32,8 +34,12 @@
             <button type="submit" class="btn btn-outline-primary mb-2">Update Report</button>
         </div>
     </form>
+    <div class="col-auto" style="margin-left:10px;">
+        <input type="button" class="btn btn-outline-primary mb-2"  value="Print" onclick="printDiv('print-content')">
+    </div>
 </div>
-<div class="table-wrapper">
+<div data-print-marker="print-content">
+    <div class="table-wrapper">
     <table class="table table-striped">
         <thead class="table-top-row">
             <tr style="background-color: #fcb14f15; padding-left: 20px;">
@@ -202,6 +208,7 @@
             </tr>
         </tbody>
     </table>
+    </div>
 </div>
 
 @functions {

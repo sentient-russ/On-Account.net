@@ -2893,3 +2893,19 @@ th, td {
     display: flex;
     width: 100%;
 }
+
+@media print {
+    @page {
+        size: auto;
+        margin: 0;
+        marks: none;
+    }
+    body {
+        margin: 0;
+        margin-left: 0;
+        padding-top: 50px;
+    }
+    .table {
+        max-width: 95%;
+    }
+}
