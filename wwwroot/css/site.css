@@ -6,12 +6,10 @@ html, body {
     padding: 0;
     overflow-x: hidden;
 }
-
 .top-border {
     border-top: 2.5px solid;
     line-height: 3px;
 }
-
 .total-text {
     line-height: 20px;
     margin-top: 5px;
@@ -38,6 +36,10 @@ html, body {
 .btn-table-margin{
     margin-top: -5px;
     margin-bottom: -5px;
+}
+.container-journal {
+    justify-content: center;
+    display: flex;
 }
 .status-signifier-background {
     max-height: 25px;
@@ -985,15 +987,13 @@ input:-webkit-autofill:focus {
 }
 .form-container{
     display:flex;
-    justify-content:center;
 }
 .remove-new-transaction{
     margin-left:10px;
 }
 
 .add-account-form-container{
-    min-width: 60%;
-    max-width: 90%;
+
 }
 
 .transaction-container {
@@ -1224,21 +1224,7 @@ th, td {
 .accent-color {
     color: #cf8520 !important;
 }
-.journal-wrapper {
-    display: flex;
-    flex-direction: column;
-    border: 1.5px solid;
-    border-color: black;
-    border-radius: 10px 10px 10px 10px;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,0);
-    box-shadow: 0px 3px 3px 2px rgba(0,0,0,.4);
-    padding: 10px;
-    background-color: #fff;
-    max-width: 1180px;
-    margin-left:auto;
-    margin-right:auto;
-    min-width:1180px;
-}
+
 .general-journal-total-row {
     --bs-table-bg: #fcb14f45;
     background-color: #fcb14f10;
@@ -2571,6 +2557,7 @@ th, td {
     box-shadow: 0px 3px 3px 2px rgba(0,0,0,.4);
     padding: 10px;
     background-color: #fff;
+    width:fit-content;
 }
 .general-journal-total-row {
     --bs-table-bg: #fcb14f45;
