@@ -16,7 +16,7 @@
     int journalCount = 0;
     if (ViewBag.pendingJournalCount != null)
     {
-       journalCount = ViewBag.pendingJournalCount;
+        journalCount = ViewBag.pendingJournalCount;
     } 
 
     string journalCountStr = journalCount.ToString();
@@ -34,27 +34,60 @@
     string[] monthsArray = monthsList.ToArray();
     string[] expenses = expensesList.ToArray();
     string[] revenues = revenuesList.ToArray();
+
     // Top 5 Expense Chart
-    List<string> accountDescriptionsList = new List<string>();
-    List<string> accountAmountsList = new List<string>();
-    var node = Model.Top5List.First; // Start from the first node
-    for (var i = 0; i < Model.Top5List.Count; i++)
+    List<string> accountDescriptionsListExpense = new List<string>();
+    List<string> accountAmountsListExpense = new List<string>();
+    var node = Model.Top5ListExpense.First; // Start from the first node
+    for (var i = 0; i < Model.Top5ListExpense.Count; i++)
     {
         if (node != null)
         {
             string desc = node.Value.accountNum.ToString() + " - " + node.Value.accountDesc;
-            accountDescriptionsList.Add(desc);
-            accountAmountsList.Add(node.Value.accountAmount.ToString());
+            accountDescriptionsListExpense.Add(desc);
+            accountAmountsListExpense.Add(node.Value.accountAmount.ToString());
             node = node.Next; // Move to the next node
         }
     }
-    string[] descripts = accountDescriptionsList.ToArray();
-    string[] amnts = accountAmountsList.ToArray();
-    string[] firstFiveElementDesc = new string[5];
-    string[] firstFiveElementAmnt = new string[5];
+    string[] expenseDescripts = accountDescriptionsListExpense.ToArray();
+    string[] expenseAmnts = accountAmountsListExpense.ToArray();
+    int numberOfExpAccounts = 5;
+    if (expenseDescripts.Count() < 5)
+    {
+        numberOfExpAccounts = expenseDescripts.Count();
+    }
+    string[] firstFiveElementExpenseDesc = new string[numberOfExpAccounts];
+    string[] firstFiveElementExpenseAmnt = new string[numberOfExpAccounts];
 
-    Array.Copy(descripts, firstFiveElementDesc, 5);
-    Array.Copy(amnts, firstFiveElementAmnt, 5);
+    Array.Copy(expenseDescripts, firstFiveElementExpenseDesc, numberOfExpAccounts);
+    Array.Copy(expenseAmnts, firstFiveElementExpenseAmnt, numberOfExpAccounts);
+
+    // Top 5 Revenue(Income) Chart
+    List<string> accountDescriptionsListRevenue = new List<string>();
+    List<string> accountAmountsListRevenue = new List<string>();
+    var nodeRevenue = Model.Top5ListRevenue.First; // Start from the first node
+    for (var i = 0; i < Model.Top5ListRevenue.Count; i++)
+    {
+        if (nodeRevenue != null)
+        {
+            string desc = nodeRevenue.Value.accountNum.ToString() + " - " + nodeRevenue.Value.accountDesc;
+            accountDescriptionsListRevenue.Add(desc);
+            accountAmountsListRevenue.Add(nodeRevenue.Value.accountAmount.ToString());
+            nodeRevenue = nodeRevenue.Next; // Move to the next nodeRevenue
+        }
+    }
+    string[] revenueDescripts = accountDescriptionsListRevenue.ToArray();
+    string[] revenueAmnts = accountAmountsListRevenue.ToArray();
+    int numberOfRevAccounts = 5;
+    if (revenueDescripts.Count() < 5)
+    {
+        numberOfRevAccounts = revenueDescripts.Count();
+    }
+    string[] firstFiveElementRevenueDesc = new string[numberOfRevAccounts];
+    string[] firstFiveElementRevenueAmnt = new string[numberOfRevAccounts];
+    
+    Array.Copy(revenueDescripts, firstFiveElementRevenueDesc, numberOfRevAccounts);
+    Array.Copy(revenueAmnts, firstFiveElementRevenueAmnt, numberOfRevAccounts);
 }
 
 <h1 class="text-center margin-top-120">Accounting Home</h1>
@@ -75,10 +108,16 @@
     </div>
     <div class="chart-col-3">
         <div class="donut-chart-container">
-            <canvas id="DonutChart-1" height="325" width="500"></canvas>
+            <canvas id="DonutChart-2" height="325" width="500"></canvas>
         </div>
 
     </div>
+    <div class="chart-col-3">
+        <div class="donut-chart-container">
+            <canvas id="DonutChart-1" height="325" width="500"></canvas>
+        </div>
+    </div>
+    
 </div>
 <hr />
 <div class="outer-container">
@@ -192,10 +231,10 @@
     new Chart(ctx2, {
         type: 'doughnut',
         data: {
-            labels: @Html.Raw(Json.Serialize(firstFiveElementDesc)),
+            labels: @Html.Raw(Json.Serialize(firstFiveElementExpenseDesc)),
             datasets: [{
                 label: 'Expenses',
-                data: @Html.Raw(Json.Serialize(firstFiveElementAmnt)),
+                data: @Html.Raw(Json.Serialize(firstFiveElementExpenseAmnt)),
                 backgroundColor: colors,
                 hoverOffset: 2,
                 radius: 100
@@ -210,7 +249,7 @@
             plugins: {
                 title: {
                     display: true,
-                    text: 'Top 5 Expenses',
+                    text: 'Top Expense',
                     position: 'top',
                     align: 'start',
                     font: {
@@ -233,6 +272,58 @@
                                                     
                     },
                     padding:{
+                        top: 10
+                    }
+                }
+            },
+            responsive: true
+        }
+    });
+    const ctx3 = document.getElementById('DonutChart-2').getContext('2d');
+    new Chart(ctx3, {
+        type: 'doughnut',
+        data: {
+            labels: @Html.Raw(Json.Serialize(firstFiveElementRevenueDesc)),
+            datasets: [{
+                label: 'Income',
+                data: @Html.Raw(Json.Serialize(firstFiveElementRevenueAmnt)),
+                backgroundColor: colors,
+                hoverOffset: 2,
+                radius: 100
+            }]
+        },
+        options: {
+            layout: {
+                padding: {
+                    left: 25
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Top Income',
+                    position: 'top',
+                    align: 'start',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    },
+                    padding: {
+                        top: 30,
+                        left: 50
+                    }
+
+                },
+                legend: {
+                    display: true,
+                    position: 'right',
+                    align: 'start',
+                    labels: {
+                        boxWidth: 10,
+                        padding: 5
+
+                    },
+                    padding: {
                         top: 10
                     }
                 }

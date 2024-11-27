@@ -95,8 +95,10 @@ namespace OnAccount.Controllers
             }
             List<ChartMonth> IEMonths = GetChartData();
             dashboardBundleModel.IEMonths = IEMonths;
-            LinkedList<Top5ExpenseModel> Top5 = Top5Expenses();
-            dashboardBundleModel.Top5List = Top5;
+            LinkedList<Top5ExpenseModel> Top5Expense = Top5Expenses();
+            dashboardBundleModel.Top5ListExpense = Top5Expense;
+            LinkedList<Top5IncomeModel> Top5Revenue = Top5Revenues();
+            dashboardBundleModel.Top5ListRevenue = Top5Revenue;
             return View(dashboardBundleModel);
         }
         // Helper method to get chart data Revenue and Expenses
@@ -178,12 +180,48 @@ namespace OnAccount.Controllers
 
                 }
             }
-            //sort greates to least
+            //sort greatest to least
             List<Top5ExpenseModel> list = new List<Top5ExpenseModel>(linkedList);
             list.Sort((x, y) => y.accountAmount.CompareTo(x.accountAmount));
             linkedList = new LinkedList<Top5ExpenseModel>(list);
             return linkedList;
         }
+
+
+        // Helper method to get chart data top 5 revenue(Income) Accounts
+        public LinkedList<Top5IncomeModel> Top5Revenues()
+        {
+            SettingsModel systemSettings = new SettingsModel();
+            systemSettings = _dbConnectorService.GetSystemSettings();
+            DateTime lastClosingDate = (DateTime)systemSettings.open_close_date;
+            ViewBag.lastClosingDate = lastClosingDate.ToString("yyyy-MM-dd");
+            string fromDate = lastClosingDate.ToString("MM-dd-yyyy");
+            int startingMonth = Int32.Parse(fromDate.Split("-")[0]);
+
+            List<AccountsModel> allAccounts = _dbConnectorService.GetChartOfAccounts();
+            LinkedList<Top5IncomeModel> linkedList = new LinkedList<Top5IncomeModel>();
+
+            foreach (var account in allAccounts)
+            {
+                if (account.type == "Revenue" && account.current_balance != 0)
+                {
+                    Top5IncomeModel top5IncomeModel = new Top5IncomeModel();
+                    top5IncomeModel.accountNum = account.number;
+                    top5IncomeModel.accountDesc = account.name;
+                    top5IncomeModel.accountAmount = (double)account.current_balance;
+                    linkedList.AddLast(top5IncomeModel);
+
+                }
+            }
+            //sort greatest to least
+            List<Top5IncomeModel> list = new List<Top5IncomeModel>(linkedList);
+            list.Sort((x, y) => y.accountAmount.CompareTo(x.accountAmount));
+            linkedList = new LinkedList<Top5IncomeModel>(list);
+            return linkedList;
+        }
+
+
+
         //All users can view the chart of accounts
         [Authorize(Roles = "Administrator, Manager, Accountant")]
         public async Task<IActionResult> ChartOfAccounts()

@@ -21,7 +21,10 @@
         }
 
         public List<ChartMonth> IEMonths { get; set; }
-        public LinkedList<Top5ExpenseModel> Top5List { get; set;}
+        public LinkedList<Top5ExpenseModel> Top5ListExpense { get; set;}
+
+        public LinkedList<Top5IncomeModel> Top5ListRevenue { get; set; }
+
 
     }
 }

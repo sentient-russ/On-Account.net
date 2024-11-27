@@ -5,6 +5,7 @@ using oa.Areas.Identity.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
 using System.Security.Cryptography;
+using Org.BouncyCastle.Crypto;
 
 namespace oa.Services
 {
@@ -2379,7 +2380,7 @@ namespace oa.Services
             }
             return returnMessage;
         }
-        }        
+                
         //string error returning from database
         public string GetErrorBasedOnCodeNumber(string codeNumber)
         {
@@ -2395,10 +2396,12 @@ namespace oa.Services
             {
                 ErrorModel errorModel = new ErrorModel();
                 errorModel.Id = reader1.IsDBNull(0) ? null : reader1.GetInt32(0);
+                errorModel.IdStr = reader1.IsDBNull(0) ? null : reader1.GetInt32(0).ToString();
                 errorModel.Error = reader1.IsDBNull(1) ? null : reader1.GetString(1);
                 errorModel.Descritpion = reader1.IsDBNull(2) ? null : reader1.GetString(2);
                 foundCodeDescription = errorModel.Descritpion;
             }
+
             return foundCodeDescription;
         }
     }
