@@ -13,10 +13,10 @@
     var UserName = currentUser.ScreenName;
     DateTime today = System.DateTime.Today;
     var numNewLines = Model.transactions_list.Count - 2;
-
 }
+<div class="container-journal">
 <div class="journal-wrapper margin-top-120">
-    <div class="form-container">
+    <div class="form-container-journal">
         <form class="add-account-form-container">
             @* row 0 *@
             <div class="row g-2">
@@ -438,7 +438,8 @@
                     <input type="submit" value="Save" class="btn btn-primary" id="save_journal_btn" hidden>
                 </div>
         </form>
-        <div />
+        </div>
+    </div>
     </div>
     @{
         string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
