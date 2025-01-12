@@ -45,7 +45,7 @@ namespace oa.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [StringLength(25, ErrorMessage = "Please enter a valid email address or username.", MinimumLength = 1)]
+            [StringLength(50, ErrorMessage = "Please enter a valid email address or username.", MinimumLength = 1)]
             public string Email { get; set; }
 
             [Required]

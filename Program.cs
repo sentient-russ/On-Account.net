@@ -45,11 +45,15 @@ builder.WebHost.ConfigureKestrel((context, serverOptions) =>
 
 var connectionString = "";
 var emailPass = "";
+var emailAddress = "";
+var emailServer = "";
 var serverVersion = new MySqlServerVersion(new Version(8, 8, 39));
 if (builder.Configuration["ASPNETCORE_ENVIRONMENT"] == "Production")
 {
     connectionString = Environment.GetEnvironmentVariable("OA_Local");
-    emailPass = Environment.GetEnvironmentVariable("GC_Email_Pass");
+    emailPass = Environment.GetEnvironmentVariable("OA_Email_Pass");
+    emailAddress = Environment.GetEnvironmentVariable("OA_Email_Address");
+    emailServer = Environment.GetEnvironmentVariable("OA_Email_Server");
     if (connectionString == "")
     {
         throw new Exception("ProgramCS: The connection string was null!");
@@ -68,7 +72,13 @@ else
 {
     //pulls connection string from development local version of secrets.json
     connectionString = builder.Configuration.GetConnectionString("OA_Remote");
-    emailPass = builder.Configuration["GC_Email_Pass"];
+    emailPass = builder.Configuration["OA_Email_Pass"];
+    emailAddress = builder.Configuration["OA_Email_Address"];
+    emailServer = builder.Configuration["OA_Email_Server"];
+
+    Environment.SetEnvironmentVariable("OA_Email_Pass", emailPass);
+    Environment.SetEnvironmentVariable("OA_Email_Address", emailAddress); 
+    Environment.SetEnvironmentVariable("OA_Email_Server", emailServer); 
 
     //db context which allows migrations but does not auto retry with mysql
     builder.Services.AddDbContext<ApplicationDbContext>(
@@ -79,8 +89,6 @@ else
         .EnableDetailedErrors()
     );
 }
-Environment.SetEnvironmentVariable("DbConnectionString", connectionString);//this is used in services to access the string
-Environment.SetEnvironmentVariable("GC_Email_Pass", emailPass);//this is used in services to access the string
 
 builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddDefaultTokenProviders()

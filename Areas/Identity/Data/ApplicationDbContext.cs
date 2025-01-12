@@ -22,6 +22,8 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     public virtual DbSet<oa.Models.ErrorModel> error { get; set; } = default!;
     public virtual DbSet<oa.Models.SupportingDocumentsModel> supporting_docs { get; set; } = default!;
     public virtual DbSet<oa.Models.SettingsModel> system_settings { get; set; } = default!;
+    public virtual DbSet<oa.Models.AppUserModel> AppUserModel { get; set; } = default!;
+    public DbSet<oa.Models.TrialBalanceModel>? TrialBalanceModel { get; set; }
 
 
     //the next section overrides the default db naming
@@ -38,8 +40,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
         builder.Entity<IdentityUserToken<string>>(entity => { entity.ToTable(name: "UserTokens"); });
         builder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
     }
-    public virtual DbSet<oa.Models.AppUserModel> AppUserModel { get; set; } = default!;
-    public DbSet<oa.Models.TrialBalanceModel>? TrialBalanceModel { get; set; }
+
 }
 internal class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<AppUser>
 {

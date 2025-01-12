@@ -33,7 +33,7 @@ namespace oa.Areas.Identity.Data
         public string? State { get; set; } = "";
         public string? Zip { get; set; } = "";
         public string? UserRole { get; set; } = "";
-        public bool? ActiveStatus { get; set; } = true;
+        public string? ActiveStatus { get; set; } = "Active";
 
         public DateTime? AcctSuspensionDate { get; set; }
 

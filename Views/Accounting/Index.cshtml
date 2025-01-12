@@ -96,7 +96,7 @@
 @{
     if (journalCount > 0)
     {
-                            <p class="text-center txt-warning">@journalMessage</p>
+      <p class="text-center txt-warning">@journalMessage</p>
     }
 }
 <hr />
@@ -110,14 +110,12 @@
         <div class="donut-chart-container">
             <canvas id="DonutChart-2" height="325" width="500"></canvas>
         </div>
-
     </div>
     <div class="chart-col-3">
         <div class="donut-chart-container">
             <canvas id="DonutChart-1" height="325" width="500"></canvas>
         </div>
-    </div>
-    
+    </div>    
 </div>
 <hr />
 <div class="outer-container">
@@ -149,7 +147,6 @@
                 <span class="btn-label">Income Statement</span>
             </div>
         </div>
-
         <div class="btn-container">
             <div class="btn-row">
                 <a class="nav-link text-dark" asp-controller="Accounting" asp-action="viewBalanceSheet" data - bs - toggle="tooltip" data - bs - placement="bottom" data - bs - title="View the Balance Sheet"><img class="btn-img" width="150" src="~/img/balance_sheet.jpg" /></a>
@@ -177,7 +174,6 @@
 
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const colors = [
@@ -216,7 +212,7 @@
             plugins: {
                 title: {
                     display: true,
-                    text: 'Income and Expenses',
+                    text: 'Revenue and Expenses',
                     font: {
                         size: 18,
                         weight: 'bold'
@@ -224,7 +220,6 @@
                 }
             },
             responsive: false,
-
         }
     });
     const ctx2 = document.getElementById('DonutChart-1').getContext('2d');
@@ -249,7 +244,7 @@
             plugins: {
                 title: {
                     display: true,
-                    text: 'Top Expense',
+                    text: 'Top Expenses',
                     position: 'top',
                     align: 'start',
                     font: {
@@ -259,8 +254,7 @@
                     padding: {
                         top: 30,
                         left: 50
-                    }
-                    
+                    }                    
                 },
                 legend: {
                     display: true,
@@ -301,7 +295,7 @@
             plugins: {
                 title: {
                     display: true,
-                    text: 'Top Income',
+                    text: 'Top Revenues',
                     position: 'top',
                     align: 'start',
                     font: {
@@ -312,7 +306,6 @@
                         top: 30,
                         left: 50
                     }
-
                 },
                 legend: {
                     display: true,
@@ -321,7 +314,6 @@
                     labels: {
                         boxWidth: 10,
                         padding: 5
-
                     },
                     padding: {
                         top: 10
