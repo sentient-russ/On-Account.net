@@ -6,7 +6,7 @@
 }
 <partial name="_StatusMessage" for="StatusMessage" />
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-8" style="min-width:425px;">
         <form id="profile-form" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
@@ -20,10 +20,10 @@
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="profile-picture-profile-container">
-                @if (!string.IsNullOrEmpty(Model.File))
+                @if (!string.IsNullOrEmpty(Model.ProfileImage))
                 {
                     <div class="profile-img-profile-row">
-                        <img class="profile-picture-profile-img" src="~/uploads/@Model.File" alt="Profile Image" style="max-height:100px;max-width:100px;" />
+                        <img class="profile-picture-profile-img" src="~/uploads/@Model.ProfileImage" alt="Profile Image" style="max-height:100px;max-width:100px;" />
                     </div>
                 }
                 else

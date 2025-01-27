@@ -9,6 +9,8 @@
     AppUserModel currentUser = CurrentUser.GetUser();
     var UsersEmail = currentUser.Email;
     var UserName = currentUser.ScreenName;
+    
+
 }
 
 <div class="login-name-container">
@@ -19,11 +21,12 @@
         <div class="usr-login-btn">
         
             <div class="NavButton">
-                @if (!string.IsNullOrEmpty(currentUser.File)){
+                @if (!string.IsNullOrEmpty(currentUser.ProfileImage)){
                     
-                    <img class="profile-picture-header-img" src="~/uploads/@currentUser.File" alt="Profile Image"  />
+                    <img class="profile-picture-header-img" src="~/uploads/@currentUser.ProfileImage" alt="Profile Image"  />
                     <span class="screenname-text"> @UserName</span>
                 } else {
+                     <img class="profile-picture-header-img" src="~/uploads/default_user.jpg" alt="Profile Image" />
                      <span class ="screenname-text"> @UserName</span>
                 }
             </div>

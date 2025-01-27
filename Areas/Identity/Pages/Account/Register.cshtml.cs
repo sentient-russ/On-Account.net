@@ -164,7 +164,7 @@ namespace oa.Areas.Identity.Pages.Account
                 user.Zip = Input.Zip;
                 user.DateofBirth = Input.DateofBirth;
                 user.LastPasswordChangedDate = System.DateTime.Now;
-                user.File = "default_user.svg";
+                user.ProfileImage = "default_user.jpg";
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);

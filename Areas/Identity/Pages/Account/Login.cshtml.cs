@@ -101,7 +101,6 @@ namespace oa.Areas.Identity.Pages.Account
                     Input.Email = email;
                 }
             }
-            
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user != null)
             {

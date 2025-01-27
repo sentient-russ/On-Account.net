@@ -78,7 +78,8 @@ else
 
     Environment.SetEnvironmentVariable("OA_Email_Pass", emailPass);
     Environment.SetEnvironmentVariable("OA_Email_Address", emailAddress); 
-    Environment.SetEnvironmentVariable("OA_Email_Server", emailServer); 
+    Environment.SetEnvironmentVariable("OA_Email_Server", emailServer);
+    Environment.SetEnvironmentVariable("DbConnectionString", connectionString);
 
     //db context which allows migrations but does not auto retry with mysql
     builder.Services.AddDbContext<ApplicationDbContext>(

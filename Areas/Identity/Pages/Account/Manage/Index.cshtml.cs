@@ -38,7 +38,7 @@ namespace oa.Areas.Identity.Pages.Account.Manage
         public InputModel Input { get; set; }
 
         [NotMapped]
-        public string File { get; set; } // Add this property
+        public string ProfileImage { get; set; } // Add this property
 
         public class InputModel
         {
@@ -55,7 +55,7 @@ namespace oa.Areas.Identity.Pages.Account.Manage
             public IFormFile FormFile { get; set; }
 
             [NotMapped]
-            public string File { get; set; } = "";
+            public string ProfileImage { get; set; } = "";
 
         }
 
@@ -83,7 +83,7 @@ namespace oa.Areas.Identity.Pages.Account.Manage
 
             AppUserModel appUser = new AppUserModel();
             appUser = _dbConnectorService.GetUserDetailsById(user.Id);
-            File = appUser.File;
+            ProfileImage = appUser.ProfileImage;
             await LoadAsync(user);
 
             return Page(); //<-- error here

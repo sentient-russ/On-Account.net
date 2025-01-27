@@ -78,7 +78,21 @@ html, body {
 .container, .container-lg, .container-md, .container-sm, .container-xl {
     max-width: 98vw;
 }
+.management-row{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 25px;
 
+}
+.management-nav-btns{
+    margin-bottom: 25px;
+}
+.management-container{
+    display: flex;
+    justify-content: center;
+
+}
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:active,
@@ -204,21 +218,36 @@ footer {
     box-shadow: grey 4px 4px 4px;
 }
 
-    .login-button:hover {
-        background-color: #353535;
-        border: 1.5px black;
-        border-radius: 10px 10px 10px 10px;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 32px;
-        margin: 4px 2px;
-        transition-duration: 0.4s;
-        cursor: pointer;
-        box-shadow: black 2px 2px 2px;
-        opacity: 85%;
-    }
+.login-button:hover {
+    background-color: #353535;
+    border: 1.5px black;
+    border-radius: 10px 10px 10px 10px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 32px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    box-shadow: black 2px 2px 2px;
+    opacity: 85%;
+}
+
+.login-info-heading {
+    font-size: clamp(1.5rem, 1.75rem, 2rem);
+    color: #fdbc2c;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.login-info-p {
+    font-size: clamp(1.5rem, 1rem, 2rem);
+}
+
+.login-info-p {
+    font-size: clamp(1.5rem, 1rem, 2rem);
+}
 
 .manage-container-column {
     display: flex;

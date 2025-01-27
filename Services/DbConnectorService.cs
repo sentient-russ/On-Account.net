@@ -148,12 +148,12 @@ namespace oa.Services
                     foundUser.State = reader1.IsDBNull(8) ? null : reader1.GetString(8);
                     foundUser.Zip = reader1.IsDBNull(9) ? null : reader1.GetString(9);
                     foundUser.UserRole = reader1.IsDBNull(10) ? null : reader1.GetString(10);
-                    foundUser.ActiveStatus = reader1.IsDBNull(11) ? null : reader1.GetBoolean(11).ToString();
+                    foundUser.ActiveStatus = reader1.IsDBNull(11) ? null : reader1.GetString(11);
                     foundUser.AcctSuspensionDate = reader1.IsDBNull(12) ? null : reader1.GetDateTime(12);
                     foundUser.AcctReinstatementDate = reader1.IsDBNull(13) ? null : reader1.GetDateTime(13);
                     foundUser.LastPasswordChangedDate = reader1.IsDBNull(14) ? null : reader1.GetDateTime(14).ToString();
                     foundUser.PasswordResetDays = reader1.IsDBNull(15) ? null : reader1.GetString(15);
-                    foundUser.File = reader1.IsDBNull(16) ? null : reader1.GetString(16);
+                    foundUser.ProfileImage = reader1.IsDBNull(16) ? null : reader1.GetString(16);
                     foundUser.UserName = reader1.IsDBNull(17) ? null : reader1.GetString(17);
                     foundUser.NormalizedUserName = reader1.IsDBNull(18) ? null : reader1.GetString(18);
                     foundUser.Email = reader1.IsDBNull(19) ? null : reader1.GetString(19);
@@ -208,7 +208,7 @@ namespace oa.Services
                 "Zip = @Zip, DateofBirth = @DateofBirth, UserRole = @UserRole, UserName = @UserName, " +
                 "Email = @Email, NormalizedUserName = @NormalizedUserName, AcctSuspensionDate = @AcctSuspensionDate, " +
                 "AcctReinstatementDate = @AcctReinstatementDate, LastPasswordChangedDate = @LastPasswordChangedDate, " +
-                "PasswordResetDays = @PasswordResetDays WHERE Id LIKE @Id";
+                "PasswordResetDays = @PasswordResetDays, ProfileImage = @ProfileImage WHERE Id LIKE @Id";
                 conn1.Open();
                 MySqlCommand cmd1 = new MySqlCommand(command, conn1);
                 cmd1.Parameters.AddWithValue("@Id", userIn.Id);
@@ -238,6 +238,7 @@ namespace oa.Services
                 cmd1.Parameters.AddWithValue("@AcctReinstatementDate", userIn.AcctReinstatementDate);
                 cmd1.Parameters.AddWithValue("@LastPasswordChangedDate", userIn.LastPasswordChangedDate);
                 cmd1.Parameters.AddWithValue("@PasswordResetDays", userIn.PasswordResetDays);
+                cmd1.Parameters.AddWithValue("@ProfileImage", userIn.ProfileImage);
 
                 MySqlDataReader reader1 = cmd1.ExecuteReader();
                 reader1.Close();

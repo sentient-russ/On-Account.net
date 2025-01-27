@@ -5,8 +5,8 @@
     ViewData["ActivePage"] = ManageNavPages.Email;
 }
 <partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-8">
+<div class="row" style="min-width:425px;">
+    <div class="col-md-12">
         <form id="email-form" method="post">
 
             @if (Model.IsEmailConfirmed)

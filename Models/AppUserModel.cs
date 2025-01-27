@@ -122,7 +122,7 @@ namespace oa.Models
         [DataType(DataType.Text)]
         [StringLength(100, MinimumLength = 1)]
         [DisplayName("Next Reset Days:")]
-        public string PasswordResetDays { get; set; } = "90";
+        public string? PasswordResetDays { get; set; } = "90";
 
         [ValidateNever]
         [NotMapped]
@@ -142,7 +142,7 @@ namespace oa.Models
 
         [DataType(DataType.Text)]
         [StringLength(500, MinimumLength = 1)]
-        public string? File { get; set; }
+        public string? ProfileImage { get; set; }
 
     }
 
