@@ -30,7 +30,7 @@ The On-Account system is now a fully functional platform that enhances the effic
 The following environment variables must be configured in order for the system to function correctly:
 
 ```plaintext
-"GC_Email_Pass": "",  # Insert your email password here
+"OA_Email_Pass": "",  # Insert your email password here
 "OA_Remote": Server=<insert ip address here>;User=<insert user name>;password=<insert password>;database=on_account;port=3306"
 ```
 
